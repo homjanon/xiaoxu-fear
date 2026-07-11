@@ -50,7 +50,7 @@
 
 | 计算分量 | 主源 | 兜底 1 | 兜底 2 | 兜底 3 | 全失败 |
 |---|---|---|---|---|---|
-| **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | — | — | — | 无（脚本报错，CI 会告警） |
+| **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | 腾讯 `stock_zh_index_daily_tx`（`proxy.finance.qq.com`，收盘价偏差 < 0.0001% 可透明兜底） | — | — | 双源均不通时报错（CI 告警） |
 | **盘面广度**（up / down / 涨停 / 跌停） | `legu`（legu host，本地/CI 均通） | 新浪 `stock_zh_a_spot`（Sina host） | — | — | 退化指数版（up/down=1/1，广度分量失效） |
 | **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`，经 push2delay 补丁取真值） | — | — | — | 双双降级 `(None, 0.0)` 由 compute() 置中性占位 |
 
@@ -110,7 +110,7 @@ pip install -r requirements.txt
 python run_xxfi.py --akshare --vol_window 60 --out output
 ```
 
-- 指数：`akshare.stock_zh_index_daily(sh000001)`
+- 指数：新浪 `stock_zh_index_daily` → 腾讯 `stock_zh_index_daily_tx` 兜底（偏差 < 0.0001%）
 - 盘面广度：`legu` → 新浪 `stock_zh_a_spot`（多源兜底，任一源失败自动切换）
 - 资金流 `retail_net` / `main_net`：东方财富 `stock_market_fund_flow()` 经 `push2delay` 补丁取真值（净占比口径，两端直连）
 - `--vol_window`：波动率分位窗口。`60`=近 60 日纯情绪相对冷热（默认）；`260`=相对全年极端程度。
@@ -162,7 +162,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | 文件 | 作用 |
 |---|---|
 | `xiaoxu_fear_index.py` | 纯计算（仅标准库，零外部依赖）★ 数据源解耦 |
-| `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，legu 广度 + 新浪指数 + push2delay 资金流，含多源兜底与重试；已清理未调用的 `_fetch_up_down` 死代码） |
+| `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，新浪→腾讯指数日K + legu 广度 + push2delay 资金流，含多源兜底与重试；已清理死代码） |
 | `run_xxfi.py` | 编排入口（`--akshare` / `--hs300` / `--json`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` 渲染为自包含静态页 `docs/index.html`（GitHub Pages） |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |

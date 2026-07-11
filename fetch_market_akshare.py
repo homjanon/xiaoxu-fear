@@ -15,8 +15,9 @@
 
 多源容错设计（关键）：akshare 单个函数只绑一个数据源，不会自动换源。
 本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级，绝不静默丢数据：
+  - 指数日K：新浪 stock_zh_index_daily → 腾讯 stock_zh_index_daily_tx（proxy.finance.qq.com）
+                    腾讯收盘价与新浪偏差 < 0.0001%，可透明兜底；双源均不通才报错
   - 广度（上涨/下跌家数/涨停/跌停）：legu（本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）
-                    东财涨跌停池 stock_zt_pool_em 已封，不再作为兜底
   - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离），
             东财已将接口迁移至 push2delay.eastmoney.com，akshare 仍硬编码旧端点 push2his；
             本取数器在模块加载时注入 URL 改写补丁（push2his→push2delay），两端均可直连取真值；
@@ -83,14 +84,29 @@ def index_components(closes, vol_window=260):
 
 
 def fetch_index(symbol="sh000001", vol_window=260):
+    """上证指数日K → 派生分量（回撤/动量/均线偏离/波动率分位）。
+
+    源链：新浪 stock_zh_index_daily → 腾讯 stock_zh_index_daily_tx
+    腾讯与新浪收盘价偏差 < 0.0001%，可透明兜底；双源均不通才报错。
+    """
     import akshare as ak
-    df = ak.stock_zh_index_daily(symbol=symbol)
-    closes = [float(x) for x in df["close"].tolist()]
-    comp = index_components(closes, vol_window)
-    comp["_index_name"] = f"上证指数({symbol})"
-    comp["_last_date"] = str(df["date"].iloc[-1])
-    comp["_last_close"] = closes[-1]
-    return comp
+    sources = [
+        ("sina", lambda: ak.stock_zh_index_daily(symbol=symbol)),
+        ("tx",    lambda: ak.stock_zh_index_daily_tx(symbol=symbol)),
+    ]
+    for label, fetch_fn in sources:
+        try:
+            df = fetch_fn()
+            closes = [float(x) for x in df["close"].tolist()]
+            comp = index_components(closes, vol_window)
+            comp["_index_name"] = f"上证指数({symbol})"
+            comp["_last_date"] = str(df["date"].iloc[-1])
+            comp["_last_close"] = closes[-1]
+            comp["_index_source"] = label
+            return comp
+        except Exception as e:
+            print(f"[warn] {label} 指数日K取数失败: {e}")
+    raise RuntimeError("新浪和腾讯双源均无法获取上证指数日K数据")
 
 
 def fetch_breadth():
