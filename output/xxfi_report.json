@@ -1,48 +1,51 @@
 {
-  "XXFI": 29.8,
-  "GreedIndex": 25.7,
+  "XXFI": 29.4,
+  "GreedIndex": 25.0,
   "extreme": "GREED",
   "contrarian_signal": "REDUCE",
   "level": "偏贪婪（情绪偏热，她倾向追高）",
   "advice": "市场恐惧偏低、热度偏高。→ 逢高减仓，不追涨；小旭常在连续大涨后追高买在山顶。",
+  "divergence": 0.0,
+  "divergence_state": "同向 / 无显著背离",
   "components": {
     "fear": {
       "drawdown": 23.1,
       "breadth": 0.0,
-      "limitdown": 3.8,
+      "limitdown": 2.2,
       "vol": 88.3
     },
     "greed": {
       "momentum": 0.0,
       "limitup": 100.0,
-      "retailin": 23.0,
-      "overbought": 0.0
+      "retailin": 0.0,
+      "overbought": 0.0,
+      "divergence": 50.0
     }
   },
   "inputs": {
     "drawdown": -0.04617163616413445,
     "ret20": -0.008768668239442667,
-    "above_ma20": -0.017351743421761122,
+    "above_ma20": -0.01735174342176134,
     "vol_pct": 0.8833333333333333,
     "vol_window": 60,
-    "_index_name": "上证指数(sh000001)",
-    "_last_date": "2026-07-10",
-    "_last_close": 3996.162,
     "up": 3511,
-    "down": 1612,
-    "limit_up": 93,
-    "limit_down": 7,
-    "_breadth_source": "legu",
-    "_breadth_date": "2026-07-10 15:00:00",
-    "retail_net": 0.11494031574894109,
-    "_retail_net_source": "tonghuashun",
+    "down": 1611,
+    "limit_up": 92,
+    "limit_down": 4,
+    "retail_net": 0.0,
+    "main_net": 0.0,
+    "_breadth_source": "baostock",
+    "_retail_net_source": "degraded",
+    "_main_net_source": "degraded",
     "_breadth_provided": true,
+    "_index_name": "上证指数(sh000001)",
     "_hs300_date": "2026-07-10",
     "_hs300_close": 3996.162
   },
   "_data_date": "2026-07-10",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
-  "_breadth_source": "legu",
-  "_retail_net_source": "tonghuashun"
+  "_breadth_source": "baostock",
+  "_retail_net_source": "degraded",
+  "_main_net_source": "degraded"
 }
