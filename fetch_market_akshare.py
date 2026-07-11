@@ -94,23 +94,6 @@ def fetch_index(symbol="sh000001", vol_window=260):
     return comp
 
 
-def _fetch_up_down():
-    """上涨/下跌家数两源兜底：legu → 新浪 spot。返回 (up, down, src)。"""
-    import akshare as ak
-    try:
-        d = ak.stock_market_activity_legu()
-        m = dict(zip(d["item"], d["value"]))
-        return int(float(m.get("上涨", 0) or 0)), int(float(m.get("下跌", 0) or 0)), "legu"
-    except Exception as e:
-        print(f"[warn] legu 失败，尝试新浪 spot: {e}")
-    try:
-        s = ak.stock_zh_a_spot()
-        return int((s["涨跌幅"] > 0).sum()), int((s["涨跌幅"] < 0).sum()), "sina_spot"
-    except Exception as e:
-        print(f"[warn] 新浪 spot 失败，up/down 退化为 1/1: {e}")
-        return 1, 1, "failed"
-
-
 def fetch_breadth():
     """盘面广度：多源容错，本地与 GitHub 同源以保证指数一致性。
 
