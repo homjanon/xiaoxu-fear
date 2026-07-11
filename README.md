@@ -50,13 +50,28 @@
 
 > **关键事实**：akshare 单个函数只绑定一个数据源，**函数本身不会自动换源**。本取数器自行实现「源链」——任一源失败自动切下一个，全部失败才降级，**绝不静默丢数据**。当前实际命中源记录在产品 `_breadth_source` / `_retail_net_source` 字段中。
 
-| 计算分量 | 主源 | 兜底 1 | 兜底 2 | 全失败 |
-|---|---|---|---|---|
-| **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | — | — | 无（脚本报错，CI 会告警） |
-| **盘面广度**（up / down / 涨停 / 跌停） | `legu`（legu host，本地/CI 均通） | 新浪 `stock_zh_a_spot`（Sina host） | 涨跌停池 `stock_zt_pool_em` / `stock_zt_pool_dtgc_em`（仅给 limit 计数） | 退化指数版（up/down=1/1，广度分量失效） |
-| **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`） | — | — | 双双降级 `0.0`（本机直连 push2his 被 TLS 掐，`ensure_proxy()` 自动走本地代理；GitHub 直连通） |
+| 计算分量 | 主源 | 兜底 1 | 兜底 2 | 兜底 3 | 全失败 |
+|---|---|---|---|---|---|
+| **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | — | — | — | 无（脚本报错，CI 会告警） |
+| **盘面广度**（up / down / 涨停 / 跌停） | `legu`（legu host，本地/CI 均通） | 新浪 `stock_zh_a_spot`（Sina host） | **必盈** `hslt/ztgc`\|`dtgc`（仅本地配 `BIYING_KEY`） | 涨跌停池 `stock_zt_pool_em` / `stock_zt_pool_dtgc_em`（仅给 limit 计数） | 退化指数版（up/down=1/1，广度分量失效） |
+| **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`） | 本地回退：同花顺 `stock_fund_flow_individual` 聚合代理 / **GitHub 已发布值回填** | — | — | 双双降级 `0.0`（本机直连 push2his 被 TLS 掐，`ensure_proxy()` 自动走本地代理；GitHub 直连通） |
 
 > 主力与散户净流入统一用东方财富大盘资金流的「净占比/100」，**两者同口径可直接相减得 v2「主力—散户背离」**。本机**直连** push2his 会被 TLS 中间设备掐断（curl/requests 均失败），故 `ensure_proxy()` 自动探测本地代理(127.0.0.1:7890)并走代理绕开；GitHub Actions 为干净公网，东方财富直连可用，背叛离取真值。两端均自动取真值，仅当皆不可达才降级。
+
+### 必盈 API（本地替代东方财富 · 仅本地生效，GitHub 零改动）
+
+用户本机直连东方财富 `push2` / `push2his` 的资金流与涨停跌停池 API 被出口 IP 拦截（GitHub CI 干净公网不受影响）。**必盈 API（`api.biyingapi.com`）在本机直连可用**，作为本地兜底：
+
+- **涨停/跌停家数**：必盈 `hslt/ztgc/{YYYY-MM-DD}` / `hslt/dtgc/{YYYY-MM-DD}` 官方股池（比自算更权威），本地 legu/新浪 失败时启用。
+- **主力/散户净流入**：必盈**无全市场级资金流**（仅个股级，聚合超 200/日额度），故不替代东财；本地回退为「同花顺个股资金流聚合代理」或「GitHub 已发布值回填」。
+- **启用方式（仅本地）**：设环境变量 `BIYING_KEY=<你的licence>`，或在本目录放 `biying_key.txt`（已 gitignore）。**GitHub Actions 不设该变量，自动走原东财链，行为完全不变。**
+- 鉴权：licence 作 URL 路径后缀；响应 gzip 压缩需解压。额度免费 200 次/日，本取数器每日仅耗 2 次（涨停+跌停池）。
+
+> **本地 vs GitHub 一致性结论**：主表 **XXFI（恐慌指数）本来就一致**——本地与 GitHub 都用 `legu`（广度）+ 新浪（指数），两端同源。真正不一致的是**副表「贪婪」的 `散户净流入` + `背离`** 两项（依赖东财资金流，本地被拦→降级）。必盈补不上这个缺口（无市场级资金流）。**完全对齐方案**：把 `xxfi_report.json` 也发布到 Pages（见下「一致性收口」），本地即可回填 GitHub 真值，使副表也完全一致。
+
+#### 一致性收口（可选 · 需一行 GitHub 改动）
+
+`fetch_biying.fetch_published_fund_flow()` 已就绪：本地设 `BIYING_KEY` 时，会自动从 `https://homjanon.github.io/xiaoxu-fear/xxfi_report.json` 抓取最近发布的 `main_net`/`retail_net`，使本地副表 == GitHub 副表。当前该 JSON 尚未发布到 Pages（404 → 本地退化为同花顺代理 + 背离中性）。**启用**：改 `render_html.py` 在渲染时顺带把 `xxfi_report.json` 复制进 `docs/`（随 Actions 提交即自动发布）。此改动仅影响产物发布、不改数据来源，需用户授权后实施。
 
 ### 历史回溯的额外数据源（去通达信，本地+GitHub 双通）
 
@@ -91,9 +106,10 @@ python run_xxfi.py --akshare --vol_window 60 --out output
 ```
 
 - 指数：`akshare.stock_zh_index_daily(sh000001)`
-- 盘面广度：`legu` → 新浪 `stock_zh_a_spot` → 涨跌停池（多源兜底，任一源失败自动切换）
-- 资金流 `retail_net` / `main_net`：东方财富 `stock_market_fund_flow()`（净占比口径；本机直连 push2his 被 TLS 掐，`ensure_proxy()` 自动走本地代理(7890)绕开，GitHub 端直连通；两端均取真值）
+- 盘面广度：`legu` → 新浪 `stock_zh_a_spot` → **必盈股池**（仅本地设 `BIYING_KEY`）→ 涨跌停池（多源兜底，任一源失败自动切换）
+- 资金流 `retail_net` / `main_net`：东方财富 `stock_market_fund_flow()`（净占比口径；本机直连 push2his 被 TLS 掐，`ensure_proxy()` 自动走本地代理(7890)绕开，GitHub 端直连通；本地失败时回退同花顺代理 / GitHub 发布值回填）
 - `--vol_window`：波动率分位窗口。`60`=近 60 日纯情绪相对冷热（默认）；`260`=相对全年极端程度。
+- **本地启用必盈**：`export BIYING_KEY=<licence>`（或放 `biying_key.txt`），涨停/跌停股池改用必盈官方源，彻底摆脱对东方财富的本地依赖。GitHub Actions 不设该变量，自动保持原东财逻辑。
 - **多源容错**：akshare 单函数只绑一个源、不会自动换源；本取数器实现「源链」，产物含 `_breadth_source` / `_retail_net_source` 溯源字段，报告展示当前实际命中源。
 
 ### 2) 通达信模式（WorkBuddy 技能交互 / 历史复盘）
@@ -158,7 +174,8 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | 文件 | 作用 |
 |---|---|
 | `xiaoxu_fear_index.py` | 纯计算（仅标准库，零外部依赖）★ 数据源解耦 |
-| `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，含多源兜底 + 中文单位解析） |
+| `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，含多源兜底 + 中文单位解析 + 字段错位修正） |
+| `fetch_biying.py` | 必盈 API 取数器（本地替代东财涨停/跌停池 + GitHub 发布值回填；`BIYING_KEY` 门控，GitHub 零改动） |
 | `fetch_history_baostock.py` | 历史分日回溯取数器（baostock 逐股广度 + akshare 历史涨跌停/资金流，去通达信） |
 | `run_xxfi.py` | 编排入口（`--akshare` / `--hs300` / `--json` / `--backfill N`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` 渲染为自包含静态页 `docs/index.html`（GitHub Pages） |

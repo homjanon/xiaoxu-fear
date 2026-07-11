@@ -184,7 +184,7 @@ def build_day(target, breadth_tuple, vol_window, closes, dates):
     comp = index_comp_at(closes, dates, target, vol_window)
     ymd = target.replace("-", "")
     lu, ld = fetch_ztdt(ymd)
-    (rn, mn), rsrc = fetch_fund_flow_at(target)
+    (mn, rn), rsrc = fetch_fund_flow_at(target)   # fetch_fund_flow_at 返回 ((main, retail), source)
     m = dict(comp)
     m.update({"up": up, "down": down, "limit_up": lu, "limit_down": ld,
               "retail_net": rn, "main_net": mn})
