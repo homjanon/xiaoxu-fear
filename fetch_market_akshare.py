@@ -29,27 +29,6 @@ from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
 
 
-def _cn_num(x):
-    """把带中文单位的金额字符串转为 float：'4779.03万'->4.779e7, '29.96亿'->2.996e9, '-'->0。"""
-    if x is None:
-        return 0.0
-    if isinstance(x, (int, float)):
-        return float(x)
-    s = str(x).strip().replace(",", "")
-    if s in ("", "-", "--", "None", "nan"):
-        return 0.0
-    unit = 1.0
-    if "亿" in s:
-        unit = 1e8
-    elif "万" in s:
-        unit = 1e4
-    s = s.replace("亿", "").replace("万", "").replace("%", "")
-    try:
-        return float(s) * unit
-    except ValueError:
-        return 0.0
-
-
 def index_components(closes, vol_window=260):
     """从收盘价序列算出指数派生分量（与 run_xxfi.index_components 口径一致）。"""
     last20 = closes[-20:]
@@ -133,56 +112,36 @@ def fetch_breadth():
 
 
 def fetch_fund_flow():
-    """当日全市场主力资金流向 → retail_net（多源兜底：东方财富 → 同花顺 → 0）。
+    """当日全市场主力/散户资金流向（东方财富大盘资金流，净占比口径）→ (main_net, retail_net, source)。
 
-    语义：全市场「主力净流入为正的家数占比」(pos-neg)/total，范围[-1,1]，正=多数个股净流入。
-    开盘瞬间无数据，必须在盘后执行（CI 北京16:30）。
-    返回 (value, source) 二元组，source 用于报告溯源。
+    统一用 stock_market_fund_flow()（全市场聚合，按日一行）取
+    「主力净流入-净占比」与「小单净流入-净占比」，两者同为 净占比/100
+    的带符号小数，可直接相减得到 v2「主力—散户背离」。
+    本地若被公司代理拦 EM(push2his)，双双降级为 0；GitHub/CI 干净网络取真值。
     """
     import akshare as ak
-    # 主源：东方财富 stock_individual_fund_flow_rank（CI 干净网络可用；本机 EM 常被代理拦）
     try:
-        df = ak.stock_individual_fund_flow_rank(indicator="今日")
+        df = ak.stock_market_fund_flow()
         if df is None or len(df) == 0:
             raise ValueError("空数据")
-        col = next((c for c in df.columns if "主力净流入" in c), None)
-        if col is None:
-            raise ValueError("无主力净流入列")
-        net = df[col].map(_cn_num)
-        total = len(net)
-        if total == 0:
-            raise ValueError("0行")
-        pos = int((net > 0).sum()); neg = int((net < 0).sum())
-        return float((pos - neg) / total), "eastmoney"
+        row = df.iloc[-1]  # 最新交易日（全市场聚合，无市场分行）
+        main = float(row["主力净流入-净占比"]) / 100.0
+        retail = float(row["小单净流入-净占比"]) / 100.0
+        return (main, retail), "eastmoney"
     except Exception as e:
-        print(f"[warn] 东方财富资金流失败，尝试同花顺: {e}")
-    # 兜底：同花顺 stock_fund_flow_individual(symbol="即时")（THS host，本地/CI 均通）
-    # 注意：同花顺「净额」列为带中文单位字符串（如 '4779.03万'），须用 _cn_num 解析
-    try:
-        import io, contextlib, warnings
-        warnings.filterwarnings("ignore")
-        with contextlib.redirect_stdout(io.StringIO()):
-            df = ak.stock_fund_flow_individual(symbol="即时")
-        if df is None or len(df) == 0:
-            raise ValueError("空数据")
-        net = df["净额"].map(_cn_num)
-        total = len(net)
-        if total == 0:
-            raise ValueError("0行")
-        pos = int((net > 0).sum()); neg = int((net < 0).sum())
-        return float((pos - neg) / total), "tonghuashun"
-    except Exception as e:
-        print(f"[warn] 同花顺资金流也失败，降级 retail_net=0: {e}")
-        return 0.0, "degraded"
+        print(f"[warn] 东方财富大盘资金流失败（本地通常被代理拦），降级 main/retail=0: {e}")
+        return (0.0, 0.0), "degraded"
 
 
 def build_market_json(symbol="sh000001", vol_window=60):
     m = fetch_index(symbol, vol_window)
     b = fetch_breadth()
-    rn, src = fetch_fund_flow()
+    (rn, mn), src = fetch_fund_flow()
     m.update(b)
-    m["retail_net"] = rn                       # 真实资金流向（盘后已定稿），失败降级 0
-    m["_retail_net_source"] = src              # 溯源：eastmoney / tonghuashun / degraded
+    m["retail_net"] = rn                       # 散户(小单)净流入占比，盘后已定稿，失败降级 0
+    m["main_net"] = mn                         # 主力净流入占比（v2 背离用），与 retail 同口径
+    m["_retail_net_source"] = src              # 溯源：eastmoney / degraded
+    m["_main_net_source"] = src
     m["_breadth_provided"] = True
     return m
 

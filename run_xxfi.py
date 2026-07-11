@@ -95,6 +95,7 @@ def format_report(res, d):
     lines.append(f"| 贪婪 | 涨停/跌停比 | {c['greed']['limitup']} |")
     lines.append(f"| 贪婪 | 散户净流入 | {c['greed']['retailin']} |")
     lines.append(f"| 贪婪 | 高于20日均线 | {c['greed']['overbought']} |")
+    lines.append(f"| 贪婪 | 主力—散户背离 | {c['greed']['divergence']} |")
     lines.append("")
     lines.append("### 输入快照")
     idx = d.get("_index_name", "沪深300")
@@ -104,8 +105,12 @@ def format_report(res, d):
     vw = d.get("vol_window", 260)
     lines.append(f"- 波动率历史分位：{d.get('vol_pct',0)*100:.0f}%（窗口={vw}日）")
     lines.append(f"- 涨跌家数：{d.get('up','-')} / {d.get('down','-')}　涨停/跌停：{d.get('limit_up','-')} / {d.get('limit_down','-')}")
-    lines.append(f"- 散户净流入占比：{d.get('retail_net',0)*100:.2f}%（源：{d.get('_retail_net_source','-')}）")
-    lines.append(f"- 数据溯源：广度={d.get('_breadth_source','-')}　资金流={d.get('_retail_net_source','-')}")
+    lines.append(f"- 主力净流入占比：{float(d.get('main_net',0) or 0)*100:.2f}%（源：{d.get('_main_net_source','-')}）")
+    lines.append(f"- 散户净流入占比：{float(d.get('retail_net',0) or 0)*100:.2f}%（源：{d.get('_retail_net_source','-')}）")
+    div = res.get("divergence")
+    div_s = res.get("divergence_state", "-")
+    lines.append(f"- 主力—散户背离：{div_s}" + (f"（diff={div:+.4f}）" if div is not None else "（无数据）"))
+    lines.append(f"- 数据溯源：广度={d.get('_breadth_source','-')}　主力/散户资金流={d.get('_main_net_source','-')}")
     lines.append("")
     lines.append("---")
     lines.append("> 反向指标仅在情绪极端+趋势反转时有效，须配合自身交易系统与止损纪律，切勿单独作为买卖依据。")
@@ -155,6 +160,7 @@ def main():
             "limit_up": breadth.get("limit_up", 1),
             "limit_down": breadth.get("limit_down", 0),
             "retail_net": breadth.get("retail_net", 0.0),
+            "main_net": breadth.get("main_net", None),
         })
         d["_hs300_date"] = ddate
         d["_hs300_close"] = dclose
@@ -177,6 +183,9 @@ def write_outputs(res, d, out_dir, vol_window=260):
     # 溯源提顶层，便于 HTML/历史展示（缺失容错）
     out["_breadth_source"] = d.get("_breadth_source", (res.get("inputs") or {}).get("_breadth_source", "-"))
     out["_retail_net_source"] = d.get("_retail_net_source", (res.get("inputs") or {}).get("_retail_net_source", "-"))
+    out["_main_net_source"] = d.get("_main_net_source", (res.get("inputs") or {}).get("_main_net_source", "-"))
+    out["divergence"] = res.get("divergence")
+    out["divergence_state"] = res.get("divergence_state")
     with open(p_md, "w", encoding="utf-8") as f: f.write(md)
     with open(p_json, "w", encoding="utf-8") as f: json.dump(out, f, ensure_ascii=False, indent=2)
     print(md)

@@ -163,6 +163,13 @@ def render(r, hist):
         retail_raw = "未提供（本地降级）"
     else:
         retail_raw = pct(inp.get("retail_net", 0))
+    msrc = r.get("_main_net_source") or inp.get("_main_net_source", "-")
+    if str(msrc).startswith("degraded"):
+        main_raw = "未提供（本地降级）"
+    else:
+        main_raw = pct(inp.get("main_net", 0))
+    div_state = r.get("divergence_state", "无数据（资金流降级）")
+    div_raw = f"主力 {main_raw} ／ 散户 {retail_raw}"
     fear_rows = [
         ("近20日最大回撤", pct(inp.get("drawdown", 0)), fear.get("drawdown", 0)),
         ("涨跌家数比", f"{int(dd)}/{int(du)}（比 {dd/du:.2f}）", fear.get("breadth", 0)),
@@ -174,6 +181,7 @@ def render(r, hist):
         ("涨停/跌停比", f"{int(lu)}/{int(ld)}（比 {lu/ld:.2f}）", greed_c.get("limitup", 0)),
         ("散户净流入", retail_raw, greed_c.get("retailin", 0)),
         ("高于20日均线", pct(inp.get("above_ma20", 0)), greed_c.get("overbought", 0)),
+        ("主力—散户背离", div_raw, greed_c.get("divergence", 0)),
     ]
     def rows_html(rows, cls):
         h = ""
@@ -225,6 +233,13 @@ def render(r, hist):
     </div>
   </div>
   <div class="advice">{advice}</div>
+</div>
+
+<div class="card" style="border-color:#fcd34d">
+  <div class="sec-h" style="color:#b45309">主力—散户背离诊断（v2）</div>
+  <div style="font-size:16px;font-weight:700;color:#b45309">{div_state}</div>
+  <div class="muted" style="margin-top:6px">主力净流入：<b>{main_raw}</b>　|　散户净流入：<b>{retail_raw}</b></div>
+  <div class="note">背离 = 主力净占比 − 散户净占比。负且「散户追·主力派」→ 顶部出货（危险）；正且「散户割·主力进」→ 底部吸筹（机会）。仅资金流源为 eastmoney 时有真值；本地降级时显示占位中性，不影响主信号。</div>
 </div>
 
 <div class="card">

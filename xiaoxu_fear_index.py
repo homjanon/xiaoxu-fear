@@ -23,6 +23,7 @@
   --limit_down 跌停家数
   --vol_pct    当前市场波动率的历史分位(0-1)，如 0.85 表示处于一年高位
   --retail_net 散户(小单)资金净流入占比，小数，负为净流出，如 -0.03
+  --main_net   主力资金净流入占比，小数（与 retail_net 同口径，均为「净占比/100」），用于 v2「主力—散户背离」
   --json       直接以 JSON 字符串传入上述全部字段
   --demo       运行内置校准样例（不读外部数据）
 
@@ -42,8 +43,12 @@ import argparse, json, sys
 
 WEIGHTS = {
     "fear":   {"drawdown": 0.30, "breadth": 0.25, "limitdown": 0.20, "vol": 0.25},
-    "greed":  {"momentum": 0.30, "limitup": 0.20, "retailin": 0.25, "overbought": 0.25},
+    # v2：新增「主力—散户背离」分量（权重 0.20），其余 4 项相应重平衡
+    "greed":  {"momentum": 0.25, "limitup": 0.15, "retailin": 0.20, "overbought": 0.20, "divergence": 0.20},
 }
+
+# 背离敏感度：div(主力-散户, 净占比/100) 每 1 个百分点 → 20 分位移
+DIVERGENCE_K = 200
 
 def clamp(x, lo=0.0, hi=100.0):
     return max(lo, min(hi, x))
@@ -74,10 +79,35 @@ def compute(d):
     above = d.get("above_ma20", 0.0)
     g_overbought = clamp(above * 500)           # 高于均线10%→50；20%→100
 
+    # ---- v2：主力—散户背离 ----
+    # 两者均为 净占比/100 的带符号小数，口径一致方可相减。
+    # divergence < 0 且 主力<0/散户>0 → 顶部出货（散户追高·主力派发）→ 市场过热危险
+    # divergence > 0 且 主力>0/散户<0 → 底部吸筹（散户割肉·主力进场）→ 机会区
+    main_net = d.get("main_net", None)
+    fund_ok = isinstance(main_net, (int, float)) and main_net is not None \
+        and isinstance(retail_net, (int, float))
+    if fund_ok:
+        main_f, ret_f = float(main_net), float(retail_net)
+        divergence = main_f - ret_f
+        g_divergence = clamp(50 - divergence * DIVERGENCE_K)   # 顶部→高(过热警告)，底部→低
+        if abs(divergence) < 0.005:
+            div_state = "同向 / 无显著背离"
+        elif main_f < 0 and ret_f > 0:
+            div_state = "顶部出货（散户追高·主力派发）"
+        elif main_f > 0 and ret_f < 0:
+            div_state = "底部吸筹（散户割肉·主力进场）"
+        else:
+            div_state = "同向（主散同方向）"
+    else:
+        divergence = None
+        g_divergence = 50.0     # 资金流缺失时取中性占位，不扭曲指数
+        div_state = "无数据（资金流降级）"
+
     greed_score = (WEIGHTS["greed"]["momentum"] * g_momentum +
                    WEIGHTS["greed"]["limitup"] * g_limitup +
                    WEIGHTS["greed"]["retailin"] * g_retailin +
-                   WEIGHTS["greed"]["overbought"] * g_overbought)
+                   WEIGHTS["greed"]["overbought"] * g_overbought +
+                   WEIGHTS["greed"]["divergence"] * g_divergence)
 
     # XXFI 头条 = 恐惧指数（高=恐惧）；反向信号按 XXFI 绝对区间判定，
     # 不再做"恐惧分 vs 贪婪分"的相对比较（低恐惧=相对贪婪，应判 REDUCE/SELL）。
@@ -94,6 +124,13 @@ def compute(d):
         extreme = "GREED"; contrarian = "SELL"
 
     level, advice = interpret(xxfi, greed_score)
+    # 背离显著时，作为「聪明钱确认」附加到解读（不改动 XXFI 主信号阈值）
+    if divergence is not None and abs(divergence) >= 0.005:
+        aligned = (divergence < 0 and contrarian in ("REDUCE", "SELL")) or \
+                  (divergence > 0 and contrarian in ("BUY", "ACCUMULATE"))
+        tag = "背离确认" if aligned else "背离提示"
+        advice = advice + f"　[{tag}·{div_state}]"
+
     return {
         "XXFI": round(xxfi, 1),
         "GreedIndex": round(greed_score, 1),
@@ -101,6 +138,8 @@ def compute(d):
         "contrarian_signal": contrarian,
         "level": level,
         "advice": advice,
+        "divergence": round(divergence, 4) if divergence is not None else None,
+        "divergence_state": div_state,
         "components": {
             "fear": {
                 "drawdown": round(f_drawdown, 1),
@@ -113,6 +152,7 @@ def compute(d):
                 "limitup": round(g_limitup, 1),
                 "retailin": round(g_retailin, 1),
                 "overbought": round(g_overbought, 1),
+                "divergence": round(g_divergence, 1),
             },
         },
         "inputs": d,
@@ -145,6 +185,8 @@ def main():
     ap.add_argument("--limit_down", type=int, default=0)
     ap.add_argument("--vol_pct", type=float, default=0.5)
     ap.add_argument("--retail_net", type=float, default=0.0)
+    ap.add_argument("--main_net", type=float, default=None,
+                    help="主力净流入占比(净占比/100)，用于 v2 背离；默认 None=资金流降级")
     ap.add_argument("--json", type=str, default=None, help="JSON 字符串传入全部字段")
     ap.add_argument("--demo", action="store_true", help="运行内置校准样例")
     args = ap.parse_args()
@@ -152,12 +194,16 @@ def main():
     if args.demo:
         print("==== 校准样例 1：恐慌割肉环境（对应 ST臻镭/江丰电子）====")
         d1 = {"drawdown": -0.15, "ret20": -0.10, "above_ma20": -0.06, "up": 800, "down": 4200,
-              "limit_up": 20, "limit_down": 90, "vol_pct": 0.85, "retail_net": -0.04}
+              "limit_up": 20, "limit_down": 90, "vol_pct": 0.85, "retail_net": -0.04, "main_net": -0.02}
         print(json.dumps(compute(d1), ensure_ascii=False, indent=2))
         print("\n==== 校准样例 2：追高狂热环境（对应 博杰/光电/澜起）====")
         d2 = {"drawdown": -0.01, "ret20": 0.18, "above_ma20": 0.09, "up": 4100, "down": 900,
-              "limit_up": 120, "limit_down": 5, "vol_pct": 0.45, "retail_net": 0.05}
+              "limit_up": 120, "limit_down": 5, "vol_pct": 0.45, "retail_net": 0.05, "main_net": -0.03}
         print(json.dumps(compute(d2), ensure_ascii=False, indent=2))
+        print("\n==== 校准样例 3：顶部出货（散户追高 主力派发，背离强烈）====")
+        d3 = {"drawdown": -0.02, "ret20": 0.10, "above_ma20": 0.06, "up": 3500, "down": 1400,
+              "limit_up": 90, "limit_down": 6, "vol_pct": 0.50, "retail_net": 0.08, "main_net": -0.06}
+        print(json.dumps(compute(d3), ensure_ascii=False, indent=2))
         return
 
     if args.json:

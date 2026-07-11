@@ -12,7 +12,7 @@
 - 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段）
 - 📈 [`output/history.jsonl`](output/history.jsonl) — 每日一行历史：`{date, xxfi, greed, signal, level}`
 
-> ⚠️ 数据为「当日快照」（akshare 盘面广度仅返回最新交易日）。历史周度复盘请在本机用 WorkBuddy + 通达信连接器完成。
+> 历史回溯已支持：**`python run_xxfi.py --backfill N`** 用 baostock 逐股统计真实历史涨跌家数 + akshare 历史涨跌停/资金流，重建过去 N 个交易日，**无需通达信**（详见下文「运行方式 4」）。
 
 ### 🌐 网页版（GitHub Pages 自动发布）
 
@@ -54,9 +54,32 @@
 |---|---|---|---|---|
 | **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | — | — | 无（脚本报错，CI 会告警） |
 | **盘面广度**（up / down / 涨停 / 跌停） | `legu`（legu host，本地/CI 均通） | 新浪 `stock_zh_a_spot`（Sina host） | 涨跌停池 `stock_zt_pool_em` / `stock_zt_pool_dtgc_em`（仅给 limit 计数） | 退化指数版（up/down=1/1，广度分量失效） |
-| **资金流** `retail_net`（主力净流入为正家数占比） | 东方财富 `stock_individual_fund_flow_rank` | 同花顺 `stock_fund_flow_individual(symbol="即时")` | — | 降级 `0.0`（不阻塞主流程） |
+| **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`） | — | — | 双双降级 `0.0`（本地代理拦 EM push2his；GitHub 取真值） |
 
-> 实测：本机东方财富常被公司代理拦截 → 自动切同花顺取到真实值（同花顺「净额」为带中文单位字符串如 `"4779.03万"`，已用 `_cn_num` 解析器处理）；GitHub Actions 为干净公网，东方财富直连可用，失败时才降级。
+> 主力与散户净流入统一用东方财富大盘资金流的「净占比/100」，**两者同口径可直接相减得 v2「主力—散户背离」**。本地公司代理常拦 EM(push2his) → 双双降级并标注「本地降级」；GitHub Actions 为干净公网，东方财富直连可用，背叛离取真值。
+
+### 历史回溯的额外数据源（去通达信，本地+GitHub 双通）
+
+当日广度用 legu/新浪/涨跌停池即可；但**历史某日的真实涨跌家数** akshare 无直接函数，改用：
+
+| 历史分量 | 数据源 | 本地 | GitHub |
+|---|---|---|---|
+| 历史涨跌家数（广度） | **baostock** 逐股 `pctChg` 统计（`query_all_stock` + `query_history_k_data_plus`） | ✅（自有服务器） | ✅ |
+| 历史涨停/跌停 | akshare `stock_zt_pool_em` / `stock_zt_pool_dtgc_em(date=)` | ✅（push2） | ✅ |
+| 历史主力/散户净流入（v2 背离用） | akshare `stock_market_fund_flow()`（EM push2his，按 `日期` 匹配） | ❌被拦→降级 | ✅ |
+
+> 广度历史是去通达信的关键：baostock 自有服务器，**本机代理不拦、GitHub 干净网络更通**，因而本地与 GitHub 历史回溯完全一致。主力/散户净流入历史仅 EM 可拿（本地被拦→降级并标注「本地降级」，不影响主表 XXFI）。
+
+### v2 新增：主力—散户背离维度
+
+XXFI 原为「散户情绪反向器」，v2 引入**聪明钱确认**——把主力资金流向作为散户情绪的对照：
+
+- **背离 = 主力净占比 − 散户(小单)净占比**（同口径小数，均来自 `stock_market_fund_flow` 的 净占比/100）。
+  - 负 且「散户追高·主力派发」→ **顶部出货**（危险，强化 REDUCE/SELL）；
+  - 正 且「散户割肉·主力进场」→ **底部吸筹**（机会，强化 BUY/ACCUMULATE）。
+- 实现：作为**贪婪副表第 5 个分量**（权重 0.20），其余 4 项重平衡为 0.25/0.15/0.20/0.20；
+  显著背离时还在报告/网页附「背离确认/提示」标注。**XXFI 主表（决定信号）的合同不变**，背离仅作辅助诊断与确认。
+- 数据源同「资金流」：东方财富 `stock_market_fund_flow()`；本地降级时取中性占位（不影响主信号，网页标注「无数据（资金流降级）」）。
 
 ## 运行方式
 
@@ -89,6 +112,22 @@ python run_xxfi.py --json '{"drawdown":-0.08,"ret20":0.02,"above_ma20":0.01,"up"
 python xiaoxu_fear_index.py --demo   # 内置恐慌/贪婪样例，应分别输出 BUY / SELL
 ```
 
+### 4) 历史回溯（去通达信 · 本地+GitHub 双通）
+
+重建过去 N 个交易日的真实 XXFI（广度由 baostock 逐股统计，涨跌停/资金流由 akshare 历史接口）：
+
+```bash
+pip install -r requirements.txt        # 含 baostock
+python run_xxfi.py --backfill 20 --vol_window 60 --out output
+#   → 重写 output/history.jsonl（按 date 去重），并重算最新一日报告
+python render_html.py --json output/xxfi_report.json --history output/history.jsonl --out docs/index.html
+```
+
+- 广度：baostock 枚举全市场 A 股、按 `pctChg` 符号统计 up/down（一次性遍历全部目标日期，约 5000 次查询，耗时 15–40 分钟，属一次性回溯，非每日）。
+- 涨跌停：akshare 历史涨跌停池（`date=` 参数）。
+- 散户净流入：akshare `stock_market_fund_flow()`；本地被代理拦时降级为 `0` 并标注「本地降级」，GitHub 端取真实值。
+- **GitHub 手动回填**：Actions 页面 → Run workflow → 填 `days`（如 `20`）→ 即可在任意时间（含周末）回填历史；CI 干净网络可直连 baostock 与东方财富历史资金流。
+
 ## 指标定义
 
 - **XXFI（0–100）**：越大 = 越恐惧。≥75 极度恐惧，≤25 极度贪婪。
@@ -120,7 +159,8 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 |---|---|
 | `xiaoxu_fear_index.py` | 纯计算（仅标准库，零外部依赖）★ 数据源解耦 |
 | `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，含多源兜底 + 中文单位解析） |
-| `run_xxfi.py` | 编排入口（`--akshare` / `--hs300` / `--json`） |
+| `fetch_history_baostock.py` | 历史分日回溯取数器（baostock 逐股广度 + akshare 历史涨跌停/资金流，去通达信） |
+| `run_xxfi.py` | 编排入口（`--akshare` / `--hs300` / `--json` / `--backfill N`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` 渲染为自包含静态页 `docs/index.html`（GitHub Pages） |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |

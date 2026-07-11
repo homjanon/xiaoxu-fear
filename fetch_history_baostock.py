@@ -126,35 +126,37 @@ def fetch_ztdt(ymd):
         return 1, 0
 
 
-# ---------------- akshare 历史散户净流入（EM，本地可能降级） ----------------
-def fetch_retail(target):
+# ---------------- akshare 历史主力/散户净流入（EM，本地可能降级） ----------------
+def fetch_fund_flow_at(target):
+    """取某历史交易日的主力/散户净流入（净占比口径）→ ((main, retail), source)。
+
+    用 stock_market_fund_flow() 全历史按日一行，按 日期 匹配 target；
+    主力=主力净流入-净占比，散户=小单净流入-净占比，均 /100 转小数，与当日口径一致。
+    本地若被代理拦 EM(push2his) → 双双降级；GitHub/CI 取真值。
+    """
     import akshare as ak
+    from datetime import date as _date
     try:
         df = ak.stock_market_fund_flow()
-        dcol = [c for c in df.columns if c == "日期"]
-        if not dcol:
-            raise ValueError("无日期列")
-        dcol = dcol[0]
-        row = df[df[dcol] == target]
-        if row.empty:
-            row = df[df[dcol] == target.replace("-", "")]
-        if row.empty:
+        if df is None or len(df) == 0:
+            raise ValueError("空数据")
+        tgt = target
+        try:
+            tgt = _date.fromisoformat(target)
+        except Exception:
+            pass
+        sub = df[df["日期"] == tgt]
+        if sub.empty:
+            sub = df[df["日期"].astype(str) == str(target)]
+        if sub.empty:
             raise ValueError("无该日数据")
-        rcol = [c for c in df.columns if "小单" in c and "净流入" in c]
-        if not rcol:
-            raise ValueError("无小单列")
-        rval = float(row[rcol[0]].iloc[0])
-        denom = abs(rval)
-        for key in ("主力", "超大单", "大单"):
-            c = [x for x in df.columns if key in x and "净流入" in x]
-            if c:
-                denom += abs(float(row[c[0]].iloc[0]))
-        if denom == 0:
-            raise ValueError("0 分母")
-        return rval / denom, "eastmoney_hist"
+        row = sub.iloc[0]
+        main = float(row["主力净流入-净占比"]) / 100.0
+        retail = float(row["小单净流入-净占比"]) / 100.0
+        return (main, retail), "eastmoney_hist"
     except Exception as e:
-        print(f"[warn] 历史资金流失败（本地通常被代理拦），降级 retail_net=0: {e}")
-        return 0.0, "degraded"
+        print(f"[warn] 历史资金流失败（本地通常被代理拦），降级 main/retail=0: {e}")
+        return (0.0, 0.0), "degraded"
 
 
 # ---------------- 组装单日 market dict ----------------
@@ -163,11 +165,13 @@ def build_day(target, breadth_tuple, vol_window, closes, dates):
     comp = index_comp_at(closes, dates, target, vol_window)
     ymd = target.replace("-", "")
     lu, ld = fetch_ztdt(ymd)
-    rn, rsrc = fetch_retail(target)
+    (rn, mn), rsrc = fetch_fund_flow_at(target)
     m = dict(comp)
-    m.update({"up": up, "down": down, "limit_up": lu, "limit_down": ld, "retail_net": rn})
+    m.update({"up": up, "down": down, "limit_up": lu, "limit_down": ld,
+              "retail_net": rn, "main_net": mn})
     m["_breadth_source"] = "baostock"
     m["_retail_net_source"] = rsrc
+    m["_main_net_source"] = rsrc
     m["_breadth_provided"] = True
     m["_index_name"] = "上证指数(sh000001)"
     m["_hs300_date"] = target
