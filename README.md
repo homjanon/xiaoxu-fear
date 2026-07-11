@@ -14,6 +14,17 @@
 
 > ⚠️ 数据为「当日快照」（akshare 盘面广度仅返回最新交易日）。历史周度复盘请在本机用 WorkBuddy + 通达信连接器完成。
 
+### 🌐 网页版（GitHub Pages 自动发布）
+
+每次运行后自动生成自包含静态页 **[https://homjanon.github.io/xiaoxu-fear/](https://homjanon.github.io/xiaoxu-fear/)**，内容含：
+
+- **最新结果卡**：大号 XXFI（主表·决定信号）+ 贪婪指数（副表·辅助诊断）+ 信号徽章 + 一句话建议
+- **分项得分**：恐惧 4 项 / 贪婪 4 项进度条
+- **对照参考表**：XXFI 绝对区间 → 等级 / 信号 / 含义，并标注「两表独立、非互补」
+- **历史趋势**：内联 SVG 折线（XXFI vs 贪婪）+ 近 10 日数据表（运行数日后自动出现）
+
+由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
+
 ## 自动运行触发方案
 
 针对"开盘瞬间资金流向缺失、非交易日空跑"的问题，重新设计了触发逻辑。依据 A 股数据更新节奏（北京时间）：
@@ -110,6 +121,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `xiaoxu_fear_index.py` | 纯计算（仅标准库，零外部依赖）★ 数据源解耦 |
 | `fetch_market_akshare.py` | 纯 akshare 取数器（CI/实时，含多源兜底 + 中文单位解析） |
 | `run_xxfi.py` | 编排入口（`--akshare` / `--hs300` / `--json`） |
+| `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` 渲染为自包含静态页 `docs/index.html`（GitHub Pages） |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
