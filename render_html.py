@@ -147,12 +147,22 @@ def render(r, hist):
 
     # 原始值 + 得分 两列构造
     def pct(v):
-        try: return f"{float(v)*100:.2f}%"
-        except Exception: return "-"
+        try:
+            fv = float(v)
+            if fv != fv:  # NaN
+                return "—"
+            return f"{fv*100:.2f}%"
+        except Exception:
+            return "-"
     du = max(1.0, float(inp.get("up", 1) or 1))
     dd = float(inp.get("down", 0) or 0)
     lu = max(1.0, float(inp.get("limit_up", 1) or 1))
     ld = float(inp.get("limit_down", 0) or 0)
+    # 散户净流入：若本地降级（源以 degraded 开头），明确标注而非显示 0.00%
+    if str(rsrc).startswith("degraded"):
+        retail_raw = "未提供（本地降级）"
+    else:
+        retail_raw = pct(inp.get("retail_net", 0))
     fear_rows = [
         ("近20日最大回撤", pct(inp.get("drawdown", 0)), fear.get("drawdown", 0)),
         ("涨跌家数比", f"{int(dd)}/{int(du)}（比 {dd/du:.2f}）", fear.get("breadth", 0)),
@@ -162,7 +172,7 @@ def render(r, hist):
     greed_rows = [
         ("近20日动量", pct(inp.get("ret20", 0)), greed_c.get("momentum", 0)),
         ("涨停/跌停比", f"{int(lu)}/{int(ld)}（比 {lu/ld:.2f}）", greed_c.get("limitup", 0)),
-        ("散户净流入", pct(inp.get("retail_net", 0)), greed_c.get("retailin", 0)),
+        ("散户净流入", retail_raw, greed_c.get("retailin", 0)),
         ("高于20日均线", pct(inp.get("above_ma20", 0)), greed_c.get("overbought", 0)),
     ]
     def rows_html(rows, cls):

@@ -120,7 +120,14 @@ def main():
     ap.add_argument("--vol_window", type=int, default=260, help="波动率分位窗口(交易日数)，默认260(全年)；设60看近60日\"纯情绪\"相对水平")
     ap.add_argument("--akshare", action="store_true", help="纯 akshare 取数模式（CI/无 tdx 环境），直接联网拉指数与盘面广度")
     ap.add_argument("--json", default=None, help="直接传入完整市场JSON(覆盖其它)")
+    ap.add_argument("--backfill", type=int, default=0,
+                    help="历史回溯 N 个交易日（baostock 取真实广度），写入 history.jsonl 并重算最新报告")
     args = ap.parse_args()
+
+    if args.backfill:
+        import fetch_history_baostock as fh
+        fh.backfill_history(args.backfill, args.vol_window, args.out)
+        return
 
     if args.json:
         d = json.loads(args.json)
@@ -155,14 +162,18 @@ def main():
         d["_breadth_provided"] = bool(breadth)
 
     res = compute(d)
-    os.makedirs(args.out, exist_ok=True)
+    write_outputs(res, d, args.out, args.vol_window)
+
+
+def write_outputs(res, d, out_dir, vol_window=260):
+    os.makedirs(out_dir, exist_ok=True)
     md = format_report(res, d)
-    p_md = os.path.join(args.out, "xxfi_report.md")
-    p_json = os.path.join(args.out, "xxfi_report.json")
+    p_md = os.path.join(out_dir, "xxfi_report.md")
+    p_json = os.path.join(out_dir, "xxfi_report.json")
     out = dict(res)
     out["_data_date"] = str(d.get("_hs300_date", "") or d.get("_breadth_date", ""))[:10]
     out["_index_name"] = d.get("_index_name", "")
-    out["_vol_window"] = d.get("vol_window", args.vol_window)
+    out["_vol_window"] = d.get("vol_window", vol_window)
     # 溯源提顶层，便于 HTML/历史展示（缺失容错）
     out["_breadth_source"] = d.get("_breadth_source", (res.get("inputs") or {}).get("_breadth_source", "-"))
     out["_retail_net_source"] = d.get("_retail_net_source", (res.get("inputs") or {}).get("_retail_net_source", "-"))
@@ -170,6 +181,7 @@ def main():
     with open(p_json, "w", encoding="utf-8") as f: json.dump(out, f, ensure_ascii=False, indent=2)
     print(md)
     print(f"\n报告已写入:\n  {p_md}\n  {p_json}")
+    return out
 
 if __name__ == "__main__":
     main()
