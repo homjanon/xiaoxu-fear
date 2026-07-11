@@ -8,14 +8,17 @@
   1. 上证指数日K  → 回撤 / 动量 / 均线偏离 / 波动率分位
   2. 当日盘面广度  → stock_market_activity_legu() 一次拿 上涨/下跌/涨停/跌停家数
                     （该接口只返「当日」，故本取数器天然产出「实时当日」恐惧指数）
-  3. 当日主力资金流向 → retail_net 真实来源（多源兜底：东方财富 → 同花顺 → 0）
+  3. 当日主力/散户资金流向 → main_net / retail_net 真实来源（v2 统一口径：
+                    stock_market_fund_flow() 的「主力/小单 净流入-净占比」÷100，
+                    两者同口径可直接相减得「主力—散户背离」）
                     （开盘瞬间无数据；务必在盘后 16:30 执行，此时已定稿）
 
 多源容错设计（关键）：akshare 单个函数只绑一个数据源，不会自动换源。
 本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级，绝不静默丢数据：
   - 广度：legu（legu host，本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）→ 涨跌停池（EM，仅 limit 计数）
-  - 资金流：东方财富 stock_individual_fund_flow_rank（CI 干净网络可用）→
-           同花顺 stock_fund_flow_individual(symbol="即时")（THS host，本地/CI 均通）→ 降级 0
+  - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离）。
+            本机直连 push2his 被 TLS 中间设备掐；ensure_proxy() 自动探测本地代理(7890)并走代理；
+            GitHub/CI 干净公网直连通。两端均取真值，仅当皆不可达才降级(主信号不受影响)。
 拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
 用法：
@@ -27,6 +30,26 @@ import sys, os, json, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
+
+
+def ensure_proxy():
+    """探测本地代理(127.0.0.1:7890)是否可连；可连则注入 HTTPS_PROXY/HTTP_PROXY 环境变量，
+    让 akshare 的东方财富资金流请求自动走代理，绕开本机对 push2his 直连的 TLS 掐断。
+
+    背景：本机直连 push2his.eastmoney.com 的 API 会被 TLS 中间设备 Reset（server closed abruptly）；
+    而本地 Clash 代理(7890)能通该 host。GitHub Actions 无 7890 端口、且为干净公网，
+    探测失败自然走直连（直连通）。这样本地/远程两端都能拿到资金流真值，不依赖环境变量是否被继承。
+    """
+    import socket
+    proxy = "http://127.0.0.1:7890"
+    try:
+        s = socket.create_connection(("127.0.0.1", 7890), timeout=3)
+        s.close()
+        for k in ("HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy"):
+            os.environ[k] = proxy
+        return proxy
+    except Exception:
+        return None
 
 
 def index_components(closes, vol_window=260):
@@ -120,6 +143,7 @@ def fetch_fund_flow():
     本地若被公司代理拦 EM(push2his)，双双降级为 0；GitHub/CI 干净网络取真值。
     """
     import akshare as ak
+    ensure_proxy()  # 本地代理可连则走代理绕开 push2his 直连掐断；GitHub 端直连
     try:
         df = ak.stock_market_fund_flow()
         if df is None or len(df) == 0:

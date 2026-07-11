@@ -10,7 +10,8 @@
   - 指数派生(回撤/动量/高于MA/波动率分位)：akshare stock_zh_index_daily（Sina 全历史）→ 本地/CI 均通
   - 涨停/跌停家数：akshare stock_zt_pool_em / stock_zt_pool_dtgc_em(date=) → 本地/CI 均通（push2）
   - 涨跌家数(广度)：baostock 逐股 pctChg 统计 → 本地/CI 均通（baostock 自有服务器）
-  - 散户净流入(贪婪副表用)：akshare stock_market_fund_flow（EM push2his）→ CI 通、本地被代理拦→降级
+  - 散户净流入(贪婪副表用)：akshare stock_market_fund_flow（EM push2his，净占比口径）→
+            CI 直连通；本地直连被 TLS 掐，ensure_proxy() 自动走本地代理(7890)绕开，两端均取真值
 
 用法（由 run_xxfi.py --backfill N 调用）：
   backfill_history(n, vol_window=60, out_dir="output")
@@ -21,6 +22,23 @@ import sys, os, json, argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_xxfi import compute, max_drawdown, roll_vol, write_outputs
+
+
+def ensure_proxy():
+    """探测本地代理(127.0.0.1:7890)是否可连；可连则注入 HTTPS_PROXY/HTTP_PROXY 环境变量，
+    让 akshare 的东方财富资金流请求自动走代理，绕开本机对 push2his 直连的 TLS 掐断。
+    GitHub Actions 无 7890 端口、且为干净公网，探测失败自然走直连（直连通）。
+    详见 fetch_market_akshare.ensure_proxy 说明。"""
+    import socket
+    proxy = "http://127.0.0.1:7890"
+    try:
+        s = socket.create_connection(("127.0.0.1", 7890), timeout=3)
+        s.close()
+        for k in ("HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy"):
+            os.environ[k] = proxy
+        return proxy
+    except Exception:
+        return None
 
 
 # ---------------- 工具 ----------------
@@ -136,6 +154,7 @@ def fetch_fund_flow_at(target):
     """
     import akshare as ak
     from datetime import date as _date
+    ensure_proxy()  # 本地代理可连则走代理绕开 push2his 直连掐断；GitHub 端直连
     try:
         df = ak.stock_market_fund_flow()
         if df is None or len(df) == 0:
