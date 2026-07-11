@@ -79,10 +79,11 @@ def format_report(res, d):
     if "_hs300_date" in d:
         idx = d.get("_index_name", "沪深300")
         lines.append(f"> 数据基准：{idx} 收盘 {d['_hs300_close']:.2f}（{d['_hs300_date']}）　|　数据模式：{conf}\n")
-    lines.append(f"## XXFI = **{res['XXFI']}**　|　贪婪指数 = {res['GreedIndex']}")
-    lines.append(f"**等级**：{res['level']}")
+    lines.append(f"## XXFI（主表·决定信号）= **{res['XXFI']}**　|　贪婪指数（副表·辅助诊断）= {res['GreedIndex']}")
+    lines.append(f"**等级**：{res['level']}（以 XXFI 主表判定）")
     lines.append(f"**反向信号**：`{res['contrarian_signal']}`")
     lines.append(f"> {res['advice']}\n")
+    lines.append("> 注：XXFI 与贪婪指数为两套独立公式，不相加=100、非互补对子；贪婪指数仅作辅助诊断（如局部热闹但非全面过热）。\n")
     lines.append("### 分项得分")
     lines.append("| 维度 | 分量 | 得分 |")
     lines.append("|---|---|---|")
