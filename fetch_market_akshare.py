@@ -20,20 +20,19 @@
   - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离），
             东财已将接口迁移至 push2delay.eastmoney.com，akshare 仍硬编码旧端点 push2his；
             本取数器在模块加载时注入 URL 改写补丁（push2his→push2delay），两端均可直连取真值；
-            某端仍不可达时：retail_net 回退同花顺个股资金流聚合代理，
-            main_net 回退 GitHub Pages 已发布值（xxfi_report.json），否则中性降级。
+            两端均可直连取真值；全部不可达时降级为中性占位。
 拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
 用法：
   python fetch_market_akshare.py --vol_window 60
   # 或直接被 run_xxfi.py --akshare 调用
 """
-import sys, os, json, argparse, ssl, gzip, urllib.request
+import sys, os, json, argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
-from retry_utils import retry_on_network, jitter, random_ua
+from retry_utils import retry_on_network, jitter
 
 
 def _patch_eastmoney_push2delay():
@@ -173,36 +172,12 @@ def _fetch_retail_tonghuashun():
         return 0.0, "degraded"
 
 
-def _fetch_published_fund_flow():
-    """从 GitHub Pages 抓取最近一次发布报告的 inputs.main_net / inputs.retail_net，
-    用于本地对齐「背离」与「散户净流入」两个维度。
-
-    需要 xxfi_report.json 已发布到 Pages docs/ 目录。
-    这是「本地 vs GitHub 一致性」收口的关键：本地无主力/散户净占比源时，采用云端已算出的真值，
-    使本地与 GitHub 完全对齐。若抓取失败 → 返回 (None, None)，调用方优雅降级。
-    """
-    url = "https://homjanon.github.io/xiaoxu-fear/xxfi_report.json"
-    try:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        req = urllib.request.Request(url, headers={"User-Agent": random_ua()})
-        with urllib.request.urlopen(req, timeout=20, context=ctx) as r:
-            j = json.loads(r.read().decode("utf-8"))
-        inp = j.get("inputs") or {}
-        return inp.get("main_net"), inp.get("retail_net")
-    except Exception:
-        return None, None
-
-
 def fetch_fund_flow():
     """当日全市场主力/散户资金流向 → (main_net, retail_net, source)。
 
-    源链顺序（两端一致）：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离）。
-    端点补丁（push2his→push2delay）已在模块加载时注入，东财两端均可直连取真值；
-    若某端仍不可达，则 retail_net 回退同花顺个股资金流聚合代理，
-    main_net 回退 GitHub Pages 已发布值对齐；全部不可达才降级 (None, degraded)，
-    由 compute() 将背离置为中性占位。
+    源链：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离）。
+    端点补丁（push2his→push2delay）已在模块加载时注入，两端均可直连取真值；
+    全部不可达时降级为 (None, 0.0, "degraded")，由 compute() 将背离置为中性占位。
     """
     import akshare as ak
 
@@ -220,19 +195,9 @@ def fetch_fund_flow():
     try:
         return _try_em_fund_flow()
     except Exception as e:
-        print(f"[warn] 东方财富大盘资金流失败（本地通常被出口拦，已重试3次），尝试本地兜底源: {e}")
+        print(f"[warn] 东方财富大盘资金流失败（已重试3次），降级为中性占位: {e}")
 
-    # —— 本地兜底：GitHub 已发布值回填 main+retail ——
-    pub_main, pub_retail = _fetch_published_fund_flow()
-    if pub_main is not None or pub_retail is not None:
-        main = pub_main
-        retail = pub_retail if pub_retail is not None else _fetch_retail_tonghuashun()[0]
-        return (main, retail), "github_published(对齐云端)"
-
-    # GitHub 未发布时：retail 同花顺代理，main 降级
-    retail, r_src = _fetch_retail_tonghuashun()
-    combined = f"local_fallback(retail={r_src},main=degraded)"
-    return (None, retail), combined
+    return (None, 0.0), "degraded"
 
 
 def build_market_json(symbol="sh000001", vol_window=60):

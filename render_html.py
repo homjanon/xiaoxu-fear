@@ -322,14 +322,12 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
-    # 一并发布 xxfi_report.json 到 Pages 源目录（docs/），供本地端从云端回填
-    # main_net/retail_net，使副表（散户净流入 + 主力—散户背离）与 GitHub 完全对齐。
-    # workflow 已提交 docs/*，无需改动 CI 逻辑。
+    # 一并输出 xxfi_report.json 到 Pages 源目录（docs/），供外部读取原始数据或调试。
     json_out = os.path.join(out_dir, "xxfi_report.json")
     with open(json_out, "w", encoding="utf-8") as f:
         json.dump(r, f, ensure_ascii=False, indent=2)
     print(f"HTML 已生成: {args.out}（历史样本 {len(hist)} 条）")
-    print(f"JSON 已发布: {json_out}（含 inputs.main_net / inputs.retail_net，供本地对齐副表）")
+    print(f"JSON 已发布: {json_out}（含完整 inputs 字段）")
 
 if __name__ == "__main__":
     main()

@@ -23,8 +23,6 @@
 
 由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
 
-> **副表对齐机制**：`render_html.py` 在生成 `docs/index.html` 的同时，会把 `xxfi_report.json`（含 `inputs.main_net` / `inputs.retail_net`）一并写入 `docs/` 并提交。本地运行 `run_xxfi.py` 时，`fetch_market_akshare._fetch_published_fund_flow()` 会自动从 Pages 抓取云端已算出的主力/散户净占比，使**本地副表（散户净流入 + 主力—散户背离）与 GitHub 完全一致**，彻底消除本地/云端不一致。
-
 ## 自动运行触发方案
 
 针对"开盘瞬间资金流向缺失、非交易日空跑"的问题，重新设计了触发逻辑。依据 A 股数据更新节奏（北京时间）：
@@ -54,7 +52,7 @@
 |---|---|---|---|---|---|
 | **指数分量**（回撤/动量/均线/波动率） | 新浪 `stock_zh_index_daily(sh000001)` | — | — | — | 无（脚本报错，CI 会告警） |
 | **盘面广度**（up / down / 涨停 / 跌停） | `legu`（legu host，本地/CI 均通） | 新浪 `stock_zh_a_spot`（Sina host） | — | — | 退化指数版（up/down=1/1，广度分量失效） |
-| **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`，经 push2delay 补丁取真值） | 本地回退：同花顺 `stock_fund_flow_individual` 聚合代理 / **GitHub 已发布值回填** | — | — | 双双降级 `0.0`（两端均不可达时） |
+| **资金流** `retail_net`（散户·小单净占比）+ `main_net`（主力净占比） | 东方财富 `stock_market_fund_flow()`（`主力/小单净流入-净占比`，经 push2delay 补丁取真值） | — | — | — | 双双降级 `(None, 0.0)` 由 compute() 置中性占位 |
 
 > 主力与散户净流入统一用东方财富大盘资金流的「净占比/100」，**两者同口径可直接相减得 v2「主力—散户背离」**。东财已将接口从 `push2his` 迁移至 `push2delay`，但 akshare 仍硬编码旧端点 → 直连被重置；本取数器在模块加载时注入 `push2his→push2delay` URL 改写补丁（含 15s 超时防挂起），使两端均可直连取真值；仅当皆不可达才降级。
 
@@ -114,7 +112,7 @@ python run_xxfi.py --akshare --vol_window 60 --out output
 
 - 指数：`akshare.stock_zh_index_daily(sh000001)`
 - 盘面广度：`legu` → 新浪 `stock_zh_a_spot`（多源兜底，任一源失败自动切换）
-- 资金流 `retail_net` / `main_net`：东方财富 `stock_market_fund_flow()` 经 `push2delay` 补丁取真值（净占比口径，两端直连）；本地失败回退同花顺代理 / GitHub 发布值回填
+- 资金流 `retail_net` / `main_net`：东方财富 `stock_market_fund_flow()` 经 `push2delay` 补丁取真值（净占比口径，两端直连）
 - `--vol_window`：波动率分位窗口。`60`=近 60 日纯情绪相对冷热（默认）；`260`=相对全年极端程度。
 - **多源容错**：akshare 单函数只绑一个源、不会自动换源；本取数器实现「源链」，产物含 `_breadth_source` / `_retail_net_source` 溯源字段，报告展示当前实际命中源。
 
