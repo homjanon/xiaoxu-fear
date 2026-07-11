@@ -8,9 +8,12 @@
   1. 上证指数日K  → 回撤 / 动量 / 均线偏离 / 波动率分位
   2. 当日盘面广度  → stock_market_activity_legu() 一次拿 上涨/下跌/涨停/跌停家数
                     （该接口只返「当日」，故本取数器天然产出「实时当日」恐惧指数）
+  3. 当日主力资金流向 → stock_individual_fund_flow_rank(indicator="今日")
+                    算「净流入为正的家数占比」作为 retail_net 真实来源
+                    （开盘瞬间无数据；务必在盘后 16:30 执行，此时已定稿）
 拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
-降级：legu 失败时退用 stock_zt_pool_em / stock_zt_pool_dtgc_em 计数。
+降级：legu 失败退用涨跌停池计数；资金流失败 retail_net 退 0（不阻塞主流程）。
 
 用法：
   python fetch_market_akshare.py --vol_window 60
@@ -86,9 +89,38 @@ def fetch_breadth():
             }
 
 
+def fetch_fund_flow():
+    """当日全市场主力资金流向，作为 retail_net 的真实来源。
+
+    用 stock_individual_fund_flow_rank(indicator="今日") 取全市场个股主力净流入，
+    算「净流入为正的家数占比」= (pos - neg) / total，范围约 [-1, 1]，正=多数个股资金净流入。
+    开盘瞬间无数据，必须在盘后执行（CI 设为北京 16:30）。
+    eastmoney 源：CI 干净网络可用；本机若被代理/eastmoney 限流则降级 retail_net=0。
+    """
+    import akshare as ak
+    try:
+        df = ak.stock_individual_fund_flow_rank(indicator="今日")
+        if df is None or len(df) == 0:
+            return 0.0
+        col = next((c for c in df.columns if "主力净流入" in c), None)
+        if col is None:
+            return 0.0
+        net = df[col].astype(float)
+        total = len(net)
+        if total == 0:
+            return 0.0
+        pos = int((net > 0).sum())
+        neg = int((net < 0).sum())
+        return float((pos - neg) / total)
+    except Exception as e:
+        print(f"[warn] 资金流获取失败，降级 retail_net=0: {e}")
+        return 0.0
+
+
 def build_market_json(symbol="sh000001", vol_window=60):
     m = fetch_index(symbol, vol_window)
     m.update(fetch_breadth())
+    m["retail_net"] = fetch_fund_flow()   # 真实资金流向（盘后已定稿），失败降级 0
     m["_breadth_provided"] = True
     return m
 

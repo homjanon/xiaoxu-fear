@@ -1,10 +1,24 @@
 name: XXFI Daily
 
-# 每个交易日 09:30 北京时间自动跑（01:30 UTC，周一至周五）
-# 也可在 Actions 页面手动触发（workflow_dispatch）
+# 自动运行触发方案（盘后 · 仅交易日 · 单次）
+# =====================================================================
+# 设计依据 —— A股数据更新节奏（北京时间）：
+#   09:30 开盘 → 15:00 收盘 → 15:00~16:00 指数日K / 涨跌家数 / 涨停跌停池 /
+#   主力资金流向 陆续定稿 → 16:00+ 当日完整数据就绪。
+#   开盘瞬间资金流向尚未生成，故不在盘前/盘中触发。
+#
+# 三条约束的落地：
+#   1) 交易日筛选：cron 仅覆盖周一至五；且 check 步骤用交易日历
+#      (tool_trade_date_hist_sina) 精确排除法定节假日/休市日（含调休）。
+#   2) 执行时机：cron "30 8 * * 1-5" = 北京 16:30，确保当日资金流向数据
+#      已更新完成。check 步骤再校验「指数日K末交易日 == 今天」双保险。
+#   3) 每日频次：盘后单次。非交易日 / 数据未就绪 由 check 步骤 skip，
+#      不产生任何无效执行。
+# 也可在 Actions 页面手动触发（workflow_dispatch）用于验证。
+# =====================================================================
 on:
   schedule:
-    - cron: "30 1 * * 1-5"
+    - cron: "30 8 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
@@ -25,13 +39,40 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 纯 akshare 取数 → 计算 → 生成 output/xxfi_report.md + .json
-      # 默认 60 日波动率窗口（纯近期情绪相对冷热）；如需相对全年极端度改 --vol_window 260
+      # 交易日 & 数据就绪判断：非交易日(节假日/周末)或当日数据尚未更新 → skip
+      - name: 判断交易日与数据就绪
+        id: check
+        run: |
+          python - <<'PY'
+          import akshare as ak, datetime, os
+          today = datetime.date.today().strftime("%Y-%m-%d")
+          # 1) 交易日历（精确排除法定节假日/休市日，含调休上班日的反向排除）
+          cal = ak.tool_trade_date_hist_sina()
+          is_trade = today in {str(x)[:10] for x in cal["trade_date"].tolist()}
+          if not is_trade:
+              print(f"{today} 非交易日（节假日/周末），跳过执行")
+              open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
+              raise SystemExit(0)
+          # 2) 数据就绪：上证指数日K末交易日应为今天（盘后资金流向等已定稿）
+          idx = ak.stock_zh_index_daily(symbol="sh000001")
+          last = str(idx["date"].iloc[-1])[:10]
+          if last != today:
+              print(f"指数末交易日={last}，今日数据尚未更新（{today}），跳过以避免无效数据")
+              open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
+              raise SystemExit(0)
+          print(f"{today} 交易日且数据已就绪，执行 XXFI 计算")
+          open(os.environ["GITHUB_OUTPUT"], "a").write("trade=1\n")
+          PY
+
+      # 纯 akshare 取数（含当日主力资金流向，盘后已定稿）→ 计算 → output/
+      # 默认 60 日波动率窗口（纯近期情绪）；看相对全年极端度改 --vol_window 260
       - name: Compute today's XXFI
+        if: steps.check.outputs.trade == '1'
         run: python run_xxfi.py --akshare --vol_window 60 --out output
 
-      # 防污染：若数据日期 != 今天（休市/半日市，legu 返的是上一交易日），跳过写历史
-      - name: Append to history (skip non-trading days)
+      # 防污染：数据日期 != 今天（极端数据延迟）跳过写历史
+      - name: Append to history
+        if: steps.check.outputs.trade == '1'
         run: |
           python - <<'PY'
           import json, datetime
@@ -39,7 +80,7 @@ jobs:
           data_date = str(r.get("_data_date", ""))[:10]
           today = datetime.date.today().isoformat()
           if data_date != today:
-              print(f"数据为 {data_date}，非当日（{today}），疑似休市，跳过写入历史")
+              print(f"数据为 {data_date}，非当日（{today}），跳过写入历史")
               raise SystemExit(0)
           row = {
               "date": today,
@@ -54,6 +95,7 @@ jobs:
           PY
 
       - name: Commit outputs
+        if: steps.check.outputs.trade == '1'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: daily XXFI update (${{ github.run_id }})"

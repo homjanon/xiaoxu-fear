@@ -137,7 +137,7 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 
 ### 自动化配置（WorkBuddy 定时任务）
 - 任务名建议：小旭恐惧指数·开盘播报
-- 频率：每个交易日 09:30（`FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9;BYMINUTE=30`，节假日不自动剔除）
+- 频率：每个交易日 09:30（`FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9;BYMINUTE=30`，节假日不自动剔除）。注：此为 **WorkBuddy 桌面 tdx 实时播报**（开盘即有实时涨跌家数/资金流）；而下方 GitHub Actions 因 akshare 开盘数据未全，**已改盘后 16:30**。
 - 任务提示词（prompt）要点：
   1. 用 `tdx_kline` 拉上证指数日K（代码 000001，260根）并记录文件路径；
   2. 用 `tdx_quotes` 取上证指数实时广度（涨/跌家数、涨/跌停），组装 breadth JSON；
@@ -148,7 +148,7 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 
 ### GitHub Actions 实时模式（纯 akshare，开源自动化）
 
-技能已开源，Actions 每个交易日 **09:30 北京时间**自动跑"取数→算→出报告→提交"，产物在仓库 `output/`：
+技能已开源，Actions 每个交易日 **16:30 北京时间（盘后）**自动跑"取数→算→出报告→提交"，产物在仓库 `output/`：
 
 - `output/xxfi_report.md` / `xxfi_report.json`：当日报告与结构化结果
 - `output/history.jsonl`：每日一行 `{date, xxfi, greed, signal, level}` 历史
@@ -158,8 +158,8 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 python run_xxfi.py --akshare --vol_window 60 --out output
 ```
 
-- 工作流：`.github/workflows/xxfi-daily.yml`（cron `30 1 * * 1-5` = 01:30 UTC 周一至五；支持手动 `workflow_dispatch`）。
-- 防污染：若 `legu` 返回的数据日期 ≠ 当天（休市/半日市），跳过写历史。
+- 工作流：`.github/workflows/xxfi-daily.yml`（cron `30 8 * * 1-5` = 08:30 UTC = **16:30 北京时间（盘后）** 周一至五；`check` 步骤用 `tool_trade_date_hist_sina` 精确排除节假日/休市，并校验指数日K末交易日==今天确保数据就绪，未就绪则 skip；支持手动 `workflow_dispatch`）。
+- 防污染：非交易日 / 当日数据未就绪（指数末交易日≠今天），由 `check` 步骤 skip，不产生无效执行；legu 数据日期≠当天亦跳过写历史。
 - 波动率窗口默认 `60`（纯近期情绪）；想看相对全年极端度改 `--vol_window 260`。
 - 取数兜底：`legu` 失败时退用 `stock_zt_pool_em` / `stock_zt_pool_dtgc_em` 计数。
 

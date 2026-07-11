@@ -6,7 +6,7 @@
 
 ## 实时结果（GitHub Actions 自动更新）
 
-每个交易日 **09:30（北京时间）** 自动运行，产物提交到 `output/`：
+每个交易日 **16:30（北京时间 · 盘后）** 自动运行，产物提交到 `output/`：
 
 - 📄 [`output/xxfi_report.md`](output/xxfi_report.md) — 当日人类可读报告
 - 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果
