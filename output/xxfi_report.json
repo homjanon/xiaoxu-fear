@@ -1,6 +1,6 @@
 {
   "XXFI": 29.8,
-  "GreedIndex": 20.0,
+  "GreedIndex": 25.7,
   "extreme": "GREED",
   "contrarian_signal": "REDUCE",
   "level": "偏贪婪（情绪偏热，她倾向追高）",
@@ -15,14 +15,14 @@
     "greed": {
       "momentum": 0.0,
       "limitup": 100.0,
-      "retailin": 0.0,
+      "retailin": 23.0,
       "overbought": 0.0
     }
   },
   "inputs": {
     "drawdown": -0.04617163616413445,
     "ret20": -0.008768668239442667,
-    "above_ma20": -0.01735174342176134,
+    "above_ma20": -0.017351743421761122,
     "vol_pct": 0.8833333333333333,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
@@ -32,14 +32,17 @@
     "down": 1612,
     "limit_up": 93,
     "limit_down": 7,
-    "retail_net": 0.0,
     "_breadth_source": "legu",
     "_breadth_date": "2026-07-10 15:00:00",
+    "retail_net": 0.11494031574894109,
+    "_retail_net_source": "tonghuashun",
     "_breadth_provided": true,
     "_hs300_date": "2026-07-10",
     "_hs300_close": 3996.162
   },
   "_data_date": "2026-07-10",
   "_index_name": "上证指数(sh000001)",
-  "_vol_window": 60
+  "_vol_window": 60,
+  "_breadth_source": "legu",
+  "_retail_net_source": "tonghuashun"
 }
