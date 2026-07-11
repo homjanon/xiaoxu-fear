@@ -4,5 +4,3 @@ __pycache__/
 .DS_Store
 *.egg-info/
 .venv/
-# 必盈 API key（本地不入库；运行时读 BIYING_KEY 环境变量或本文件）
-biying_key.txt

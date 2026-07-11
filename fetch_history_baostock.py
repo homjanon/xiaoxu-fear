@@ -22,6 +22,7 @@ import sys, os, json, argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from run_xxfi import compute, max_drawdown, roll_vol, write_outputs
+from retry_utils import retry_on_network, jitter
 
 
 def ensure_proxy():
@@ -105,7 +106,10 @@ def get_breadth_for_dates(date_list):
         print(f"[info] baostock 枚举 A 股 {len(codes)} 只，统计区间 {min(date_list)}~{max(date_list)}")
         start, end = min(date_list), max(date_list)
         counts = {d: [0, 0, 0] for d in date_list}  # up, down, flat
-        for c in codes:
+        for i, c in enumerate(codes):
+            # 每 200 只停一下，降低对 baostock 服务器的连续压力
+            if i > 0 and i % 200 == 0:
+                jitter(0.05, 0.15)
             try:
                 rs = bs.query_history_k_data_plus(
                     c, "date,pctChg", start_date=start, end_date=end,
@@ -133,8 +137,10 @@ def get_breadth_for_dates(date_list):
 
 
 # ---------------- akshare 历史涨跌停 ----------------
+@retry_on_network(max_attempts=3)
 def fetch_ztdt(ymd):
     import akshare as ak
+    jitter(0.3, 1.0)
     try:
         zt = ak.stock_zt_pool_em(date=ymd)
         dt = ak.stock_zt_pool_dtgc_em(date=ymd)
@@ -145,6 +151,15 @@ def fetch_ztdt(ymd):
 
 
 # ---------------- akshare 历史主力/散户净流入（EM，本地可能降级） ----------------
+@retry_on_network(max_attempts=3)
+def _try_em_fund_flow_hist():
+    """内层调用，加退避重试；异常抛出给外层兜底。"""
+    import akshare as ak
+    jitter(0.3, 1.0)
+    df = ak.stock_market_fund_flow()
+    return df
+
+
 def fetch_fund_flow_at(target):
     """取某历史交易日的主力/散户净流入（净占比口径）→ ((main, retail), source)。
 
@@ -156,7 +171,7 @@ def fetch_fund_flow_at(target):
     from datetime import date as _date
     ensure_proxy()  # 本地代理可连则走代理绕开 push2his 直连掐断；GitHub 端直连
     try:
-        df = ak.stock_market_fund_flow()
+        df = _try_em_fund_flow_hist()
         if df is None or len(df) == 0:
             raise ValueError("空数据")
         tgt = target

@@ -15,26 +15,24 @@
 
 多源容错设计（关键）：akshare 单个函数只绑一个数据源，不会自动换源。
 本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级，绝不静默丢数据：
-  - 广度（上涨/下跌家数）：legu（本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）
-  - 涨停/跌停家数：必盈 hslt/ztgc|dtgc（本地直连可用、官方口径，**优先**；仅当配置了 BIYING_KEY）
-                    → 兜底回退东财 stock_zt_pool_em（GitHub 默认，CI 直连通）
+  - 广度（上涨/下跌家数/涨停/跌停）：legu（本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）
+                    → 东财涨跌停池 stock_zt_pool_em
   - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离），
             GitHub/CI 干净公网直连通；
             本机直连 push2his 被出口 IP 拦截时：retail_net 回退同花顺个股资金流聚合代理，
-            main_net 回退 GitHub Pages 已发布值（待发布 xxfi_report.json 后自动对齐），否则中性降级。
-  **GitHub 零改动**：必盈仅在本地设 BIYING_KEY 时启用；CI 不设该变量，自动走原有东财链，行为不变。
+            main_net 回退 GitHub Pages 已发布值（xxfi_report.json），否则中性降级。
 拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
 用法：
   python fetch_market_akshare.py --vol_window 60
   # 或直接被 run_xxfi.py --akshare 调用
 """
-import sys, os, json, argparse, datetime
+import sys, os, json, argparse, datetime, ssl, gzip, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
-import fetch_biying                           # 必盈 API（本地替代东财涨跌停池；GitHub 未配置 key 则跳过）
+from retry_utils import retry_on_network, jitter, random_ua
 
 
 def ensure_proxy():
@@ -103,13 +101,11 @@ def _fetch_up_down():
 
 
 def fetch_breadth():
-    """盘面广度：多源容错，且本地与 GitHub 默认同源（legu）以保证指数一致性。
+    """盘面广度：多源容错，本地与 GitHub 同源以保证指数一致性。
 
-    源链顺序（两端一致）：legu → 新浪 spot → 必盈(仅本地配 key) → 东财涨跌停池。
-      - legu 在本地/CI 均直连通，且 GitHub 也用它 → 主表口径两端一致（关键）。
-      - 必盈（本地配 BIYING_KEY 时）作为 legu/新浪 之后的兜底，提供官方涨停/跌停股池；
-        比东财更权威且本地直连可用；GitHub 无 key 自动跳过，行为不变。
-    两端均尽量取真值；仅当皆不可达才降级，绝不静默丢数据。
+    源链顺序（两端一致）：legu → 新浪 spot → 东财涨跌停池。
+      - legu 在本地/CI 均直连通 → 主表口径两端一致（关键）。
+    两端均尽量取真值；仅当皆不可达才降级。
     """
     import akshare as ak
     # 主源：legu（一次拿全，本地/CI 均通，保证两端同源一致性）
@@ -139,20 +135,8 @@ def fetch_breadth():
             "_breadth_source": "sina_spot",
         }
     except Exception as e:
-        print(f"[warn] 新浪 spot 失败，尝试必盈股池(本地): {e}")
-    # 兜底源2：必盈官方涨停/跌停股池（仅本地配 BIYING_KEY 时；GitHub 跳过）
-    if fetch_biying.BIYING_KEY:
-        try:
-            lu, ld, lim_src = fetch_biying.fetch_limit_counts()
-            return {
-                "up": 1, "down": 1,
-                "limit_up": lu, "limit_down": ld,
-                "_breadth_source": f"biying({lim_src})",
-                "_breadth_date": datetime.date.today().strftime("%Y-%m-%d"),
-            }
-        except Exception as e:
-            print(f"[warn] 必盈股池失败，尝试东财涨跌停池: {e}")
-    # 兜底源3：涨跌停池（EM，仅给 limit 计数）
+        print(f"[warn] 新浪 spot 失败，尝试东财涨跌停池兜底: {e}")
+    # 兜底源：涨跌停池（EM，仅给 limit 计数）
     try:
         dd = datetime.date.today().strftime("%Y-%m-%d")
         zt = ak.stock_zt_pool_em(date=dd)
@@ -207,40 +191,66 @@ def _fetch_retail_tonghuashun():
         return 0.0, "degraded"
 
 
+def _fetch_published_fund_flow():
+    """从 GitHub Pages 抓取最近一次发布报告的 inputs.main_net / inputs.retail_net，
+    用于本地对齐「背离」与「散户净流入」两个维度。
+
+    需要 xxfi_report.json 已发布到 Pages docs/ 目录。
+    这是「本地 vs GitHub 一致性」收口的关键：本地无主力/散户净占比源时，采用云端已算出的真值，
+    使本地与 GitHub 完全对齐。若抓取失败 → 返回 (None, None)，调用方优雅降级。
+    """
+    url = "https://homjanon.github.io/xiaoxu-fear/xxfi_report.json"
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        req = urllib.request.Request(url, headers={"User-Agent": random_ua()})
+        with urllib.request.urlopen(req, timeout=20, context=ctx) as r:
+            j = json.loads(r.read().decode("utf-8"))
+        inp = j.get("inputs") or {}
+        return inp.get("main_net"), inp.get("retail_net")
+    except Exception:
+        return None, None
+
+
 def fetch_fund_flow():
     """当日全市场主力/散户资金流向 → (main_net, retail_net, source)。
 
-    GitHub（无 BIYING_KEY）：东方财富 stock_market_fund_flow() 净占比口径，主力/小单同口径可相减得背离。
-    本地（东财被出口 IP 拦截）：东财失败 →
-        retail_net 回退同花顺个股资金流聚合（代理，标签 tonghuashun_proxy）；
-        main_net   回退 GitHub Pages 已发布值（fetch_biying.fetch_published_main_net），
-                   未发布则降级 None（背离中性占位）。
-    两端均尽量取真值；仅当皆不可达才降级，绝不静默丢数据。
+    源链顺序（两端一致）：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离）。
+    两端均试东财真值；本地若被出口 IP 拦截则：
+        retail_net 回退同花顺个股资金流聚合代理（tonghuashun_proxy）；
+        main_net 回退 GitHub Pages 已发布值。
+    全部不可达才降级为 (None, degraded)，由 compute() 将背离置为中性占位。
     """
     import akshare as ak
     ensure_proxy()  # 本地代理可连则走代理绕开 push2his 直连掐断；GitHub 端直连
-    try:
+
+    @retry_on_network(max_attempts=3)
+    def _try_em_fund_flow():
+        jitter(0.3, 1.0)
         df = ak.stock_market_fund_flow()
         if df is None or len(df) == 0:
             raise ValueError("空数据")
-        row = df.iloc[-1]  # 最新交易日（全市场聚合，无市场分行）
+        row = df.iloc[-1]
         main = float(row["主力净流入-净占比"]) / 100.0
         retail = float(row["小单净流入-净占比"]) / 100.0
         return (main, retail), "eastmoney"
-    except Exception as e:
-        print(f"[warn] 东方财富大盘资金流失败（本地通常被出口拦），尝试本地兜底源: {e}")
 
-    # —— 本地兜底：优先用 GitHub 已发布值对齐（main+retail），否则同花顺零售代理 ——
-    if fetch_biying.BIYING_KEY:
-        pub_main, pub_retail = fetch_biying.fetch_published_fund_flow()
-        if pub_main is not None or pub_retail is not None:
-            main = pub_main
-            retail = pub_retail if pub_retail is not None else _fetch_retail_tonghuashun()[0]
-            return (main, retail), "github_published(对齐云端)"
-    # GitHub 发布值不可用时：retail 同花顺代理，main 降级 None（背离中性占位）
+    try:
+        return _try_em_fund_flow()
+    except Exception as e:
+        print(f"[warn] 东方财富大盘资金流失败（本地通常被出口拦，已重试3次），尝试本地兜底源: {e}")
+
+    # —— 本地兜底：GitHub 已发布值回填 main+retail ——
+    pub_main, pub_retail = _fetch_published_fund_flow()
+    if pub_main is not None or pub_retail is not None:
+        main = pub_main
+        retail = pub_retail if pub_retail is not None else _fetch_retail_tonghuashun()[0]
+        return (main, retail), "github_published(对齐云端)"
+
+    # GitHub 未发布时：retail 同花顺代理，main 降级
     retail, r_src = _fetch_retail_tonghuashun()
     combined = f"local_fallback(retail={r_src},main=degraded)"
-    # main 保留 None（降级）：compute 据此将背离置为中性占位，避免伪造背离值
     return (None, retail), combined
 
 
