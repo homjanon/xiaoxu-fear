@@ -2,50 +2,72 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>小旭恐惧指数 XXFI · 实时</title><style>
-:root{--bg:#f5f7fa;--card:#fff;--ink:#1f2933;--sub:#6b7280;--line:#e5e7eb;--accent:#2563eb;}
+:root{
+  --bg:#eef2f7;--card:#fff;--ink:#1f2937;--sub:#64748b;--line:#e8edf3;
+  --accent:#2563eb;--fear:#0ea5e9;--greed:#f59e0b;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 6px 20px rgba(15,23,42,.05);
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  background:var(--bg);color:var(--ink);line-height:1.6;padding:24px 16px;}
-.wrap{max-width:760px;margin:0 auto;}
-h1{font-size:22px;font-weight:700;margin-bottom:4px;}
-.sub{color:var(--sub);font-size:13px;margin-bottom:20px;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;
-  box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.hero{display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
-.hero .main{flex:1 1 240px;}
-.hero .gx{flex:1 1 200px;border-left:1px solid var(--line);padding-left:20px;}
-.big{font-size:56px;font-weight:800;line-height:1;letter-spacing:-1px;}
-.big.sub2{font-size:44px;}
-.label{font-size:13px;color:var(--sub);margin-top:6px;}
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;color:#fff;font-size:13px;font-weight:600;margin-top:10px;}
-.advice{margin-top:14px;font-size:14px;background:#f8fafc;border-radius:10px;padding:12px 14px;border:1px solid var(--line);}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:8px}}
+  background:var(--bg);color:var(--ink);line-height:1.6;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:780px;margin:0 auto;}
+h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
+.sub{color:var(--sub);font-size:12.5px;margin:6px 0 22px;line-height:1.55;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;
+  box-shadow:var(--shadow);}
+.hero{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+.hero .main{flex:1 1 230px;min-width:0;}
+.hero .gx{flex:1 1 190px;min-width:0;border-left:1px solid var(--line);padding-left:22px;}
+.big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
+.big.sub2{font-size:clamp(36px,11vw,46px);}
+.label{font-size:13px;color:var(--sub);margin-top:8px;}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;color:#fff;font-size:13px;font-weight:700;
+  margin-top:12px;letter-spacing:.3px;}
+.advice{margin-top:16px;font-size:14px;background:#f8fafc;border-radius:12px;padding:12px 14px;
+  border:1px solid var(--line);line-height:1.55;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.panel-h{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;margin-bottom:10px;}
+.panel-h.fear{color:var(--fear);} .panel-h.greed{color:var(--greed);}
+.panel-h .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+.panel-h.fear .dot{background:var(--fear);} .panel-h.greed .dot{background:var(--greed);}
 .sec-h{font-size:15px;font-weight:700;margin-bottom:12px;}
-.row{margin-bottom:10px;}
-.row .rt{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;}
-.bar{height:8px;background:#eef2f7;border-radius:6px;overflow:hidden;max-width:160px;margin-top:4px;}
-.bar>i{display:block;height:100%;background:var(--accent);border-radius:6px;}
-.bar.fear>i{background:#0ea5e9;}
-.bar.greed>i{background:#f59e0b;}
+.score-tbl{table-layout:fixed;width:100%;border-collapse:collapse;font-size:13px;margin-bottom:2px;}
+.score-tbl th,.score-tbl td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.score-tbl th{color:var(--sub);font-weight:600;background:#f8fafc;font-size:11.5px;}
+.score-tbl td.dim{font-weight:600;font-size:13px;color:var(--ink);}
+.score-tbl td.raw{font-size:11.5px;color:var(--sub);overflow-wrap:anywhere;line-height:1.35;word-break:break-word;}
+.score-tbl td.sc{vertical-align:middle;}
+.sc-num{display:block;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;margin-bottom:5px;}
+.bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden;width:100%;}
+.bar>i{display:block;height:100%;border-radius:6px;}
+.bar.fear>i{background:var(--fear);}
+.bar.greed>i{background:var(--greed);}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
 th{color:var(--sub);font-weight:600;background:#fafbfc;font-size:12px;}
-td.raw{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;}
-td.sc{b:font-weight:700}
-.note{font-size:12.5px;color:var(--sub);margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;}
+td.raw-gen{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;}
+.note{font-size:12.5px;color:var(--sub);margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;line-height:1.5;}
+.note b{color:var(--ink);}
 .trend svg{width:100%;height:auto;display:block;}
 .legend{font-size:12px;color:var(--sub);margin:6px 0 12px;}
 .legend b{color:var(--ink);}
 .muted{color:var(--sub);font-size:13px;}
-.foot{font-size:12px;color:var(--sub);margin-top:8px;}
+.foot{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
 code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px;}
+.tbl-scroll .ref-tbl{min-width:460px;}
+.tbl-scroll .hist-tbl{min-width:540px;}
+@media(max-width:560px){
+  body{padding:18px 12px;}
+  .grid{grid-template-columns:1fr;}
+  .hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;}
+}
 </style></head>
 <body><div class="wrap">
 <h1>小旭恐惧指数 · XXFI</h1>
 <div class="sub">反向情绪指标（散户行为版）　|　数据日期：2026-07-10　|　基准：上证指数(sh000001)　|　波动率窗口：60 日</div>
 
-<div class="card">
+<div class="card" style="border-top:4px solid #ea580c">
   <div class="hero">
     <div class="main">
       <div class="big" style="color:#ea580c">29.4</div>
@@ -64,8 +86,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
 
 <div class="card" style="border-color:#fcd34d">
   <div class="sec-h" style="color:#b45309">主力—散户背离诊断（v2）</div>
-  <div style="font-size:16px;font-weight:700;color:#b45309">同向 / 无显著背离</div>
-  <div class="muted" style="margin-top:6px">主力净流入：<b>未提供（本地降级）</b>　|　散户净流入：<b>未提供（本地降级）</b></div>
+  <div style="font-size:16px;font-weight:700;color:#b45309">无数据（资金流降级）</div>
+  <div class="muted" style="margin-top:6px">主力净流入：<b>-</b>　|　散户净流入：<b>-2.78%</b></div>
   <div class="note">背离 = 主力净占比 − 散户净占比。负且「散户追·主力派」→ 顶部出货（危险）；正且「散户割·主力进」→ 底部吸筹（机会）。仅资金流源为 eastmoney 时有真值；本地降级时显示占位中性，不影响主信号。</div>
 </div>
 
@@ -73,14 +95,16 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   <div class="sec-h">分项得分（0–100）· 含原始值</div>
   <div class="grid">
     <div>
-      <div class="sec-h" style="font-size:13px;color:#0ea5e9">恐惧分项</div>
-      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
-      <tbody><tr><td>近20日最大回撤</td><td class='raw'>-4.62%</td><td class='sc'><b>23.1</b><div class="bar fear"><i style="width:23.1%"></i></div></td></tr><tr><td>涨跌家数比</td><td class='raw'>1611/3511（比 0.46）</td><td class='sc'><b>0.0</b><div class="bar fear"><i style="width:0.0%"></i></div></td></tr><tr><td>跌停/涨停比</td><td class='raw'>4/92（比 0.04）</td><td class='sc'><b>2.2</b><div class="bar fear"><i style="width:2.2%"></i></div></td></tr><tr><td>波动率分位</td><td class='raw'>88.33%</td><td class='sc'><b>88.3</b><div class="bar fear"><i style="width:88.3%"></i></div></td></tr></tbody></table>
+      <div class="panel-h fear"><span class="dot"></span>恐惧分项</div>
+      <table class="score-tbl"><colgroup><col style="width:40%"><col style="width:32%"><col style="width:28%"></colgroup>
+        <thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+        <tbody><tr><td class='dim'>近20日最大回撤</td><td class='raw'>-4.62%</td><td class='sc'><span class='sc-num' style='color:var(--fear)'>23.1</span><div class="bar fear"><i style="width:23.1%"></i></div></td></tr><tr><td class='dim'>涨跌家数比</td><td class='raw'>1612/3511（比 0.46）</td><td class='sc'><span class='sc-num' style='color:var(--fear)'>0.0</span><div class="bar fear"><i style="width:0.0%"></i></div></td></tr><tr><td class='dim'>跌停/涨停比</td><td class='raw'>7/93（比 0.08）</td><td class='sc'><span class='sc-num' style='color:var(--fear)'>3.8</span><div class="bar fear"><i style="width:3.8%"></i></div></td></tr><tr><td class='dim'>波动率分位</td><td class='raw'>88.33%</td><td class='sc'><span class='sc-num' style='color:var(--fear)'>88.3</span><div class="bar fear"><i style="width:88.3%"></i></div></td></tr></tbody></table>
     </div>
     <div>
-      <div class="sec-h" style="font-size:13px;color:#f59e0b">贪婪分项</div>
-      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
-      <tbody><tr><td>近20日动量</td><td class='raw'>-0.88%</td><td class='sc'><b>0.0</b><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td>涨停/跌停比</td><td class='raw'>92/4（比 23.00）</td><td class='sc'><b>100.0</b><div class="bar greed"><i style="width:100.0%"></i></div></td></tr><tr><td>散户净流入</td><td class='raw'>未提供（本地降级）</td><td class='sc'><b>0.0</b><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td>高于20日均线</td><td class='raw'>-1.74%</td><td class='sc'><b>0.0</b><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td>主力—散户背离</td><td class='raw'>主力 未提供（本地降级） ／ 散户 未提供（本地降级）</td><td class='sc'><b>50.0</b><div class="bar greed"><i style="width:50.0%"></i></div></td></tr></tbody></table>
+      <div class="panel-h greed"><span class="dot"></span>贪婪分项</div>
+      <table class="score-tbl"><colgroup><col style="width:40%"><col style="width:32%"><col style="width:28%"></colgroup>
+        <thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+        <tbody><tr><td class='dim'>近20日动量</td><td class='raw'>-0.88%</td><td class='sc'><span class='sc-num' style='color:var(--greed)'>0.0</span><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td class='dim'>涨停/跌停比</td><td class='raw'>93/7（比 13.29）</td><td class='sc'><span class='sc-num' style='color:var(--greed)'>100.0</span><div class="bar greed"><i style="width:100.0%"></i></div></td></tr><tr><td class='dim'>散户净流入</td><td class='raw'>-2.78%</td><td class='sc'><span class='sc-num' style='color:var(--greed)'>0.0</span><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td class='dim'>高于20日均线</td><td class='raw'>-1.74%</td><td class='sc'><span class='sc-num' style='color:var(--greed)'>0.0</span><div class="bar greed"><i style="width:0.0%"></i></div></td></tr><tr><td class='dim'>主力—散户背离</td><td class='raw'>主力 - ／ 散户 -2.78%</td><td class='sc'><span class='sc-num' style='color:var(--greed)'>50.0</span><div class="bar greed"><i style="width:50.0%"></i></div></td></tr></tbody></table>
     </div>
   </div>
   <div class="note">说明：原始值有数据但接近中性时，得分会被公式夹到 0（属正常，非缺失）。<b>得分=0 不代表没数据</b>；唯有原始值本身为 0 / 缺失（如资金流降级）才需关注。</div>
@@ -88,8 +112,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
 
 <div class="card">
   <div class="sec-h">对照参考表（XXFI 绝对区间 → 等级 / 信号）</div>
-  <table><thead><tr><th>区间</th><th>等级</th><th>信号</th><th>含义与反向操作</th></tr></thead>
-  <tbody><tr><td>≥75</td><td>极度恐惧（小旭式恐慌割肉区）</td><td><span class='badge' style='background:#16a34a'>BUY</span></td><td>历史校准：连跌后恐慌割肉，卖后多现 +9%~+24% 反弹 → 反向强烈看多，分批低吸</td></tr><tr><td>≥60</td><td>恐惧（偏谨慎，她倾向割肉）</td><td><span class='badge' style='background:#22c55e'>ACCUMULATE</span></td><td>市场情绪偏弱，接近她‘卖飞’区 → 逢低吸纳，避免跟风杀跌</td></tr><tr><td>≥40</td><td>中性</td><td><span class='badge' style='background:#6b7280'>HOLD</span></td><td>恐惧与贪婪均衡，无明显反向极值 → 按自身策略持有，不依赖本指标</td></tr><tr style="background:#fff7ed;font-weight:600"><td>≥25</td><td>偏贪婪（情绪偏热，她倾向追高）</td><td><span class='badge' style='background:#ea580c'>REDUCE</span></td><td>热度偏高 → 逢高减仓不追涨；小旭常在连续大涨后追高买在山顶</td></tr><tr><td><25</td><td>极度贪婪（小旭式追涨山顶区）</td><td><span class='badge' style='background:#dc2626'>SELL</span></td><td>历史校准：追高买在山顶后多现 -12%~-21% 回落 → 反向强烈看空</td></tr></tbody></table>
+  <div class="tbl-scroll"><table class="ref-tbl"><thead><tr><th>区间</th><th>等级</th><th>信号</th><th>含义与反向操作</th></tr></thead>
+  <tbody><tr><td>≥75</td><td>极度恐惧（小旭式恐慌割肉区）</td><td><span class='badge' style='background:#16a34a'>BUY</span></td><td>历史校准：连跌后恐慌割肉，卖后多现 +9%~+24% 反弹 → 反向强烈看多，分批低吸</td></tr><tr><td>≥60</td><td>恐惧（偏谨慎，她倾向割肉）</td><td><span class='badge' style='background:#22c55e'>ACCUMULATE</span></td><td>市场情绪偏弱，接近她‘卖飞’区 → 逢低吸纳，避免跟风杀跌</td></tr><tr><td>≥40</td><td>中性</td><td><span class='badge' style='background:#6b7280'>HOLD</span></td><td>恐惧与贪婪均衡，无明显反向极值 → 按自身策略持有，不依赖本指标</td></tr><tr style="background:#fff7ed;font-weight:600"><td>≥25</td><td>偏贪婪（情绪偏热，她倾向追高）</td><td><span class='badge' style='background:#ea580c'>REDUCE</span></td><td>热度偏高 → 逢高减仓不追涨；小旭常在连续大涨后追高买在山顶</td></tr><tr><td><25</td><td>极度贪婪（小旭式追涨山顶区）</td><td><span class='badge' style='background:#dc2626'>SELL</span></td><td>历史校准：追高买在山顶后多现 -12%~-21% 回落 → 反向强烈看空</td></tr></tbody></table></div>
   <div class="note">说明：<b>XXFI 与贪婪指数为两套独立公式，不相加=100、非互补对子</b>。
   以 <b>XXFI（主表）</b> 判定反向信号等级；贪婪指数仅作辅助诊断（如局部热闹但非全面过热）。
   反向指标仅在情绪极端+趋势反转时有效，须配合自身交易系统与止损纪律。</div>
@@ -98,13 +122,13 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
 <div class="card trend">
   <div class="sec-h">历史趋势</div>
   <div class="legend"><b style="color:#2563eb">■</b> XXFI（主）　<b style="color:#f59e0b">■</b> 贪婪指数（副）</div>
-  <svg viewBox="0 0 680 220" role="img" aria-label="XXFI 与贪婪指数历史趋势"><line x1="36" y1="194.0" x2="668" y2="194.0" stroke="#eef2f7"/><text x="30" y="198.0" font-size="10" fill="#9aa3af" text-anchor="end">0</text><line x1="36" y1="149.0" x2="668" y2="149.0" stroke="#eef2f7"/><text x="30" y="153.0" font-size="10" fill="#9aa3af" text-anchor="end">25</text><line x1="36" y1="104.0" x2="668" y2="104.0" stroke="#eef2f7"/><text x="30" y="108.0" font-size="10" fill="#9aa3af" text-anchor="end">50</text><line x1="36" y1="59.0" x2="668" y2="59.0" stroke="#eef2f7"/><text x="30" y="63.0" font-size="10" fill="#9aa3af" text-anchor="end">75</text><line x1="36" y1="14.0" x2="668" y2="14.0" stroke="#eef2f7"/><text x="30" y="18.0" font-size="10" fill="#9aa3af" text-anchor="end">100</text><polyline points="36.0,89.8 194.0,83.8 352.0,82.6 510.0,111.6 668.0,141.1" fill="none" stroke="#2563eb" stroke-width="2.2"/><polyline points="36.0,152.6 194.0,161.2 352.0,160.5 510.0,146.1 668.0,149.0" fill="none" stroke="#f59e0b" stroke-width="2.2"/><circle cx="668.0" cy="141.1" r="3.5" fill="#2563eb"/></svg>
-  <table style="margin-top:14px"><thead><tr><th>日期</th><th>XXFI</th><th>贪婪</th><th>信号</th><th>等级</th></tr></thead>
-  <tbody><tr><td>2026-07-10</td><td>29.4</td><td>25.0</td><td>REDUCE</td><td>偏贪婪（情绪偏热，她倾向追高）</td></tr><tr><td>2026-07-09</td><td>45.8</td><td>26.6</td><td>HOLD</td><td>中性</td></tr><tr><td>2026-07-08</td><td>61.9</td><td>18.6</td><td>ACCUMULATE</td><td>恐惧（偏谨慎，她倾向割肉）</td></tr><tr><td>2026-07-07</td><td>61.2</td><td>18.2</td><td>ACCUMULATE</td><td>恐惧（偏谨慎，她倾向割肉）</td></tr><tr><td>2026-07-06</td><td>57.9</td><td>23.0</td><td>HOLD</td><td>中性</td></tr></tbody></table>
+  <svg viewBox="0 0 680 220" role="img" aria-label="XXFI 与贪婪指数历史趋势"><line x1="36" y1="194.0" x2="668" y2="194.0" stroke="#eef2f7"/><text x="30" y="198.0" font-size="10" fill="#9aa3af" text-anchor="end">0</text><line x1="36" y1="149.0" x2="668" y2="149.0" stroke="#eef2f7"/><text x="30" y="153.0" font-size="10" fill="#9aa3af" text-anchor="end">25</text><line x1="36" y1="104.0" x2="668" y2="104.0" stroke="#eef2f7"/><text x="30" y="108.0" font-size="10" fill="#9aa3af" text-anchor="end">50</text><line x1="36" y1="59.0" x2="668" y2="59.0" stroke="#eef2f7"/><text x="30" y="63.0" font-size="10" fill="#9aa3af" text-anchor="end">75</text><line x1="36" y1="14.0" x2="668" y2="14.0" stroke="#eef2f7"/><text x="30" y="18.0" font-size="10" fill="#9aa3af" text-anchor="end">100</text><polyline points="36.0,102.7 194.0,100.2 352.0,98.2 510.0,114.4 668.0,141.8" fill="none" stroke="#2563eb" stroke-width="2.2"/><polyline points="36.0,170.4 194.0,176.0 352.0,176.0 510.0,172.6 668.0,176.0" fill="none" stroke="#f59e0b" stroke-width="2.2"/><circle cx="668.0" cy="141.8" r="3.5" fill="#2563eb"/></svg>
+  <div class="tbl-scroll"><table class="hist-tbl" style="margin-top:14px"><thead><tr><th>日期</th><th>XXFI</th><th>贪婪</th><th>信号</th><th>等级</th></tr></thead>
+  <tbody><tr><td>2026-07-10</td><td>29.0</td><td>10.0</td><td>REDUCE</td><td>偏贪婪（情绪偏热，她倾向追高）</td></tr><tr><td>2026-07-09</td><td>44.2</td><td>11.9</td><td>HOLD</td><td>中性</td></tr><tr><td>2026-07-08</td><td>53.2</td><td>10.0</td><td>HOLD</td><td>中性</td></tr><tr><td>2026-07-07</td><td>52.1</td><td>10.0</td><td>HOLD</td><td>中性</td></tr><tr><td>2026-07-06</td><td>50.7</td><td>13.1</td><td>HOLD</td><td>中性</td></tr></tbody></table></div>
 </div>
 
 <div class="foot">
-  数据溯源：广度源=<code>baostock</code>　资金流源=<code>degraded</code><br>
+  数据溯源：广度源=<code>legu</code>　资金流源=<code>local_fallback(retail=tonghuashun_proxy,main=degraded)</code><br>
   指标为反向情绪参考，非投资建议。生成自 xiaoxu-fear-index 技能 · GitHub Actions 每日盘后自动更新。
 </div>
 </div></body></html>

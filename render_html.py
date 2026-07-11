@@ -35,44 +35,66 @@ SIGNAL_COLOR = {
 }
 
 CSS = """
-:root{--bg:#f5f7fa;--card:#fff;--ink:#1f2933;--sub:#6b7280;--line:#e5e7eb;--accent:#2563eb;}
+:root{
+  --bg:#eef2f7;--card:#fff;--ink:#1f2937;--sub:#64748b;--line:#e8edf3;
+  --accent:#2563eb;--fear:#0ea5e9;--greed:#f59e0b;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 6px 20px rgba(15,23,42,.05);
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  background:var(--bg);color:var(--ink);line-height:1.6;padding:24px 16px;}
-.wrap{max-width:760px;margin:0 auto;}
-h1{font-size:22px;font-weight:700;margin-bottom:4px;}
-.sub{color:var(--sub);font-size:13px;margin-bottom:20px;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;
-  box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.hero{display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
-.hero .main{flex:1 1 240px;}
-.hero .gx{flex:1 1 200px;border-left:1px solid var(--line);padding-left:20px;}
-.big{font-size:56px;font-weight:800;line-height:1;letter-spacing:-1px;}
-.big.sub2{font-size:44px;}
-.label{font-size:13px;color:var(--sub);margin-top:6px;}
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;color:#fff;font-size:13px;font-weight:600;margin-top:10px;}
-.advice{margin-top:14px;font-size:14px;background:#f8fafc;border-radius:10px;padding:12px 14px;border:1px solid var(--line);}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:8px}}
+  background:var(--bg);color:var(--ink);line-height:1.6;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:780px;margin:0 auto;}
+h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
+.sub{color:var(--sub);font-size:12.5px;margin:6px 0 22px;line-height:1.55;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;
+  box-shadow:var(--shadow);}
+.hero{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+.hero .main{flex:1 1 230px;min-width:0;}
+.hero .gx{flex:1 1 190px;min-width:0;border-left:1px solid var(--line);padding-left:22px;}
+.big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
+.big.sub2{font-size:clamp(36px,11vw,46px);}
+.label{font-size:13px;color:var(--sub);margin-top:8px;}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;color:#fff;font-size:13px;font-weight:700;
+  margin-top:12px;letter-spacing:.3px;}
+.advice{margin-top:16px;font-size:14px;background:#f8fafc;border-radius:12px;padding:12px 14px;
+  border:1px solid var(--line);line-height:1.55;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.panel-h{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;margin-bottom:10px;}
+.panel-h.fear{color:var(--fear);} .panel-h.greed{color:var(--greed);}
+.panel-h .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+.panel-h.fear .dot{background:var(--fear);} .panel-h.greed .dot{background:var(--greed);}
 .sec-h{font-size:15px;font-weight:700;margin-bottom:12px;}
-.row{margin-bottom:10px;}
-.row .rt{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;}
-.bar{height:8px;background:#eef2f7;border-radius:6px;overflow:hidden;max-width:160px;margin-top:4px;}
-.bar>i{display:block;height:100%;background:var(--accent);border-radius:6px;}
-.bar.fear>i{background:#0ea5e9;}
-.bar.greed>i{background:#f59e0b;}
+.score-tbl{table-layout:fixed;width:100%;border-collapse:collapse;font-size:13px;margin-bottom:2px;}
+.score-tbl th,.score-tbl td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.score-tbl th{color:var(--sub);font-weight:600;background:#f8fafc;font-size:11.5px;}
+.score-tbl td.dim{font-weight:600;font-size:13px;color:var(--ink);}
+.score-tbl td.raw{font-size:11.5px;color:var(--sub);overflow-wrap:anywhere;line-height:1.35;word-break:break-word;}
+.score-tbl td.sc{vertical-align:middle;}
+.sc-num{display:block;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;margin-bottom:5px;}
+.bar{height:6px;background:#eef2f7;border-radius:6px;overflow:hidden;width:100%;}
+.bar>i{display:block;height:100%;border-radius:6px;}
+.bar.fear>i{background:var(--fear);}
+.bar.greed>i{background:var(--greed);}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
 th{color:var(--sub);font-weight:600;background:#fafbfc;font-size:12px;}
-td.raw{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;}
-td.sc{b:font-weight:700}
-.note{font-size:12.5px;color:var(--sub);margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;}
+td.raw-gen{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;}
+.note{font-size:12.5px;color:var(--sub);margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;line-height:1.5;}
+.note b{color:var(--ink);}
 .trend svg{width:100%;height:auto;display:block;}
 .legend{font-size:12px;color:var(--sub);margin:6px 0 12px;}
 .legend b{color:var(--ink);}
 .muted{color:var(--sub);font-size:13px;}
-.foot{font-size:12px;color:var(--sub);margin-top:8px;}
+.foot{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
 code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px;}
+.tbl-scroll .ref-tbl{min-width:460px;}
+.tbl-scroll .hist-tbl{min-width:540px;}
+@media(max-width:560px){
+  body{padding:18px 12px;}
+  .grid{grid-template-columns:1fr;}
+  .hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;}
+}
 """
 
 def load_json(path):
@@ -183,14 +205,15 @@ def render(r, hist):
         ("高于20日均线", pct(inp.get("above_ma20", 0)), greed_c.get("overbought", 0)),
         ("主力—散户背离", div_raw, greed_c.get("divergence", 0)),
     ]
-    def rows_html(rows, cls):
+    def rows_html(rows, cls, accent):
         h = ""
         for label, raw, score in rows:
-            h += (f"<tr><td>{label}</td><td class='raw'>{raw}</td>"
-                  f"<td class='sc'><b>{score}</b>{bar(score, cls)}</td></tr>")
+            h += (f"<tr><td class='dim'>{label}</td>"
+                  f"<td class='raw'>{raw}</td>"
+                  f"<td class='sc'><span class='sc-num' style='color:{accent}'>{score}</span>{bar(score, cls)}</td></tr>")
         return h
-    fear_html = rows_html(fear_rows, "fear")
-    greed_html = rows_html(greed_rows, "greed")
+    fear_html = rows_html(fear_rows, "fear", "var(--fear)")
+    greed_html = rows_html(greed_rows, "greed", "var(--greed)")
 
     # 对照表行
     ref_rows = ""
@@ -218,7 +241,7 @@ def render(r, hist):
 <h1>小旭恐惧指数 · XXFI</h1>
 <div class="sub">反向情绪指标（散户行为版）　|　数据日期：{data_date}　|　基准：{idx_name}　|　波动率窗口：{vw} 日</div>
 
-<div class="card">
+<div class="card" style="border-top:4px solid {scolor}">
   <div class="hero">
     <div class="main">
       <div class="big" style="color:{scolor}">{xxfi}</div>
@@ -246,14 +269,16 @@ def render(r, hist):
   <div class="sec-h">分项得分（0–100）· 含原始值</div>
   <div class="grid">
     <div>
-      <div class="sec-h" style="font-size:13px;color:#0ea5e9">恐惧分项</div>
-      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
-      <tbody>{fear_html}</tbody></table>
+      <div class="panel-h fear"><span class="dot"></span>恐惧分项</div>
+      <table class="score-tbl"><colgroup><col style="width:40%"><col style="width:32%"><col style="width:28%"></colgroup>
+        <thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+        <tbody>{fear_html}</tbody></table>
     </div>
     <div>
-      <div class="sec-h" style="font-size:13px;color:#f59e0b">贪婪分项</div>
-      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
-      <tbody>{greed_html}</tbody></table>
+      <div class="panel-h greed"><span class="dot"></span>贪婪分项</div>
+      <table class="score-tbl"><colgroup><col style="width:40%"><col style="width:32%"><col style="width:28%"></colgroup>
+        <thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+        <tbody>{greed_html}</tbody></table>
     </div>
   </div>
   <div class="note">说明：原始值有数据但接近中性时，得分会被公式夹到 0（属正常，非缺失）。<b>得分=0 不代表没数据</b>；唯有原始值本身为 0 / 缺失（如资金流降级）才需关注。</div>
@@ -261,8 +286,8 @@ def render(r, hist):
 
 <div class="card">
   <div class="sec-h">对照参考表（XXFI 绝对区间 → 等级 / 信号）</div>
-  <table><thead><tr><th>区间</th><th>等级</th><th>信号</th><th>含义与反向操作</th></tr></thead>
-  <tbody>{ref_rows}</tbody></table>
+  <div class="tbl-scroll"><table class="ref-tbl"><thead><tr><th>区间</th><th>等级</th><th>信号</th><th>含义与反向操作</th></tr></thead>
+  <tbody>{ref_rows}</tbody></table></div>
   <div class="note">说明：<b>XXFI 与贪婪指数为两套独立公式，不相加=100、非互补对子</b>。
   以 <b>XXFI（主表）</b> 判定反向信号等级；贪婪指数仅作辅助诊断（如局部热闹但非全面过热）。
   反向指标仅在情绪极端+趋势反转时有效，须配合自身交易系统与止损纪律。</div>
@@ -272,8 +297,8 @@ def render(r, hist):
   <div class="sec-h">历史趋势</div>
   <div class="legend"><b style="color:#2563eb">■</b> XXFI（主）　<b style="color:#f59e0b">■</b> 贪婪指数（副）</div>
   {trend_svg(hist)}
-  <table style="margin-top:14px"><thead><tr><th>日期</th><th>XXFI</th><th>贪婪</th><th>信号</th><th>等级</th></tr></thead>
-  <tbody>{hist_rows}</tbody></table>
+  <div class="tbl-scroll"><table class="hist-tbl" style="margin-top:14px"><thead><tr><th>日期</th><th>XXFI</th><th>贪婪</th><th>信号</th><th>等级</th></tr></thead>
+  <tbody>{hist_rows}</tbody></table></div>
 </div>
 
 <div class="foot">
@@ -293,10 +318,18 @@ def main():
     r = load_json(args.json)
     hist = load_history(args.history)
     html = render(r, hist)
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    out_dir = os.path.dirname(os.path.abspath(args.out))
+    os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
+    # 一并发布 xxfi_report.json 到 Pages 源目录（docs/），供本地端从云端回填
+    # main_net/retail_net，使副表（散户净流入 + 主力—散户背离）与 GitHub 完全对齐。
+    # workflow 已提交 docs/*，无需改动 CI 逻辑。
+    json_out = os.path.join(out_dir, "xxfi_report.json")
+    with open(json_out, "w", encoding="utf-8") as f:
+        json.dump(r, f, ensure_ascii=False, indent=2)
     print(f"HTML 已生成: {args.out}（历史样本 {len(hist)} 条）")
+    print(f"JSON 已发布: {json_out}（含 inputs.main_net / inputs.retail_net，供本地对齐副表）")
 
 if __name__ == "__main__":
     main()

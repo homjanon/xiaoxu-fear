@@ -19,11 +19,13 @@
 每次运行后自动生成自包含静态页 **[https://homjanon.github.io/xiaoxu-fear/](https://homjanon.github.io/xiaoxu-fear/)**，内容含：
 
 - **最新结果卡**：大号 XXFI（主表·决定信号）+ 贪婪指数（副表·辅助诊断）+ 信号徽章 + 一句话建议
-- **分项得分**：恐惧 4 项 / 贪婪 4 项进度条
+- **分项得分**：恐惧 4 项 / 贪婪 5 项进度条（恐惧/贪婪两表列宽对齐、手机端自适应不溢出）
 - **对照参考表**：XXFI 绝对区间 → 等级 / 信号 / 含义，并标注「两表独立、非互补」
 - **历史趋势**：内联 SVG 折线（XXFI vs 贪婪）+ 近 10 日数据表（运行数日后自动出现）
 
 由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
+
+> **副表对齐机制**：`render_html.py` 在生成 `docs/index.html` 的同时，会把 `xxfi_report.json`（含 `inputs.main_net` / `inputs.retail_net`）一并写入 `docs/` 并提交。本地运行 `run_xxfi.py` 时，`fetch_biying.fetch_published_fund_flow()` 会自动从 Pages 抓取云端已算出的主力/散户净占比，使**本地副表（散户净流入 + 主力—散户背离）与 GitHub 完全一致**，彻底消除本地/云端不一致。
 
 ## 自动运行触发方案
 
