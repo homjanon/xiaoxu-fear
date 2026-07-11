@@ -125,14 +125,7 @@ def main():
     ap.add_argument("--vol_window", type=int, default=260, help="波动率分位窗口(交易日数)，默认260(全年)；设60看近60日\"纯情绪\"相对水平")
     ap.add_argument("--akshare", action="store_true", help="纯 akshare 取数模式（CI/无 tdx 环境），直接联网拉指数与盘面广度")
     ap.add_argument("--json", default=None, help="直接传入完整市场JSON(覆盖其它)")
-    ap.add_argument("--backfill", type=int, default=0,
-                    help="历史回溯 N 个交易日（baostock 取真实广度），写入 history.jsonl 并重算最新报告")
     args = ap.parse_args()
-
-    if args.backfill:
-        import fetch_history_baostock as fh
-        fh.backfill_history(args.backfill, args.vol_window, args.out)
-        return
 
     if args.json:
         d = json.loads(args.json)

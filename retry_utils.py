@@ -4,7 +4,7 @@
 XXFI 网络调用通用工具：指数退避重试 + 随机间隔 + UA 轮换
 ===========================================================
 
-用于 fetch_market_akshare / fetch_history_baostock 等取数模块，
+用于 fetch_market_akshare 等取数模块，
 降低因网络波动导致的临时失败，以及批量调用触发反爬的概率。
 
 注意：本模块的「重试」仅对临时性网络错误有效；
@@ -32,7 +32,6 @@ def jitter(min_s=0.5, max_s=2.0):
     """在两次请求之间睡眠随机秒数，降低连续调用触发反爬的概率。
 
     日常取数（每日 3-5 次调用）：min_s=0.3, max_s=1.0
-    历史回溯（baostock 逐股 5000+ 次）：min_s=0.05, max_s=0.3
     """
     time.sleep(random.uniform(min_s, max_s))
 

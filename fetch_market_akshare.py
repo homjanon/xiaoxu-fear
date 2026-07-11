@@ -16,7 +16,7 @@
 多源容错设计（关键）：akshare 单个函数只绑一个数据源，不会自动换源。
 本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级，绝不静默丢数据：
   - 广度（上涨/下跌家数/涨停/跌停）：legu（本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）
-                    → 东财涨跌停池 stock_zt_pool_em
+                    东财涨跌停池 stock_zt_pool_em 已封，不再作为兜底
   - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离），
             东财已将接口迁移至 push2delay.eastmoney.com，akshare 仍硬编码旧端点 push2his；
             本取数器在模块加载时注入 URL 改写补丁（push2his→push2delay），两端均可直连取真值；
@@ -28,7 +28,7 @@
   python fetch_market_akshare.py --vol_window 60
   # 或直接被 run_xxfi.py --akshare 调用
 """
-import sys, os, json, argparse, datetime, ssl, gzip, urllib.request
+import sys, os, json, argparse, ssl, gzip, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
@@ -51,6 +51,9 @@ def _patch_eastmoney_push2delay():
         def _wrapped(self, method, url, *a, **kw):
             if isinstance(url, str) and "push2his.eastmoney.com" in url:
                 url = url.replace("push2his.eastmoney.com", "push2delay.eastmoney.com")
+            # 防挂起：GitHub 美国 IP 对 push2delay 可能丢包而非秒拒，
+            # 不设超时会导致重试把整个 run 拖死。统一注入 15s 上限。
+            kw.setdefault("timeout", 15)
             return _orig(self, method, url, *a, **kw)
 
         _wrapped._xxfi_patched = True
@@ -142,20 +145,8 @@ def fetch_breadth():
             "limit_up": limit_up, "limit_down": limit_down,
             "_breadth_source": "sina_spot",
         }
-    except Exception as e:
-        print(f"[warn] 新浪 spot 失败，尝试东财涨跌停池兜底: {e}")
-    # 兜底源：涨跌停池（EM，仅给 limit 计数）
-    try:
-        dd = datetime.date.today().strftime("%Y-%m-%d")
-        zt = ak.stock_zt_pool_em(date=dd)
-        dt = ak.stock_zt_pool_dtgc_em(date=dd)
-        return {
-            "up": 1, "down": 1,
-            "limit_up": len(zt), "limit_down": len(dt),
-            "_breadth_source": "zt_pool_fallback",
-        }
     except Exception as e2:
-        print(f"[warn] 涨跌停池也失败，广度退化: {e2}")
+        print(f"[warn] 新浪 spot 也失败，广度退化: {e2}")
         return {
             "up": 1, "down": 1, "limit_up": 1, "limit_down": 0,
             "_breadth_source": "failed",
