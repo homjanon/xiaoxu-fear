@@ -1,0 +1,45 @@
+{
+  "XXFI": 29.8,
+  "GreedIndex": 20.0,
+  "extreme": "GREED",
+  "contrarian_signal": "REDUCE",
+  "level": "偏贪婪（情绪偏热，她倾向追高）",
+  "advice": "市场恐惧偏低、热度偏高。→ 逢高减仓，不追涨；小旭常在连续大涨后追高买在山顶。",
+  "components": {
+    "fear": {
+      "drawdown": 23.1,
+      "breadth": 0.0,
+      "limitdown": 3.8,
+      "vol": 88.3
+    },
+    "greed": {
+      "momentum": 0.0,
+      "limitup": 100.0,
+      "retailin": 0.0,
+      "overbought": 0.0
+    }
+  },
+  "inputs": {
+    "drawdown": -0.04617163616413445,
+    "ret20": -0.008768668239442667,
+    "above_ma20": -0.017351743421761122,
+    "vol_pct": 0.8833333333333333,
+    "vol_window": 60,
+    "_index_name": "上证指数(sh000001)",
+    "_last_date": "2026-07-10",
+    "_last_close": 3996.162,
+    "up": 3511,
+    "down": 1612,
+    "limit_up": 93,
+    "limit_down": 7,
+    "retail_net": 0.0,
+    "_breadth_source": "legu",
+    "_breadth_date": "2026-07-10 15:00:00",
+    "_breadth_provided": true,
+    "_hs300_date": "2026-07-10",
+    "_hs300_close": 3996.162
+  },
+  "_data_date": "2026-07-10",
+  "_index_name": "上证指数(sh000001)",
+  "_vol_window": 60
+}
