@@ -94,9 +94,14 @@ jobs:
           print("appended:", row)
           PY
 
+      # 渲染静态 HTML（最新结果 + 对照参考表 + 历史趋势）→ docs/index.html
+      - name: Render static HTML
+        if: steps.check.outputs.trade == '1'
+        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --out docs/index.html
+
       - name: Commit outputs
         if: steps.check.outputs.trade == '1'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: daily XXFI update (${{ github.run_id }})"
-          file_pattern: "output/*"
+          file_pattern: "output/* docs/*"

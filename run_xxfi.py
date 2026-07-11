@@ -163,6 +163,9 @@ def main():
     out["_data_date"] = str(d.get("_hs300_date", "") or d.get("_breadth_date", ""))[:10]
     out["_index_name"] = d.get("_index_name", "")
     out["_vol_window"] = d.get("vol_window", args.vol_window)
+    # 溯源提顶层，便于 HTML/历史展示（缺失容错）
+    out["_breadth_source"] = d.get("_breadth_source", (res.get("inputs") or {}).get("_breadth_source", "-"))
+    out["_retail_net_source"] = d.get("_retail_net_source", (res.get("inputs") or {}).get("_retail_net_source", "-"))
     with open(p_md, "w", encoding="utf-8") as f: f.write(md)
     with open(p_json, "w", encoding="utf-8") as f: json.dump(out, f, ensure_ascii=False, indent=2)
     print(md)
