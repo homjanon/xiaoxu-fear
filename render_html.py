@@ -7,7 +7,7 @@
   --history   累积的 history.jsonl（每日一行，用于趋势）
   --out       生成的 HTML 路径（如 docs/index.html）
 
-输出：自包含 index.html（内联 CSS，含「最新结果卡 + 分项得分 + 完整对照表 + 历史趋势」），
+输出：自包含 index.html（内联 CSS，含「最新结果卡 + 分项(原始值+得分) + 完整对照表 + 历史趋势」），
       可直接由 GitHub Pages（main/docs）或任意静态托管发布。
 """
 import argparse, json, os
@@ -57,13 +57,15 @@ h1{font-size:22px;font-weight:700;margin-bottom:4px;}
 .sec-h{font-size:15px;font-weight:700;margin-bottom:12px;}
 .row{margin-bottom:10px;}
 .row .rt{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;}
-.bar{height:8px;background:#eef2f7;border-radius:6px;overflow:hidden;}
+.bar{height:8px;background:#eef2f7;border-radius:6px;overflow:hidden;max-width:160px;margin-top:4px;}
 .bar>i{display:block;height:100%;background:var(--accent);border-radius:6px;}
 .bar.fear>i{background:#0ea5e9;}
 .bar.greed>i{background:#f59e0b;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
-th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
-th{color:var(--sub);font-weight:600;background:#fafbfc;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+th{color:var(--sub);font-weight:600;background:#fafbfc;font-size:12px;}
+td.raw{font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap;}
+td.sc{b:font-weight:700}
 .note{font-size:12.5px;color:var(--sub);margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;}
 .trend svg{width:100%;height:auto;display:block;}
 .legend{font-size:12px;color:var(--sub);margin:6px 0 12px;}
@@ -108,18 +110,15 @@ def trend_svg(hist):
     def X(i): return pad_l + (w - pad_l - pad_r) * i / (n - 1)
     def Y(v): return pad_t + (h - pad_t - pad_b) * (100 - v) / 100
     svg = [f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="XXFI 与贪婪指数历史趋势">']
-    # 网格 + Y 轴刻度
     for g in (0, 25, 50, 75, 100):
         y = Y(g)
         svg.append(f'<line x1="{pad_l}" y1="{y:.1f}" x2="{w-pad_r}" y2="{y:.1f}" stroke="#eef2f7"/>')
         svg.append(f'<text x="{pad_l-6}" y="{y+4:.1f}" font-size="10" fill="#9aa3af" text-anchor="end">{g}</text>')
-    # 两条折线
     def poly(key, color):
         pts = " ".join(f"{X(i):.1f},{Y(hist[i].get(key,0)):.1f}" for i in range(n))
         return f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2.2"/>'
     svg.append(poly("xxfi", "#2563eb"))
     svg.append(poly("greed", "#f59e0b"))
-    # 末点高亮
     lx, ly = X(n-1), Y(hist[-1].get("xxfi", 0))
     svg.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="3.5" fill="#2563eb"/>')
     svg.append(f'</svg>')
@@ -138,12 +137,42 @@ def render(r, hist):
     comp = r.get("components", {})
     fear = comp.get("fear", {})
     greed_c = comp.get("greed", {})
+    inp = r.get("inputs", {})
     data_date = r.get("_data_date", "")
     idx_name = r.get("_index_name", "")
     vw = r.get("_vol_window", 60)
-    bsrc = r.get("_breadth_source") or r.get("inputs", {}).get("_breadth_source", "-")
-    rsrc = r.get("_retail_net_source") or r.get("inputs", {}).get("_retail_net_source", "-")
+    bsrc = r.get("_breadth_source") or inp.get("_breadth_source", "-")
+    rsrc = r.get("_retail_net_source") or inp.get("_retail_net_source", "-")
     scolor = SIGNAL_COLOR.get(signal, "#6b7280")
+
+    # 原始值 + 得分 两列构造
+    def pct(v):
+        try: return f"{float(v)*100:.2f}%"
+        except Exception: return "-"
+    du = max(1.0, float(inp.get("up", 1) or 1))
+    dd = float(inp.get("down", 0) or 0)
+    lu = max(1.0, float(inp.get("limit_up", 1) or 1))
+    ld = float(inp.get("limit_down", 0) or 0)
+    fear_rows = [
+        ("近20日最大回撤", pct(inp.get("drawdown", 0)), fear.get("drawdown", 0)),
+        ("涨跌家数比", f"{int(dd)}/{int(du)}（比 {dd/du:.2f}）", fear.get("breadth", 0)),
+        ("跌停/涨停比", f"{int(ld)}/{int(lu)}（比 {ld/lu:.2f}）", fear.get("limitdown", 0)),
+        ("波动率分位", pct(inp.get("vol_pct", 0)), fear.get("vol", 0)),
+    ]
+    greed_rows = [
+        ("近20日动量", pct(inp.get("ret20", 0)), greed_c.get("momentum", 0)),
+        ("涨停/跌停比", f"{int(lu)}/{int(ld)}（比 {lu/ld:.2f}）", greed_c.get("limitup", 0)),
+        ("散户净流入", pct(inp.get("retail_net", 0)), greed_c.get("retailin", 0)),
+        ("高于20日均线", pct(inp.get("above_ma20", 0)), greed_c.get("overbought", 0)),
+    ]
+    def rows_html(rows, cls):
+        h = ""
+        for label, raw, score in rows:
+            h += (f"<tr><td>{label}</td><td class='raw'>{raw}</td>"
+                  f"<td class='sc'><b>{score}</b>{bar(score, cls)}</td></tr>")
+        return h
+    fear_html = rows_html(fear_rows, "fear")
+    greed_html = rows_html(greed_rows, "greed")
 
     # 对照表行
     ref_rows = ""
@@ -189,23 +218,20 @@ def render(r, hist):
 </div>
 
 <div class="card">
-  <div class="sec-h">分项得分（0–100）</div>
+  <div class="sec-h">分项得分（0–100）· 含原始值</div>
   <div class="grid">
     <div>
       <div class="sec-h" style="font-size:13px;color:#0ea5e9">恐惧分项</div>
-      <div class="row"><div class="rt"><span>近20日最大回撤</span><span>{fear.get('drawdown',0)}</span></div>{bar(fear.get('drawdown',0),'fear')}</div>
-      <div class="row"><div class="rt"><span>涨跌家数比</span><span>{fear.get('breadth',0)}</span></div>{bar(fear.get('breadth',0),'fear')}</div>
-      <div class="row"><div class="rt"><span>跌停/涨停比</span><span>{fear.get('limitdown',0)}</span></div>{bar(fear.get('limitdown',0),'fear')}</div>
-      <div class="row"><div class="rt"><span>波动率分位</span><span>{fear.get('vol',0)}</span></div>{bar(fear.get('vol',0),'fear')}</div>
+      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+      <tbody>{fear_html}</tbody></table>
     </div>
     <div>
       <div class="sec-h" style="font-size:13px;color:#f59e0b">贪婪分项</div>
-      <div class="row"><div class="rt"><span>近20日动量</span><span>{greed_c.get('momentum',0)}</span></div>{bar(greed_c.get('momentum',0),'greed')}</div>
-      <div class="row"><div class="rt"><span>涨停/跌停比</span><span>{greed_c.get('limitup',0)}</span></div>{bar(greed_c.get('limitup',0),'greed')}</div>
-      <div class="row"><div class="rt"><span>散户净流入</span><span>{greed_c.get('retailin',0)}</span></div>{bar(greed_c.get('retailin',0),'greed')}</div>
-      <div class="row"><div class="rt"><span>高于20日均线</span><span>{greed_c.get('overbought',0)}</span></div>{bar(greed_c.get('overbought',0),'greed')}</div>
+      <table><thead><tr><th>维度</th><th>原始值</th><th>得分</th></tr></thead>
+      <tbody>{greed_html}</tbody></table>
     </div>
   </div>
+  <div class="note">说明：原始值有数据但接近中性时，得分会被公式夹到 0（属正常，非缺失）。<b>得分=0 不代表没数据</b>；唯有原始值本身为 0 / 缺失（如资金流降级）才需关注。</div>
 </div>
 
 <div class="card">
