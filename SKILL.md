@@ -2,7 +2,7 @@
 name: xiaoxu-fear-index
 display_name: 小旭恐惧指数 (XXFI)
 description: 把当前市场数据映射为一个 0-100 的反向情绪指标（类似 VIX/VXN 的散户行为版），用于判断市场情绪极端点并给出反向操作参考。当用户想了解"市场现在是不是恐慌/贪婪到极点、该反向抄底还是逃顶"时使用；也适用于复盘小旭式追涨杀跌行为模式。
-version: 1.1.6
+version: 1.1.7
 ---
 
 # 小旭恐惧指数 (XiaoXu Fear Index, XXFI)
@@ -77,7 +77,12 @@ version: 1.1.6
 
 > **双模式数据来源（v1.1.6 新增）**：本技能支持两套取数，共用同一套 `compute()` 与权重，结论口径一致。
 > - **A. 通达信模式（交互 / 历史复盘）**：用 `tdx-connector` 取上证指数日K（每行自带历史 `up`/`down` 广度）+ akshare 取涨跌停池。支持**历史周度复盘**（见下文"实时自动播报"交互用法）。
-> - **B. 纯 akshare 模式（CI / 实时）**：`fetch_market_akshare.py` 直接联网取数，无需 tdx。`stock_zh_index_daily(sh000001)` 算指数分量 + `stock_market_activity_legu()` 拿**当日**广度（上涨/下跌/涨停/跌停家数，一次到位）。⚠️ akshare 广度只返**最新交易日**，故该模式产出"实时当日"指数，不做历史回看。已开源到 GitHub，由 Actions 每个交易日 09:30 自动跑（详见 SKILL.md 末尾"GitHub Actions 实时模式"）。
+> - **B. 纯 akshare 模式（CI / 实时）**：`fetch_market_akshare.py` 直接联网取数，无需 tdx。`stock_zh_index_daily(sh000001)` 算指数分量 + `stock_market_activity_legu()` 拿**当日**广度（上涨/下跌/涨停/跌停家数，一次到位）。⚠️ akshare 广度只返**最新交易日**，故该模式产出"实时当日"指数，不做历史回看。已开源到 GitHub，由 Actions 每个交易日 **16:30 盘后**自动跑（详见 SKILL.md 末尾"GitHub Actions 实时模式"）。
+>
+> **多源容错（v1.1.7 关键）**：akshare 单个函数只绑一个数据源，**不会自动换源**。本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级（绝不静默丢数据）：
+> - 广度：`legu`（legu host，本地/CI 均通）→ 新浪 `stock_zh_a_spot`（Sina host，公司代理拦 eastmoney 时仍可用）→ 涨跌停池 `stock_zt_pool_em/dtgc_em`（EM，仅 limit 计数）。
+> - 资金流 `retail_net`：东方财富 `stock_individual_fund_flow_rank`（CI 干净网络可用；本机 eastmoney 常被代理拦）→ 同花顺 `stock_fund_flow_individual(symbol="即时")`（THS host，本地/CI 均通，解析其 `净额` 中文单位字符串）→ 降级 0。
+> - 产物 JSON 含 `_breadth_source` / `_retail_net_source` 字段，报告"输入快照"展示溯源，便于排查哪家源被用上。
 
 优先用 **tdx-connector** 或 **westock-data / neodata** 获取以下字段（单位见 `calibration.json` 的 `input_fields`）：
 
@@ -161,7 +166,7 @@ python run_xxfi.py --akshare --vol_window 60 --out output
 - 工作流：`.github/workflows/xxfi-daily.yml`（cron `30 8 * * 1-5` = 08:30 UTC = **16:30 北京时间（盘后）** 周一至五；`check` 步骤用 `tool_trade_date_hist_sina` 精确排除节假日/休市，并校验指数日K末交易日==今天确保数据就绪，未就绪则 skip；支持手动 `workflow_dispatch`）。
 - 防污染：非交易日 / 当日数据未就绪（指数末交易日≠今天），由 `check` 步骤 skip，不产生无效执行；legu 数据日期≠当天亦跳过写历史。
 - 波动率窗口默认 `60`（纯近期情绪）；想看相对全年极端度改 `--vol_window 260`。
-- 取数兜底：`legu` 失败时退用 `stock_zt_pool_em` / `stock_zt_pool_dtgc_em` 计数。
+- 取数多源兜底（详见上文"双模式数据来源"）：广度 `legu → 新浪spot → 涨跌停池`；资金流 `东方财富 → 同花顺 → 降级0`。任一源失败自动切换，不阻塞。
 
 > 该模式产出的"实时当日"指数与通达信交互模式的"历史周度复盘"互补，二者共用 `compute()`，口径一致。
 

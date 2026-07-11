@@ -8,12 +8,15 @@
   1. 上证指数日K  → 回撤 / 动量 / 均线偏离 / 波动率分位
   2. 当日盘面广度  → stock_market_activity_legu() 一次拿 上涨/下跌/涨停/跌停家数
                     （该接口只返「当日」，故本取数器天然产出「实时当日」恐惧指数）
-  3. 当日主力资金流向 → stock_individual_fund_flow_rank(indicator="今日")
-                    算「净流入为正的家数占比」作为 retail_net 真实来源
+  3. 当日主力资金流向 → retail_net 真实来源（多源兜底：东方财富 → 同花顺 → 0）
                     （开盘瞬间无数据；务必在盘后 16:30 执行，此时已定稿）
-拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
-降级：legu 失败退用涨跌停池计数；资金流失败 retail_net 退 0（不阻塞主流程）。
+多源容错设计（关键）：akshare 单个函数只绑一个数据源，不会自动换源。
+本取数器自行实现「源链」，任一源失败自动切下一个，全部失败才降级，绝不静默丢数据：
+  - 广度：legu（legu host，本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）→ 涨跌停池（EM，仅 limit 计数）
+  - 资金流：东方财富 stock_individual_fund_flow_rank（CI 干净网络可用）→
+           同花顺 stock_fund_flow_individual(symbol="即时")（THS host，本地/CI 均通）→ 降级 0
+拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
 用法：
   python fetch_market_akshare.py --vol_window 60
@@ -24,6 +27,27 @@ import sys, os, json, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
+
+
+def _cn_num(x):
+    """把带中文单位的金额字符串转为 float：'4779.03万'->4.779e7, '29.96亿'->2.996e9, '-'->0。"""
+    if x is None:
+        return 0.0
+    if isinstance(x, (int, float)):
+        return float(x)
+    s = str(x).strip().replace(",", "")
+    if s in ("", "-", "--", "None", "nan"):
+        return 0.0
+    unit = 1.0
+    if "亿" in s:
+        unit = 1e8
+    elif "万" in s:
+        unit = 1e4
+    s = s.replace("亿", "").replace("万", "").replace("%", "")
+    try:
+        return float(s) * unit
+    except ValueError:
+        return 0.0
 
 
 def index_components(closes, vol_window=260):
@@ -55,8 +79,13 @@ def fetch_index(symbol="sh000001", vol_window=260):
 
 
 def fetch_breadth():
-    """优先 legu（一次拿全），失败退用涨跌停池计数。"""
+    """盘面广度：多源兜底（legu → 新浪 spot → 涨跌停池）。
+
+    返回 up/down/limit_up/limit_down。legu 与 新浪 spot 都能给完整涨跌家数；
+    若两者皆败，仅用涨跌停池给 limit 计数，up/down 给中性 1/1（退化为指数版）。
+    """
     import akshare as ak
+    # 主源：legu（一次拿全，legu host 在本地/CI 均通）
     try:
         d = ak.stock_market_activity_legu()
         m = dict(zip(d["item"], d["value"]))
@@ -65,62 +94,95 @@ def fetch_breadth():
             "down": int(float(m.get("下跌", 0) or 0)),
             "limit_up": int(float(m.get("涨停", 0) or 0)),
             "limit_down": int(float(m.get("跌停", 0) or 0)),
-            "retail_net": 0.0,
             "_breadth_source": "legu",
             "_breadth_date": str(m.get("统计日期", "")),
         }
     except Exception as e:
-        # 兜底：涨跌停池按当日计数（缺涨跌家数时给中性 1/1，让广度分量退化为指数版）
-        try:
-            from datetime import date
-            dd = date.today().strftime("%Y%m%d")
-            zt = ak.stock_zt_pool_em(date=dd)
-            dt = ak.stock_zt_pool_dtgc_em(date=dd)
-            return {
-                "up": 1, "down": 1,
-                "limit_up": len(zt), "limit_down": len(dt),
-                "retail_net": 0.0,
-                "_breadth_source": "zt_pool_fallback",
-            }
-        except Exception as e2:
-            return {
-                "up": 1, "down": 1, "limit_up": 1, "limit_down": 0,
-                "retail_net": 0.0, "_breadth_source": "failed",
-            }
+        print(f"[warn] legu 失败，尝试新浪 spot: {e}")
+    # 兜底源1：新浪 stock_zh_a_spot（Sina host，本机代理不拦 eastmoney 时仍可用）
+    try:
+        s = ak.stock_zh_a_spot()
+        up = int((s["涨跌幅"] > 0).sum())
+        down = int((s["涨跌幅"] < 0).sum())
+        limit_up = int((s["涨跌幅"] >= 9.8).sum())
+        limit_down = int((s["涨跌幅"] <= -9.8).sum())
+        return {
+            "up": up, "down": down,
+            "limit_up": limit_up, "limit_down": limit_down,
+            "_breadth_source": "sina_spot",
+        }
+    except Exception as e:
+        print(f"[warn] 新浪 spot 失败，尝试涨跌停池: {e}")
+    # 兜底源2：涨跌停池（EM，仅给 limit 计数）
+    try:
+        from datetime import date
+        dd = date.today().strftime("%Y%m%d")
+        zt = ak.stock_zt_pool_em(date=dd)
+        dt = ak.stock_zt_pool_dtgc_em(date=dd)
+        return {
+            "up": 1, "down": 1,
+            "limit_up": len(zt), "limit_down": len(dt),
+            "_breadth_source": "zt_pool_fallback",
+        }
+    except Exception as e2:
+        print(f"[warn] 涨跌停池也失败，广度退化: {e2}")
+        return {
+            "up": 1, "down": 1, "limit_up": 1, "limit_down": 0,
+            "_breadth_source": "failed",
+        }
 
 
 def fetch_fund_flow():
-    """当日全市场主力资金流向，作为 retail_net 的真实来源。
+    """当日全市场主力资金流向 → retail_net（多源兜底：东方财富 → 同花顺 → 0）。
 
-    用 stock_individual_fund_flow_rank(indicator="今日") 取全市场个股主力净流入，
-    算「净流入为正的家数占比」= (pos - neg) / total，范围约 [-1, 1]，正=多数个股资金净流入。
-    开盘瞬间无数据，必须在盘后执行（CI 设为北京 16:30）。
-    eastmoney 源：CI 干净网络可用；本机若被代理/eastmoney 限流则降级 retail_net=0。
+    语义：全市场「主力净流入为正的家数占比」(pos-neg)/total，范围[-1,1]，正=多数个股净流入。
+    开盘瞬间无数据，必须在盘后执行（CI 北京16:30）。
+    返回 (value, source) 二元组，source 用于报告溯源。
     """
     import akshare as ak
+    # 主源：东方财富 stock_individual_fund_flow_rank（CI 干净网络可用；本机 EM 常被代理拦）
     try:
         df = ak.stock_individual_fund_flow_rank(indicator="今日")
         if df is None or len(df) == 0:
-            return 0.0
+            raise ValueError("空数据")
         col = next((c for c in df.columns if "主力净流入" in c), None)
         if col is None:
-            return 0.0
-        net = df[col].astype(float)
+            raise ValueError("无主力净流入列")
+        net = df[col].map(_cn_num)
         total = len(net)
         if total == 0:
-            return 0.0
-        pos = int((net > 0).sum())
-        neg = int((net < 0).sum())
-        return float((pos - neg) / total)
+            raise ValueError("0行")
+        pos = int((net > 0).sum()); neg = int((net < 0).sum())
+        return float((pos - neg) / total), "eastmoney"
     except Exception as e:
-        print(f"[warn] 资金流获取失败，降级 retail_net=0: {e}")
-        return 0.0
+        print(f"[warn] 东方财富资金流失败，尝试同花顺: {e}")
+    # 兜底：同花顺 stock_fund_flow_individual(symbol="即时")（THS host，本地/CI 均通）
+    # 注意：同花顺「净额」列为带中文单位字符串（如 '4779.03万'），须用 _cn_num 解析
+    try:
+        import io, contextlib, warnings
+        warnings.filterwarnings("ignore")
+        with contextlib.redirect_stdout(io.StringIO()):
+            df = ak.stock_fund_flow_individual(symbol="即时")
+        if df is None or len(df) == 0:
+            raise ValueError("空数据")
+        net = df["净额"].map(_cn_num)
+        total = len(net)
+        if total == 0:
+            raise ValueError("0行")
+        pos = int((net > 0).sum()); neg = int((net < 0).sum())
+        return float((pos - neg) / total), "tonghuashun"
+    except Exception as e:
+        print(f"[warn] 同花顺资金流也失败，降级 retail_net=0: {e}")
+        return 0.0, "degraded"
 
 
 def build_market_json(symbol="sh000001", vol_window=60):
     m = fetch_index(symbol, vol_window)
-    m.update(fetch_breadth())
-    m["retail_net"] = fetch_fund_flow()   # 真实资金流向（盘后已定稿），失败降级 0
+    b = fetch_breadth()
+    rn, src = fetch_fund_flow()
+    m.update(b)
+    m["retail_net"] = rn                       # 真实资金流向（盘后已定稿），失败降级 0
+    m["_retail_net_source"] = src              # 溯源：eastmoney / tonghuashun / degraded
     m["_breadth_provided"] = True
     return m
 

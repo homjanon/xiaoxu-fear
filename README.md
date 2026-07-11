@@ -24,8 +24,10 @@ python run_xxfi.py --akshare --vol_window 60 --out output
 ```
 
 - 指数：`akshare.stock_zh_index_daily(sh000001)`
-- 盘面广度：`akshare.stock_market_activity_legu()`（一次拿 上涨/下跌/涨停/跌停家数；失败退用涨跌停池计数）
+- 盘面广度：`legu` → 新浪 `stock_zh_a_spot` → 涨跌停池（多源兜底，任一源失败自动切换）
+- 资金流 `retail_net`：东方财富 `stock_individual_fund_flow_rank` → 同花顺 `stock_fund_flow_individual(symbol="即时")` → 降级 0（多源兜底）
 - `--vol_window`：波动率分位窗口。`60`=近 60 日纯情绪相对冷热（默认）；`260`=相对全年极端程度。
+- **多源容错**：akshare 单函数只绑一个源、不会自动换源；本取数器实现「源链」，产物含 `_breadth_source` / `_retail_net_source` 溯源字段，报告展示当前实际命中源。
 
 ### 2) 通达信模式（WorkBuddy 技能交互 / 历史复盘）
 
