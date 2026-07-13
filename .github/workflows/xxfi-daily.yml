@@ -41,27 +41,30 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 交易日 & 数据就绪判断：非交易日(节假日/周末)或当日数据尚未更新 → trade=0
-      # （手动触发时仍会继续，由后续 Compute 步骤取最近一个交易日数据）
-      - name: 判断交易日与数据就绪
+      # 交易日 & 盘后窗口判断：非交易日(节假日/周末) 或 盘中(<15:00北京时间) → trade=0
+      # 注意：不再以「指数日K末根==今天」作为就绪信号——日K(stock_zh_index_daily)滞后约1天，
+      # 收盘后许久不补当日 bar，会导致 check 永久失败。当日指数值改由 fetch_index 用
+      # 新浪实时 spot 补充（见 fetch_market_akshare.fetch_index_spot），故此处只需判交易日+盘后。
+      # 手动触发(workflow_dispatch) 不受 trade=0 限制，盘中也可出当日快照（用户已知并接受）。
+      - name: 判断交易日与盘后窗口
         id: check
         run: |
           python - <<'PY'
           import akshare as ak, datetime, os
-          today = datetime.date.today().strftime("%Y-%m-%d")
+          BJ = datetime.timezone(datetime.timedelta(hours=8))
+          now_bj = datetime.datetime.now(BJ)
+          today = now_bj.strftime("%Y-%m-%d")
           cal = ak.tool_trade_date_hist_sina()
           is_trade = today in {str(x)[:10] for x in cal["trade_date"].tolist()}
           if not is_trade:
-              print(f"{today} 非交易日（节假日/周末），跳过当日计算（手动触发仍可取最近交易日）")
+              print(f"{today} 非交易日（节假日/周末），跳过（手动触发仍可取最近交易日数据）")
               open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
               raise SystemExit(0)
-          idx = ak.stock_zh_index_daily(symbol="sh000001")
-          last = str(idx["date"].iloc[-1])[:10]
-          if last != today:
-              print(f"指数末交易日={last}，今日数据尚未更新（{today}），跳过当日计算")
+          if now_bj.hour < 15:
+              print(f"{today} 盘中({now_bj.strftime('%H:%M')} 北京时间)，未收盘；自动任务跳过，手动触发可出盘中快照")
               open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
               raise SystemExit(0)
-          print(f"{today} 交易日且数据已就绪，执行 XXFI 计算")
+          print(f"{today} 交易日且已收盘，执行 XXFI 计算")
           open(os.environ["GITHUB_OUTPUT"], "a").write("trade=1\n")
           PY
 
@@ -71,18 +74,23 @@ jobs:
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         run: python run_xxfi.py --akshare --vol_window 60 --out output
 
-      # 写入历史趋势：仅当数据日期 == 今天（避免周末/非交易日污染）；
+      # 写入历史趋势：仅当 data_date == 今天 且 已收盘(北京时间>=15:00)（避免盘中快照污染趋势）；
       # 同日已存在则跳过（防手动触发与 cron 重复追加）
-      - name: Append to history (去重)
+      - name: Append to history (去重·仅收盘后)
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         run: |
           python - <<'PY'
           import json, datetime, os
           r = json.load(open("output/xxfi_report.json", encoding="utf-8"))
           data_date = str(r.get("_data_date", ""))[:10]
-          today = datetime.date.today().isoformat()
+          BJ = datetime.timezone(datetime.timedelta(hours=8))
+          now_bj = datetime.datetime.now(BJ)
+          today = now_bj.strftime("%Y-%m-%d")
           if data_date != today:
               print(f"数据为 {data_date}，非当日（{today}），跳过写入历史（避免周末/非交易日污染）")
+              raise SystemExit(0)
+          if now_bj.hour < 15:
+              print(f"盘中快照({now_bj.strftime('%H:%M')})，不写入历史趋势（避免盘中值污染）")
               raise SystemExit(0)
           hist_path = "output/history.jsonl"
           rows = []

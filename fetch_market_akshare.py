@@ -83,13 +83,39 @@ def index_components(closes, vol_window=260):
     }
 
 
+def fetch_index_spot(symbol="sh000001"):
+    """实时 spot 取当日最新价（收盘后=当日收盘；盘中=当时快照）。
+
+    指数日K（stock_zh_index_daily）滞后约 1 天，收盘后许久不补当日 bar，
+    故用新浪实时 spot 补「当日」一根，使 data_date 与指数派生分量反映当日。
+    新浪实时接口本地/CI 均通；失败返回 None，由 fetch_index 优雅降级为纯日K。
+    """
+    import akshare as ak
+    try:
+        sp = ak.stock_zh_index_spot_sina()
+        row = sp[sp["代码"] == symbol]
+        if len(row) == 0:
+            print(f"[warn] spot 未找到指数 {symbol}，降级为日K")
+            return None
+        return float(row.iloc[0]["最新价"])
+    except Exception as e:
+        print(f"[warn] 指数 spot 取数失败(降级为日K): {e}")
+        return None
+
+
 def fetch_index(symbol="sh000001", vol_window=260):
     """上证指数日K → 派生分量（回撤/动量/均线偏离/波动率分位）。
 
     源链：新浪 stock_zh_index_daily → 腾讯 stock_zh_index_daily_tx
     腾讯与新浪收盘价偏差 < 0.0001%，可透明兜底；双源均不通才报错。
+    当日补点：日K末根滞后约1天，故拉完日K历史后，用 fetch_index_spot 取当日
+    最新价追加为最新一根（仅当 当日 > 日K末根），使 _last_date/_data_date 落到当日。
+    spot 失败则保留日K原行为（_last_date = T-1），不破坏历史逻辑。
     """
     import akshare as ak
+    import datetime
+    BJ = datetime.timezone(datetime.timedelta(hours=8))
+    today = datetime.datetime.now(BJ).strftime("%Y-%m-%d")
     sources = [
         ("sina", lambda: ak.stock_zh_index_daily(symbol=symbol)),
         ("tx",    lambda: ak.stock_zh_index_daily_tx(symbol=symbol)),
@@ -98,10 +124,19 @@ def fetch_index(symbol="sh000001", vol_window=260):
         try:
             df = fetch_fn()
             closes = [float(x) for x in df["close"].tolist()]
+            _last_date = str(df["date"].iloc[-1])
+            _last_close = closes[-1]
+            # 当日补点：用 spot 最新价补当日一根，纠正日K滞后导致的 data_date 慢一天
+            spot_close = fetch_index_spot(symbol)
+            if spot_close is not None and today > _last_date:
+                closes.append(spot_close)
+                _last_date = today
+                _last_close = spot_close
+                label = f"{label}+spot"
             comp = index_components(closes, vol_window)
             comp["_index_name"] = f"上证指数({symbol})"
-            comp["_last_date"] = str(df["date"].iloc[-1])
-            comp["_last_close"] = closes[-1]
+            comp["_last_date"] = _last_date
+            comp["_last_close"] = _last_close
             comp["_index_source"] = label
             return comp
         except Exception as e:
