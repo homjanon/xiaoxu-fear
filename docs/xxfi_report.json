@@ -1,15 +1,15 @@
 {
-  "XXFI": 74.0,
+  "XXFI": 76.1,
   "GreedIndex": 17.0,
   "extreme": "FEAR",
-  "contrarian_signal": "ACCUMULATE",
-  "level": "恐惧（偏谨慎，她倾向割肉）",
-  "advice": "市场情绪偏弱，但接近她‘卖飞’区。→ 逢低吸纳，避免跟风杀跌。　[背离提示·顶部出货（散户追高·主力派发）]",
+  "contrarian_signal": "BUY",
+  "level": "极度恐惧（小旭式恐慌割肉区）",
+  "advice": "历史校准：小旭在连跌后恐慌割肉，卖后多现 +9%~+24% 反弹。→ 反向强烈看多，分批低吸。　[背离提示·顶部出货（散户追高·主力派发）]",
   "divergence": -0.1021,
   "divergence_state": "顶部出货（散户追高·主力派发）",
   "components": {
     "fear": {
-      "drawdown": 23.1,
+      "drawdown": 29.9,
       "breadth": 100.0,
       "limitdown": 100.0,
       "vol": 88.3
@@ -23,15 +23,15 @@
     }
   },
   "inputs": {
-    "drawdown": -0.04617163616413445,
-    "ret20": -0.008768668239442667,
-    "above_ma20": -0.01735174342176134,
+    "drawdown": -0.05988402384090496,
+    "ret20": -0.04459398233406697,
+    "above_ma20": -0.036210936461595074,
     "vol_pct": 0.8833333333333333,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
-    "_last_date": "2026-07-10",
-    "_last_close": 3996.162,
-    "_index_source": "sina",
+    "_last_date": "2026-07-13",
+    "_last_close": 3913.794,
+    "_index_source": "sina+spot",
     "up": 780,
     "down": 4377,
     "limit_up": 32,
@@ -43,10 +43,10 @@
     "_retail_net_source": "eastmoney",
     "_main_net_source": "eastmoney",
     "_breadth_provided": true,
-    "_hs300_date": "2026-07-10",
-    "_hs300_close": 3996.162
+    "_hs300_date": "2026-07-13",
+    "_hs300_close": 3913.794
   },
-  "_data_date": "2026-07-10",
+  "_data_date": "2026-07-13",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
