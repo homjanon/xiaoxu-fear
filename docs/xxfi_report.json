@@ -1,25 +1,25 @@
 {
-  "XXFI": 29.8,
-  "GreedIndex": 26.3,
-  "extreme": "GREED",
-  "contrarian_signal": "REDUCE",
-  "level": "偏贪婪（情绪偏热，她倾向追高）",
-  "advice": "市场恐惧偏低、热度偏高。→ 逢高减仓，不追涨；小旭常在连续大涨后追高买在山顶。　[背离确认·顶部出货（散户追高·主力派发）]",
-  "divergence": -0.0215,
-  "divergence_state": "顶部出货（散户追高·主力派发）",
+  "XXFI": 73.6,
+  "GreedIndex": 13.8,
+  "extreme": "FEAR",
+  "contrarian_signal": "ACCUMULATE",
+  "level": "恐惧（偏谨慎，她倾向割肉）",
+  "advice": "市场情绪偏弱，但接近她‘卖飞’区。→ 逢低吸纳，避免跟风杀跌。",
+  "divergence": null,
+  "divergence_state": "无数据（资金流降级）",
   "components": {
     "fear": {
       "drawdown": 23.1,
-      "breadth": 0.0,
-      "limitdown": 3.8,
+      "breadth": 100.0,
+      "limitdown": 98.1,
       "vol": 88.3
     },
     "greed": {
       "momentum": 0.0,
-      "limitup": 100.0,
-      "retailin": 2.0,
+      "limitup": 25.5,
+      "retailin": 0.0,
       "overbought": 0.0,
-      "divergence": 54.3
+      "divergence": 50.0
     }
   },
   "inputs": {
@@ -32,16 +32,16 @@
     "_last_date": "2026-07-10",
     "_last_close": 3996.162,
     "_index_source": "sina",
-    "up": 3511,
-    "down": 1612,
-    "limit_up": 93,
-    "limit_down": 7,
+    "up": 869,
+    "down": 4270,
+    "limit_up": 27,
+    "limit_down": 53,
     "_breadth_source": "legu",
-    "_breadth_date": "2026-07-10 15:00:00",
-    "main_net": -0.011699999999999999,
-    "retail_net": 0.0098,
-    "_retail_net_source": "eastmoney",
-    "_main_net_source": "eastmoney",
+    "_breadth_date": "2026-07-13 11:30:00",
+    "main_net": null,
+    "retail_net": 0.0,
+    "_retail_net_source": "degraded",
+    "_main_net_source": "degraded",
     "_breadth_provided": true,
     "_hs300_date": "2026-07-10",
     "_hs300_close": 3996.162
@@ -50,6 +50,6 @@
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
-  "_retail_net_source": "eastmoney",
-  "_main_net_source": "eastmoney"
+  "_retail_net_source": "degraded",
+  "_main_net_source": "degraded"
 }
