@@ -31,7 +31,7 @@
     "_index_name": "上证指数(sh000001)",
     "_last_date": "2026-07-13",
     "_last_close": 3913.794,
-    "_index_source": "sina+spot",
+    "_index_source": "sina",
     "up": 780,
     "down": 4377,
     "limit_up": 32,
