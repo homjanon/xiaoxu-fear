@@ -18,9 +18,13 @@
   - 指数日K：新浪 stock_zh_index_daily → 腾讯 stock_zh_index_daily_tx（proxy.finance.qq.com）
                     腾讯收盘价与新浪偏差 < 0.0001%，可透明兜底；双源均不通才报错
   - 广度（上涨/下跌家数/涨停/跌停）：legu（本地/CI 均通）→ 新浪 stock_zh_a_spot（Sina host）
-  - 资金流：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离），
-            东财已将接口迁移至 push2delay.eastmoney.com，akshare 仍硬编码旧端点 push2his；
-            本取数器在模块加载时注入 URL 改写补丁（push2his→push2delay），两端均可直连取真值；
+  - 资金流：东方财富「大盘资金流」ulist.np/get（净占比口径，主力/小单同口径可相减得背离）。
+            复刻东财 zjlx 大盘页口径：以 上证指数+深证成指 secid 求和 主力净额/小单净额/
+            成交额 得市场级净占比（与网站 loadchart2 同算法，单请求无分页截断）。
+            原 stock_market_fund_flow() 用的 daykline/get 端点已废弃（任何日期均返回
+            data:null）；clist 聚合则被东财 100 行/页硬上限截断（约 1/4 市场即失真）。
+            东财 host 已从 push2his 迁移至 push2delay，且 push2 在境外 IP 亦被重置；
+            本取数器在模块加载时注入 URL 改写补丁（push2his/push2→push2delay，正则幂等），
             两端均可直连取真值；全部不可达时降级为中性占位。
 拼装成 market json，可直接喂给 xiaoxu_fear_index.compute()。
 
@@ -37,20 +41,24 @@ from retry_utils import retry_on_network, jitter
 
 
 def _patch_eastmoney_push2delay():
-    """东财已将资金流接口从 push2his.eastmoney.com 迁移到 push2delay.eastmoney.com，
-    但 akshare 1.18.x 仍硬编码旧端点 → 直连被重置（非 IP 封禁，是端点过时）。
-    运行时把请求 URL 中的 push2his 改写为 push2delay，使 stock_market_fund_flow() 等可用。
-    仅在 URL 含该 host 时改写，不影响 legu / 新浪等其他源。
+    """东财资金流接口已迁移到 push2delay；且旧端点 push2his 与 push2 在境外 IP
+    下均被重置（非 IP 封禁，是端点/ host 过时）。运行时用正则把 URL 中的
+    push2his / push2（非 push2delay）改写为 push2delay，使 ulist / daykline
+    等端点两端均可达。仅当 URL 含该 host 时改写，不影响 legu / 新浪等其他源。
+
+    正则 push2(?:his)?\\.eastmoney\\.com 同时匹配 push2his 与 push2，但不匹配
+    push2delay（其后为 delay 而非 his/'.'），故幂等安全；push2ex 等也不受影响。
     """
     try:
-        import requests
+        import requests, re
         if getattr(requests.Session.request, "_xxfi_patched", False):
             return
         _orig = requests.Session.request
+        _HOST_RE = re.compile(r'push2(?:his)?\.eastmoney\.com')
 
         def _wrapped(self, method, url, *a, **kw):
-            if isinstance(url, str) and "push2his.eastmoney.com" in url:
-                url = url.replace("push2his.eastmoney.com", "push2delay.eastmoney.com")
+            if isinstance(url, str):
+                url = _HOST_RE.sub('push2delay.eastmoney.com', url)
             # 防挂起：GitHub 美国 IP 对 push2delay 可能丢包而非秒拒，
             # 不设超时会导致重试把整个 run 拖死。统一注入 15s 上限。
             kw.setdefault("timeout", 15)
@@ -226,25 +234,51 @@ def _fetch_retail_tonghuashun():
 def fetch_fund_flow():
     """当日全市场主力/散户资金流向 → (main_net, retail_net, source)。
 
-    源链：东方财富 stock_market_fund_flow()（净占比口径，主力/小单同口径可相减得背离）。
-    端点补丁（push2his→push2delay）已在模块加载时注入，两端均可直连取真值；
-    全部不可达时降级为 (None, 0.0, "degraded")，由 compute() 将背离置为中性占位。
+    源：东方财富「大盘资金流」接口 ulist.np/get（push2 → 经补丁改写 push2delay，两端可达）。
+    复刻东财 zjlx 大盘页（dpzjlx.html / dapan.js）的口径：以 secids="1.000001,0.399001"
+    （上证指数 + 深证成指 = 网站“沪深两市”）请求 ulist，将两行（沪深两市）的
+    主力净额(f62)/小单净额(f84)/成交额(f6) 求和，得市场级净占比。与网站 loadchart2
+    完全一致：主力净占比 = Σf62/Σf6 ；小单净占比 = Σf84/Σf6。
+    符号与东财 zjlx「主力净流入-净占比 / 小单净流入-净占比」同号（主力净流出为负、
+    小单净流入为正），与旧 akshare stock_market_fund_flow() 字段口径一致，无需取反。
+    主力/小单同口径可相减得「主力—散户背离」。全部不可达时降级为
+    (None, 0.0, "degraded")，由 compute() 将背离置为中性占位。
     """
-    import akshare as ak
+    import requests
+    # 复刻 data.eastmoney.com/zjlx/dapan.js：quoteurl=push2，secids=沪深两市指数
+    HOST = "https://push2.eastmoney.com/api/qt/ulist.np/get"   # 补丁改写为 push2delay
+    SECIDS = "1.000001,0.399001"          # 上证指数 + 深证成指（= 网站“沪深两市”）
+    FIELDS = "f62,f84,f6"                  # 主力净额 / 小单净额 / 成交额
+    UT = "b2884a393a59ad64002292a3e90d46a5"
 
     @retry_on_network(max_attempts=3)
-    def _try_em_fund_flow():
+    def _try_em_ulist():
         jitter(0.3, 1.0)
-        df = ak.stock_market_fund_flow()
-        if df is None or len(df) == 0:
+        r = requests.get(
+            HOST,
+            params={"fltt": 2, "secids": SECIDS, "fields": FIELDS, "ut": UT},
+            headers={"User-Agent": "Mozilla/5.0",
+                     "Referer": "https://data.eastmoney.com/zjlx/dpzjlx.html"},
+            timeout=15,
+        )
+        payload = r.json()
+        diff = (payload.get("data") or {}).get("diff") or []
+        if not diff:
             raise ValueError("空数据")
-        row = df.iloc[-1]
-        main = float(row["主力净流入-净占比"]) / 100.0
-        retail = float(row["小单净流入-净占比"]) / 100.0
-        return (main, retail), "eastmoney"
+        main = small = turn = 0.0
+        for it in diff:
+            main += float(it.get("f62") or 0)
+            small += float(it.get("f84") or 0)
+            turn += float(it.get("f6") or 0)
+        if turn <= 0:
+            raise ValueError("成交额为0")
+        # 与网站 loadchart2 一致：Σf62/Σf6、Σf84/Σf6（同号，不取反）
+        main_net = main / turn
+        retail_net = small / turn
+        return (main_net, retail_net), "eastmoney"
 
     try:
-        return _try_em_fund_flow()
+        return _try_em_ulist()
     except Exception as e:
         print(f"[warn] 东方财富大盘资金流失败（已重试3次），降级为中性占位: {e}")
 
