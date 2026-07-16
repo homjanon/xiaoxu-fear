@@ -18,6 +18,26 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .hero{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
 .hero .main{flex:1 1 230px;min-width:0;}
 .hero .gx{flex:1 1 190px;min-width:0;border-left:1px solid var(--line);padding-left:22px;}
+.hero .ice{flex:1 1 200px;min-width:0;}
+/* —— 冰点参考卡（A股极端恐慌·旁挂参考）: 冰霜质感 + 冰冷计 —— */
+.ice{background:linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:14px;
+  padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.65);}
+.ice-head{font-size:13px;font-weight:800;color:#0369a1;display:flex;align-items:center;gap:5px;}
+.ice-tag{font-size:10px;font-weight:600;color:#0284c7;background:#e0f2fe;border:1px solid #bae6fd;
+  border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
+.ice-status{font-size:clamp(25px,7.5vw,34px);font-weight:800;line-height:1.1;margin-top:8px;letter-spacing:-.5px;}
+.ice-status.fire{color:#dc2626;}      /* 冰点触发 = 恐慌带血筹码 */
+.ice-status.cool{color:#0ea5e9;}      /* 未至冰点 = 冷静 */
+.ice-sub{font-size:11.5px;color:#475569;margin-top:4px;line-height:1.4;}
+.ice-meter{display:flex;gap:6px;margin:12px 0 6px;}
+.ice-cube{flex:1;height:9px;border-radius:5px;background:#cbd5e1;transition:background .2s;}
+.ice-cube.on{background:linear-gradient(90deg,#7dd3fc,#0ea5e9);box-shadow:0 0 6px rgba(14,165,233,.55);}
+.ice-met{font-size:11.5px;color:#0369a1;font-weight:700;}
+.ice-dims{margin-top:9px;border-top:1px dashed #bae6fd;padding-top:7px;}
+.ice-dim{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;}
+.ice-dim .nm{color:#475569;white-space:nowrap;}
+.ice-dim .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;}
+.ice-dim .pass{color:#16a34a;} .ice-dim .fail{color:#dc2626;} .ice-dim .na{color:#94a3b8;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -61,6 +81,7 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   body{padding:18px 12px;}
   .grid{grid-template-columns:1fr;}
   .hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;}
+  .hero .ice{border-left:none;padding-left:0;margin-top:14px;}
 }
 </style></head>
 <body><div class="wrap">
@@ -79,6 +100,15 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
       <div class="big sub2" style="color:#6b7280">26.1</div>
       <div class="label">贪婪指数（副表·辅助诊断）</div>
       <div class="label" style="margin-top:8px">独立公式 · 非互补</div>
+    </div>
+
+    <div class="ice">
+      <div class="ice-head">❄ 冰点参考 <span class="ice-tag">参考指标·不影响XXFI</span></div>
+      <div class="ice-status fire">🔥 冰点</div>
+      <div class="ice-sub">极端恐慌 · 带血筹码居多的时机</div>
+      <div class="ice-meter" title="4/4 维度满足"><div class="ice-cube on" title="D1 下跌广度"></div><div class="ice-cube on" title="D2 指数/ETF跌幅"></div><div class="ice-cube on" title="D3 跌停数量"></div><div class="ice-cube on" title="D4 放量恐慌"></div></div>
+      <div class="ice-met">4 / 4 维度满足</div>
+      <div class="ice-dims"><div class="ice-dim"><span class="nm">D1 下跌广度</span><span class="v pass">下跌 5100/5400（94.4%） ✅</span></div><div class="ice-dim"><span class="nm">D2 指数/ETF跌幅</span><span class="v pass">上证 -3.60% 创业 -3.50% · ETF跌 75% ✅</span></div><div class="ice-dim"><span class="nm">D3 跌停数量</span><span class="v pass">跌停 133/涨停 12（比 11.1） ✅</span></div><div class="ice-dim"><span class="nm">D4 放量恐慌</span><span class="v pass">1.80 倍 ✅</span></div></div>
     </div>
   </div>
   <div class="advice">恐惧与贪婪均衡，无明显反向极值。→ 按自身策略持有，不依赖本指标。　[背离提示·顶部出货（散户追高·主力派发）]</div>
