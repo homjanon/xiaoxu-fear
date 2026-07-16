@@ -74,6 +74,12 @@ jobs:
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         run: python run_xxfi.py --akshare --vol_window 60 --out output
 
+      # 冰点参考（旁挂指标，不影响XXFI）：legu主→东财兜底→暂未获取
+      # 与 XXFI 同一 check 闸门；独立产物 output/bingdian_report.json
+      - name: Compute 冰点参考 (akshare)
+        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        run: python run_bingdian.py --akshare --out output
+
       # 写入历史趋势：仅当 data_date == 今天 且 已收盘(北京时间>=15:00)（避免盘中快照污染趋势）；
       # 同日已存在则跳过（防手动触发与 cron 重复追加）
       - name: Append to history (去重·仅收盘后)
@@ -115,10 +121,10 @@ jobs:
           print("appended:", row)
           PY
 
-      # 渲染静态 HTML（最新结果 + 对照参考表 + 历史趋势）→ docs/index.html
+      # 渲染静态 HTML（XXFI + 冰点参考卡 → docs/index.html）
       - name: Render static HTML
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
-        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --out docs/index.html
+        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --out docs/index.html
 
       - name: Commit outputs
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
