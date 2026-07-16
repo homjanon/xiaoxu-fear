@@ -73,6 +73,8 @@ def main():
     ap.add_argument("--akshare", action="store_true", help="联网取数（legu主→东财兜底）")
     ap.add_argument("--demo", action="store_true", help="内置冰点日样例")
     ap.add_argument("--json", default=None, help="直接传入冰点输入 JSON 字符串")
+    ap.add_argument("--xxfi-report", default=None,
+                    help="同轮 XXFI 报告路径，用于复用其 legu 广度(P0)；默认 <out>/xxfi_report.json")
     ap.add_argument("--out", default="output", help="报告输出目录")
     args = ap.parse_args()
 
@@ -81,7 +83,20 @@ def main():
     elif args.json:
         m = json.loads(args.json)
     elif args.akshare:
-        m = fb.build_bingdian_inputs()
+        # P0：复用同轮 XXFI 已取的 legu 广度（避免重复取数 + 规避 legu 抖动兜底）
+        xxfi_inputs = None
+        xr = args.xxfi_report or os.path.join(args.out, "xxfi_report.json")
+        if os.path.exists(xr):
+            try:
+                xxfi_inputs = json.load(open(xr, encoding="utf-8")).get("inputs")
+                print(f"[P0] 复用 XXFI 广度（{xr}）: down={xxfi_inputs.get('down')} "
+                      f"limit_down={xxfi_inputs.get('limit_down')}")
+            except Exception as e:
+                print(f"[warn] 读取 XXFI 报告失败，广度走自有链: {e}")
+        else:
+            print(f"[P0] 未找到 XXFI 报告（{xr}），广度走自有链")
+        cache_path = os.path.join(args.out, "_sh_amt_cache.json")   # P2 放量缓存
+        m = fb.build_bingdian_inputs(xxffi_inputs=xxfi_inputs, cache_path=cache_path)
     else:
         print("ERROR: 需 --akshare / --demo / --json"); sys.exit(1)
 
