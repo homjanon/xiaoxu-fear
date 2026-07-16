@@ -170,9 +170,42 @@ def fetch_index_em():
                 "_src": "暂未获取"}
 
 
-# ---------------- D2 核心ETF spot（东财，白名单过滤） ----------------
+# ---------------- D2 核心ETF spot（东财 ulist.np 按 secids 精确查询，[提速] 免全量分页） ----------------
+def _to_secid(code):
+    """东财 secid 格式：上交所(5/6开头)→1. ; 深交所(0/1开头)→0. 。"""
+    return ('1.' if str(code)[0] in '56' else '0.') + str(code)
+
+
 def fetch_etf_em():
-    """固化42只核心ETF内，跌幅<=-2.5%占比 + 平均涨跌幅（D2）。失败降级 None。"""
+    """固化42只核心ETF内，跌幅<=-2.5%占比 + 平均涨跌幅（D2）。
+    [提速] 改用东财 ulist.np/get + secids 精确查询（~0.1s），替代 fund_etf_spot_em 全量分页(18s)。
+    命中不足(<40)或异常时回退 fund_etf_spot_em 全量拉取（兜底，绝不静默丢D2）。"""
+    try:
+        import requests
+        secids = ",".join(_to_secid(c) for c in A_SHARE_CORE_ETF)
+        url = "https://push2delay.eastmoney.com/api/qt/ulist.np/get"
+        params = {'fltt': '2', 'invt': '2', 'fields': 'f12,f14,f3', 'secids': secids}
+        r = requests.get(url, params=params, timeout=15)
+        j = r.json()
+        data = j.get('data') or {}
+        diff = data.get('diff')
+        rows = list(diff.values()) if isinstance(diff, dict) else list(diff or [])
+        got = {str(x.get('f12')) for x in rows}
+        missing = sorted(set(A_SHARE_CORE_ETF) - got)
+        if missing:
+            print(f"  [提示] 白名单中 {len(missing)} 只未在实时数据找到: {missing}")
+        if int(data.get('total', 0) or 0) >= 40 and rows:
+            chgs = [float(x['f3']) for x in rows if x.get('f3') is not None]
+            n = len(chgs)
+            ratio = sum(1 for c in chgs if c <= -2.5) / max(n, 1)
+            avg = sum(chgs) / n if n else 0.0
+            return {"etf_down_ratio": float(ratio), "etf_avg": float(avg),
+                    "etf_total": int(n), "_src": "eastmoney_etf(secids)"}
+        print(f"  [warn] ulist.np 命中 {len(rows)} 不足，回退 fund_etf_spot_em 全量")
+    except Exception as e:
+        print(f"  [warn] ulist.np 失败（回退 fund_etf_spot_em）: {e}")
+
+    # 兜底：原全量拉取
     try:
         etf = ak.fund_etf_spot_em()
         core = etf[etf['代码'].isin(A_SHARE_CORE_ETF)]
