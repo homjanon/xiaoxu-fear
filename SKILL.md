@@ -163,7 +163,7 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 python run_xxfi.py --akshare --vol_window 60 --out output
 ```
 
-- 工作流：`.github/workflows/xxfi-daily.yml`（cron `30 8 * * 1-5` = 08:30 UTC = **16:30 北京时间（盘后）** 周一至五；`check` 步骤用 `tool_trade_date_hist_sina` 精确排除节假日/休市，并校验指数日K末交易日==今天确保数据就绪，未就绪则 skip；支持手动 `workflow_dispatch`）。
+- 工作流：`.github/workflows/xxfi-daily.yml`（cron `30 6 * * 1-5` = 06:30 UTC = **14:30 北京时间触发**；GitHub Actions 约 2h 排队延迟，实跑约 **16:30 北京时间（盘后）** 周一至五；`check` 步骤用 `tool_trade_date_hist_sina` 精确排除节假日/休市，并校验北京时间≥15:00 收盘后确保数据就绪，未就绪则 skip；支持手动 `workflow_dispatch`）。
 - 防污染：非交易日 / 当日数据未就绪（指数末交易日≠今天），由 `check` 步骤 skip，不产生无效执行；legu 数据日期≠当天亦跳过写历史。
 - 波动率窗口默认 `60`（纯近期情绪）；想看相对全年极端度改 `--vol_window 260`。
 - 取数多源兜底（详见上文"双模式数据来源"）：广度 `legu → 新浪spot → 涨跌停池`；资金流 `东方财富 → 同花顺 → 降级0`。任一源失败自动切换，不阻塞。

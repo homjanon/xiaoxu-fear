@@ -6,7 +6,7 @@
 
 ## 实时结果（GitHub Actions 自动更新）
 
-每个交易日 **15:30（UTC+8）** cron 触发，产物提交到 `output/`。GitHub Actions 实际存在约 1h 排队延迟，实跑时间为 16:30 左右，恰好盘后数据定稿窗口：
+每个交易日 **14:30（UTC+8）** cron 触发（cron `"30 6 * * 1-5"`），产物提交到 `output/`。GitHub Actions 实际存在约 2h 排队延迟（实测 07-14/07-15 自动运行 ~+2h，07-13 拥堵日 +3h09m），实跑时间约 16:30 北京，恰好盘后数据定稿窗口：
 
 - 📄 [`output/xxfi_report.md`](output/xxfi_report.md) — 当日人类可读报告
 - 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段）
@@ -31,7 +31,7 @@
 
 ```
 09:30 开盘 → 15:00 收盘 → 15:00~16:00 涨跌家数 / 涨停跌停池 / 主力资金流向 陆续定稿（注：上证指数日K接口滞后约1天，当日指数值改由新浪实时 spot 补充）
-                              ↑ 15:30 cron（CI 实际约 16:30 执行，数据已就绪）
+                              ↑ 14:30 cron（CI 实际约 16:30 执行，数据已就绪）
 ```
 
 三条约束的落地：
@@ -39,7 +39,7 @@
 | 约束 | 方案 | 实现 |
 |---|---|---|
 | **① 交易日筛选** | 仅在交易日执行，非交易日（含节假日/休市）完全不触发 | cron 仅覆盖周一至五；`check` 步骤用 `tool_trade_date_hist_sina()` **精确排除法定节假日/休市日（含调休）**，不靠"周一到五"硬猜 |
-| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | cron `"30 7 * * 1-5"` = **北京 15:30**（GitHub Actions ~1h 延迟，实际约 16:30 执行）；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
+| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | cron `"30 6 * * 1-5"` = **北京 14:30**（GitHub Actions ~2h 延迟，实际约 16:30 执行）；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
 | **③ 每日频次** | 单日单次，不产生无效执行 | 盘后单次运行；非交易日 / 数据未就绪由 `check` 步骤 `skip`，后续步骤 `if: steps.check.outputs.trade == '1'` 全部跳过 |
 
 - 也可在 Actions 页面 **手动触发**（`workflow_dispatch`，无参数）：任意时间强制重算「当日」XXFI——盘中出**盘中快照**、收盘后出**当日收盘值**（周末/非交易日仍取最近交易日），用于验证链路或补算。
@@ -192,7 +192,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
-| `.github/workflows/xxfi-daily.yml` | 每日自动播报（15:30 cron · 仅交易日 · 数据就绪校验；实际约 16:30 执行） |
+| `.github/workflows/xxfi-daily.yml` | 每日自动播报（14:30 cron · 仅交易日 · 数据就绪校验；实际约 16:30 执行） |
 
 ## License
 
