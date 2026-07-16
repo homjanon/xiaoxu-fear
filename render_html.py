@@ -51,28 +51,32 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .hero{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
 .hero .main{flex:1 1 230px;min-width:0;}
 .hero .gx{flex:1 1 190px;min-width:0;border-left:1px solid var(--line);padding-left:22px;}
-.hero .ice{flex:1 1 200px;min-width:0;}
-/* —— 冰点参考卡（A股极端恐慌·旁挂参考）: 冰霜质感 + 冰冷计 —— */
-.ice{background:linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:14px;
-  padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.65);}
-.ice-head{font-size:13px;font-weight:800;color:#0369a1;display:flex;align-items:center;gap:5px;}
+/* —— 冰点参考卡（方案B·全宽横条，独立于hero，置于背离诊断上方）—— */
+.ice-card{background:linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:16px;
+  padding:16px 18px;box-shadow:var(--shadow);}
+.ice-head{font-size:13px;font-weight:800;color:#0369a1;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
 .ice-tag{font-size:10px;font-weight:600;color:#0284c7;background:#e0f2fe;border:1px solid #bae6fd;
   border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
-.ice-status{font-size:clamp(25px,7.5vw,34px);font-weight:800;line-height:1.1;margin-top:8px;letter-spacing:-.5px;}
+.ice-verdict{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.ice-status{font-size:clamp(21px,5.5vw,30px);font-weight:800;line-height:1.1;}
 .ice-status.fire{color:#dc2626;}      /* 冰点触发 = 恐慌带血筹码 */
 .ice-status.cool{color:#0ea5e9;}      /* 未至冰点 = 冷静 */
-.ice-sub{font-size:11.5px;color:#475569;margin-top:4px;line-height:1.4;}
-.ice-meter{display:flex;gap:6px;margin:12px 0 6px;}
-.ice-cube{flex:1;height:9px;border-radius:5px;background:#cbd5e1;transition:background .2s;}
+.ice-sub{font-size:11.5px;color:#475569;margin-top:2px;line-height:1.3;}
+.ice-right{text-align:right;min-width:140px;}
+.ice-meter{display:flex;gap:6px;max-width:240px;margin-left:auto;}
+.ice-cube{flex:1;height:8px;border-radius:5px;background:#cbd5e1;}
 .ice-cube.on{background:linear-gradient(90deg,#7dd3fc,#0ea5e9);box-shadow:0 0 6px rgba(14,165,233,.55);}
-.ice-met{font-size:11.5px;color:#0369a1;font-weight:700;}
-.ice-dims{margin-top:9px;border-top:1px dashed #bae6fd;padding-top:7px;}
-.ice-dim{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:11.5px;padding:4px 0;}
-.ice-dim-l{display:flex;flex-direction:column;gap:1px;min-width:0;}
-.ice-dim .nm{color:#475569;white-space:nowrap;}
-.ice-dim .th{font-size:10px;color:#94a3b8;line-height:1.25;}
-.ice-dim .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap;}
-.ice-dim .pass{color:#16a34a;} .ice-dim .fail{color:#dc2626;} .ice-dim .na{color:#94a3b8;}
+.ice-met{font-size:11.5px;color:#0369a1;font-weight:700;margin-top:6px;}
+.ice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:13px;
+  border-top:1px dashed #bae6fd;padding-top:12px;}
+.ice-cell{background:rgba(255,255,255,.65);border:1px solid #cbe8fb;border-radius:10px;
+  padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.ice-cell .k{font-size:11px;font-weight:700;color:#0369a1;display:flex;align-items:center;gap:5px;}
+.ice-cell .k .key{background:#bae6fd;color:#0369a1;border-radius:4px;padding:0 5px;font-size:10px;font-weight:800;}
+.ice-cell .k .st{margin-left:auto;font-size:12px;line-height:1;}
+.ice-cell .v{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#1f2937;line-height:1.3;overflow-wrap:anywhere;}
+.ice-cell .v.pass{color:#16a34a;} .ice-cell .v.fail{color:#dc2626;} .ice-cell .v.na{color:#94a3b8;}
+.ice-cell .th{font-size:10px;color:#94a3b8;line-height:1.3;overflow-wrap:anywhere;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -116,7 +120,9 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   body{padding:18px 12px;}
   .grid{grid-template-columns:1fr;}
   .hero .gx{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:6px;}
-  .hero .ice{border-left:none;padding-left:0;margin-top:14px;}
+  .ice-grid{grid-template-columns:repeat(2,1fr);}
+  .ice-right{text-align:left;min-width:0;}
+  .ice-meter{margin-left:0;}
 }
 """
 
@@ -176,7 +182,9 @@ def bar(score, cls):
 
 def render_ice_card(b):
     """冰点参考卡（旁挂 XXFI，独立、不影响原指标）。无数据返回空串。
-    设计：冰霜质感面板 + 冰冷计（4 格冰晶，满足维度点亮为冰蓝）+ 维度明细。
+    方案B：全宽卡片，置于「主力—散户背离诊断」上方。
+    结构：标题栏 + 结论区（左 emoji/状态/副标题 · 右 冰晶计横条 + x/4 满足）+ 4 列维度网格。
+    每个维度格：维度名(含 Dx 徽标) + 状态图标 + 实测值(粗体) + 判定标准(10px灰·完整)。
     """
     if not b:
         return ""
@@ -184,7 +192,7 @@ def render_ice_card(b):
     dims = b.get("dimensions", [])
     emoji = b.get("verdict_emoji", "🧊")
     if verdict:
-        s_cls, s_txt, sub = "fire", "冰点", "极端恐慌 · 带血筹码居多的时机"
+        s_cls, s_txt, sub = "fire", "冰点触发", "极端恐慌 · 带血筹码居多的时机"
     else:
         s_cls, s_txt, sub = "cool", "非冰点", "未至极端 · 纪律不出手"
     met = sum(1 for d in dims if d.get("pass") is True)
@@ -193,7 +201,7 @@ def render_ice_card(b):
         f'<div class="ice-cube {"on" if d.get("pass") is True else ""}" title="{d.get("key","")} {d.get("name","")}"></div>'
         for d in dims
     )
-    dim_html = ""
+    cells = ""
     for d in dims:
         p = d.get("pass")
         if p is True:
@@ -202,21 +210,27 @@ def render_ice_card(b):
             pc, pt = "fail", "❌"
         else:
             pc, pt = "na", "—"
-        dim_html += (f'<div class="ice-dim">'
-                     f'<div class="ice-dim-l">'
-                     f'<span class="nm">{d.get("key","")} {d.get("name","")}</span>'
-                     f'<span class="th">（{d.get("threshold","")}）</span>'
-                     f'</div>'
-                     f'<span class="v {pc}">{d.get("value","—")} {pt}</span></div>')
+        cells += (f'<div class="ice-cell">'
+                  f'<div class="k"><span class="key">{d.get("key","")}</span>{d.get("name","")}'
+                  f'<span class="st">{pt}</span></div>'
+                  f'<div class="v {pc}">{d.get("value","—")}</div>'
+                  f'<div class="th">（{d.get("threshold","")}）</div>'
+                  f'</div>')
     na_txt = f" · {na}项暂未获取" if na else ""
     return f'''
-    <div class="ice">
-      <div class="ice-head">❄ 冰点参考 <span class="ice-tag">参考指标·不影响XXFI</span></div>
-      <div class="ice-status {s_cls}">{emoji} {s_txt}</div>
-      <div class="ice-sub">{sub}</div>
-      <div class="ice-meter" title="{met}/{len(dims)} 维度满足">{cubes}</div>
-      <div class="ice-met">{met} / {len(dims)} 维度满足{na_txt}</div>
-      <div class="ice-dims">{dim_html}</div>
+    <div class="card ice-card">
+      <div class="ice-head">❄ 冰点参考（A股极端恐慌） <span class="ice-tag">参考指标·不影响XXFI</span></div>
+      <div class="ice-verdict">
+        <div>
+          <div class="ice-status {s_cls}">{emoji} {s_txt}</div>
+          <div class="ice-sub">{sub}</div>
+        </div>
+        <div class="ice-right">
+          <div class="ice-meter" title="{met}/{len(dims)} 维度满足">{cubes}</div>
+          <div class="ice-met">{met} / {len(dims)} 维度满足{na_txt}</div>
+        </div>
+      </div>
+      <div class="ice-grid">{cells}</div>
     </div>'''
 
 def render(r, hist, bingdian=None):
@@ -324,10 +338,11 @@ def render(r, hist, bingdian=None):
       <div class="label">贪婪指数（副表·辅助诊断）</div>
       <div class="label" style="margin-top:8px">独立公式 · 非互补</div>
     </div>
-{ice_html}
   </div>
   <div class="advice">{advice}</div>
 </div>
+
+{ice_html}
 
 <div class="card" style="border-color:#fcd34d">
   <div class="sec-h" style="color:#b45309">主力—散户背离诊断（v2）</div>
