@@ -67,9 +67,11 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .ice-cube.on{background:linear-gradient(90deg,#7dd3fc,#0ea5e9);box-shadow:0 0 6px rgba(14,165,233,.55);}
 .ice-met{font-size:11.5px;color:#0369a1;font-weight:700;}
 .ice-dims{margin-top:9px;border-top:1px dashed #bae6fd;padding-top:7px;}
-.ice-dim{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;}
+.ice-dim{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:11.5px;padding:4px 0;}
+.ice-dim-l{display:flex;flex-direction:column;gap:1px;min-width:0;}
 .ice-dim .nm{color:#475569;white-space:nowrap;}
-.ice-dim .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;}
+.ice-dim .th{font-size:10px;color:#94a3b8;line-height:1.25;}
+.ice-dim .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap;}
 .ice-dim .pass{color:#16a34a;} .ice-dim .fail{color:#dc2626;} .ice-dim .na{color:#94a3b8;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
@@ -200,7 +202,11 @@ def render_ice_card(b):
             pc, pt = "fail", "❌"
         else:
             pc, pt = "na", "—"
-        dim_html += (f'<div class="ice-dim"><span class="nm">{d.get("key","")} {d.get("name","")}</span>'
+        dim_html += (f'<div class="ice-dim">'
+                     f'<div class="ice-dim-l">'
+                     f'<span class="nm">{d.get("key","")} {d.get("name","")}</span>'
+                     f'<span class="th">（{d.get("threshold","")}）</span>'
+                     f'</div>'
                      f'<span class="v {pc}">{d.get("value","—")} {pt}</span></div>')
     na_txt = f" · {na}项暂未获取" if na else ""
     return f'''

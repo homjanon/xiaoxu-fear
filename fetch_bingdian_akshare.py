@@ -4,12 +4,12 @@
 A股冰点 · akshare 取数器（仿 fetch_market_akshare.py，含 push2delay 补丁 + 多源兜底）
 ================================================================================
 
-数据优先级（应你的要求）：**legu 源作为主力 → 东财兜底 → 都无法获取则"暂未获取"**。
+数据优先级（应你的要求）：**legu 主力 → 新浪第二 → 东财末兜底 → 都无法获取则"暂未获取"**。
 
-  D1 下跌广度   : legu stock_market_activity_legu() 主 → 东财 stock_zh_a_spot_em 兜底（逐股）
-  D3 跌停数量   : legu 聚合跌停（板块限制感知）主 → 东财 stock_zh_a_spot_em 逐股兜底。
-                 实测：常态日两口径差 2~4 只、冰点日(≥50)差 <10 只，对"跌停≥50 且 比≥3"阈值判定一致；
-                 故主用 legu 省去 ~1min 重调用，东财逐股仅 legu 不可达时调用（保留板块差异化+剔除ST 精确兜底）。
+  D1 下跌广度   : legu stock_market_activity_legu() 主 → 新浪 stock_zh_a_spot 兜底 → 东财 stock_zh_a_spot_em 末兜底
+  D3 跌停数量   : legu 聚合跌停（板块限制感知）主 → 新浪 stock_zh_a_spot 逐股（板块差异化+剔除ST）兜底
+                 → 东财 stock_zh_a_spot_em 逐股末兜底。新浪/东财逐股均可板块差异化+剔除ST；
+                 东财仅最末兜底（最重，~1min 全市场58页），正常CI(legu通)不触发。
   D2 指数/ETF   : 东财 stock_zh_index_spot_em("沪深重要指数") + fund_etf_spot_em（42只核心ETF白名单）
   D4 放量       : 东财/腾讯 上证成交额 vs 上证近20日均值（腾讯 stock_zh_index_daily_tx）
 
@@ -127,6 +127,31 @@ def fetch_spot_em():
         return None, False
 
 
+# ---------------- 新浪全量 spot（D1/D3 第二源，轻量） ----------------
+def fetch_spot_sina():
+    """新浪全量A股实时 spot → D1/D3 第二源（板块差异化·剔除ST 精确值）。
+    仅当 legu 不可达时调用，比东财逐股 spot 轻量；失败返回 (None, False)。"""
+    try:
+        s = ak.stock_zh_a_spot()
+        chg = s['涨跌幅']
+        n = len(s)
+        down = int((chg < 0).sum())
+        # 板块差异化 + 剔除ST（新浪含 代码/名称/涨跌幅，可复用 _board_flags）
+        is_st, is_cyb, is_kcb, is_bse, is_main = _board_flags(s)
+        ld = int(((chg <= -9.5) & is_main).sum()
+                 + ((chg <= -19.5) & (is_cyb | is_kcb)).sum()
+                 + ((chg <= -29.5) & is_bse).sum())
+        lu = int(((chg >= 9.5) & is_main).sum()
+                 + ((chg >= 19.5) & (is_cyb | is_kcb)).sum()
+                 + ((chg >= 29.5) & is_bse).sum())
+        return {"total": n, "down": down, "down_ratio": (down / n if n else 0.0),
+                "limit_up": lu, "limit_down": ld, "ld_lu_ratio": ld / max(lu, 1),
+                "_src": "sina_spot"}, True
+    except Exception as e:
+        print(f"[warn] 新浪spot失败（D1/D3 降级）: {e}")
+        return None, False
+
+
 # ---------------- D2 指数 spot（东财，快，单页） ----------------
 def fetch_index_em():
     """上证综指 / 创业板指 涨跌幅 + 上证成交额（D2/D4 用）。失败降级 None。"""
@@ -184,8 +209,7 @@ def build_bingdian_inputs():
     """按源优先级拼装 4 维度输入，供 bingdian_index.compute() 判定。
 
     源链：
-      D1 : legu 主 → 东财spot 兜底
-      D3 : 东财spot 板块差异化（权威） ；legu 聚合跌停仅作交叉参考兜底
+      D1/D3 : legu 主 → 新浪 spot（板块差异化+剔除ST）兜底 → 东财 spot 末兜底
       D2 : 东财指数spot + ETF spot
       D4 : 东财当日额 / 腾讯近20日均额
     """
@@ -194,12 +218,15 @@ def build_bingdian_inputs():
     etf = fetch_etf_em()                                      # D2 ETF
     vol = fetch_volume_mult(idx.get("sh_amount"))             # D4 放量倍数
     legu, legu_ok = fetch_breadth_legu()                      # 广度主源（D1+D3 共用）
-    # 仅当 legu 不可达时才拉东财逐股 spot（重调用 ~1min，正常CI不触发）
-    spot, spot_ok = (None, False)
+    # 源链：legu 不可达才试新浪（轻量逐股）；两者都失败才落东财逐股 spot（重调用 ~1min）
+    sina, sina_ok = (None, False)
     if not legu_ok:
+        sina, sina_ok = fetch_spot_sina()
+    spot, spot_ok = (None, False)
+    if not (legu_ok or sina_ok):
         spot, spot_ok = fetch_spot_em()
 
-    # ---- D1 & D3 统一：legu 主 → 东财逐股 spot 兜底 ----
+    # ---- D1 & D3 统一：legu 主 → 新浪 spot → 东财 spot（末兜底） ----
     if legu_ok:
         d1 = {"down": legu["down"], "total": legu["total"],
               "down_ratio": (legu["down"] / legu["total"] if legu["total"] else 0.0),
@@ -207,6 +234,11 @@ def build_bingdian_inputs():
         d3 = {"limit_down": legu["limit_down"], "limit_up": legu["limit_up"],
               "ld_lu_ratio": (legu["limit_down"] / max(legu["limit_up"], 1)),
               "_src_D3": "legu"}
+    elif sina_ok:
+        d1 = {"down": sina["down"], "total": sina["total"], "down_ratio": sina["down_ratio"],
+              "_src_D1": "sina_spot"}
+        d3 = {"limit_down": sina["limit_down"], "limit_up": sina["limit_up"],
+              "ld_lu_ratio": sina["ld_lu_ratio"], "_src_D3": "sina_spot"}
     elif spot_ok:
         d1 = {"down": spot["down"], "total": spot["total"], "down_ratio": spot["down_ratio"],
               "_src_D1": "eastmoney_spot"}
