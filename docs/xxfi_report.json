@@ -1,5 +1,5 @@
 {
-  "XXFI": 79.3,
+  "XXFI": 84.4,
   "GreedIndex": 17.1,
   "extreme": "FEAR",
   "contrarian_signal": "BUY",
@@ -9,10 +9,10 @@
   "divergence_state": "顶部出货（散户追高·主力派发）",
   "components": {
     "fear": {
-      "drawdown": 33.7,
+      "drawdown": 47.9,
       "breadth": 100.0,
       "limitdown": 100.0,
-      "vol": 96.7
+      "vol": 100.0
     },
     "greed": {
       "momentum": 0.0,
@@ -23,15 +23,15 @@
     }
   },
   "inputs": {
-    "drawdown": -0.06742192170876628,
-    "ret20": -0.050866389551742275,
-    "above_ma20": -0.038119729561518566,
-    "vol_pct": 0.9666666666666667,
+    "drawdown": -0.09582824997832136,
+    "ret20": -0.0958282499783214,
+    "above_ma20": -0.06363341619517793,
+    "vol_pct": 1.0,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
-    "_last_date": "2026-07-16",
-    "_last_close": 3882.413,
-    "_index_source": "sina",
+    "_last_date": "2026-07-17",
+    "_last_close": 3764.1547,
+    "_index_source": "sina+spot",
     "up": 405,
     "down": 4758,
     "limit_up": 34,
@@ -43,10 +43,10 @@
     "_retail_net_source": "eastmoney",
     "_main_net_source": "eastmoney",
     "_breadth_provided": true,
-    "_hs300_date": "2026-07-16",
-    "_hs300_close": 3882.413
+    "_hs300_date": "2026-07-17",
+    "_hs300_close": 3764.1547
   },
-  "_data_date": "2026-07-16",
+  "_data_date": "2026-07-17",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
