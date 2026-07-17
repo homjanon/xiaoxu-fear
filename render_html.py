@@ -235,7 +235,7 @@ def render_ice_card(b):
                   f'<div class="th">（{d.get("threshold","")}）</div>'
                   f'</div>')
     na_txt = f" · {na}项暂未获取" if na else ""
-    plan_html = ICE_OP_PLAN if verdict else ""
+    plan_html = ICE_OP_PLAN
     return f'''
     <div class="card ice-card">
       <div class="ice-head">❄ 冰点参考（A股极端恐慌） <span class="ice-tag">参考指标·不影响XXFI</span></div>
