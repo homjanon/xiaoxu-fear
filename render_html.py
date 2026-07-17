@@ -77,6 +77,11 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .ice-cell .v{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#1f2937;line-height:1.3;overflow-wrap:anywhere;}
 .ice-cell .v.pass{color:#16a34a;} .ice-cell .v.fail{color:#dc2626;} .ice-cell .v.na{color:#94a3b8;}
 .ice-cell .th{font-size:10px;color:#94a3b8;line-height:1.3;overflow-wrap:anywhere;}
+.ice-plan{margin-top:12px;padding:10px 12px;border-top:1px dashed #bae6fd;background:rgba(255,255,255,.55);
+  border-radius:0 0 10px 10px;font-size:11px;line-height:1.75;color:#64748b;}
+.ice-plan .ttl{font-weight:800;color:#dc2626;margin-bottom:4px;font-size:11.5px;}
+.ice-plan .rw{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:560px){ .ice-plan{font-size:10.5px;} }
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -180,11 +185,24 @@ def bar(score, cls):
     return f'<div class="bar {cls}"><i style="width:{s:.1f}%"></i></div>'
 
 
+# ---------------- 冰点实操计划（固化·仅冰点触发时显示；纯名称不带代码） ----------------
+ICE_OP_PLAN = '''
+    <div class="ice-plan">
+      <div class="ttl">📋 冰点实操计划（战术桶·仅抢反弹，非长持）</div>
+      <div class="rw">• 第一批（触发当日尾盘 14:30–15:00 / 最迟次日开盘）：中证2000 + 科创50 + 创业板 + 半导体，占战术桶 1/3</div>
+      <div class="rw">• 第二批（触发后 3–5 日不破前低）：+ 中证1000 + 券商 + 新能源，占 1/3</div>
+      <div class="rw">• 第三批（右侧放量站上 5/10 日线）：补齐 + 北证50 / 恒生科技（卫星仓），占 1/3</div>
+      <div class="rw">• 退出：沪深300 自低点 +8~12% / 高β +15~25% 分批止盈；D1 下跌&lt;2000、涨停&gt;跌停连续 2 日退场</div>
+      <div class="rw">• 铁律：战术桶 ≠ 战略桶（红利/债券不动）· 单信号 ≤ 1/3 · 获利转回红利/债券</div>
+    </div>'''
+
+
 def render_ice_card(b):
     """冰点参考卡（旁挂 XXFI，独立、不影响原指标）。无数据返回空串。
     方案B：全宽卡片，置于「主力—散户背离诊断」上方。
     结构：标题栏 + 结论区（左 emoji/状态/副标题 · 右 冰晶计横条 + x/4 满足）+ 4 列维度网格。
     每个维度格：维度名(含 Dx 徽标) + 状态图标 + 实测值(粗体) + 判定标准(10px灰·完整)。
+    冰点触发时，卡片底部追加「冰点实操计划」小字块（ICE_OP_PLAN，纯名称）；未触发不显示。
     """
     if not b:
         return ""
@@ -217,6 +235,7 @@ def render_ice_card(b):
                   f'<div class="th">（{d.get("threshold","")}）</div>'
                   f'</div>')
     na_txt = f" · {na}项暂未获取" if na else ""
+    plan_html = ICE_OP_PLAN if verdict else ""
     return f'''
     <div class="card ice-card">
       <div class="ice-head">❄ 冰点参考（A股极端恐慌） <span class="ice-tag">参考指标·不影响XXFI</span></div>
@@ -230,7 +249,7 @@ def render_ice_card(b):
           <div class="ice-met">{met} / {len(dims)} 维度满足{na_txt}</div>
         </div>
       </div>
-      <div class="ice-grid">{cells}</div>
+      <div class="ice-grid">{cells}</div>{plan_html}
     </div>'''
 
 def render(r, hist, bingdian=None):
