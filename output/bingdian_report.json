@@ -1,13 +1,13 @@
 {
-  "verdict": false,
-  "verdict_text": "非冰点",
-  "verdict_emoji": "🧊",
-  "verdict_full": "🧊 未至冰点 · 纪律不出手",
+  "verdict": true,
+  "verdict_text": "冰点",
+  "verdict_emoji": "🔥",
+  "verdict_full": "🔥 冰点触发 · 极端恐慌带血筹码",
   "dimensions": [
     {
       "key": "D1",
       "name": "下跌广度",
-      "value": "下跌 4433/5195（85.3%）",
+      "value": "下跌 4690/5195（90.3%）",
       "threshold": "下跌≥4000 且 占比≥85%",
       "pass": true,
       "source": "legu(reuse)"
@@ -15,15 +15,15 @@
     {
       "key": "D2",
       "name": "指数/ETF跌幅",
-      "value": "上证 -2.25% 创业 -6.08% · ETF跌 57%",
+      "value": "上证 -2.97% 创业 -7.34% · ETF跌 62%",
       "threshold": "上证≤-2.0% 创业≤-2.5% ETF跌≥60%",
-      "pass": false,
+      "pass": true,
       "source": "eastmoney_index"
     },
     {
       "key": "D3",
       "name": "跌停数量",
-      "value": "跌停 85/涨停 25（比 3.4）",
+      "value": "跌停 131/涨停 24（比 5.5）",
       "threshold": "跌停≥50 且 比≥3",
       "pass": true,
       "source": "legu(reuse)"
@@ -31,9 +31,9 @@
     {
       "key": "D4",
       "name": "放量恐慌",
-      "value": "1.27 倍",
+      "value": "1.38 倍",
       "threshold": "放量倍数≥1.3",
-      "pass": false,
+      "pass": true,
       "source": "eastmoney_spot+cache"
     }
   ],
@@ -41,16 +41,16 @@
   "_data_date": "2026-07-17",
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
   "inputs": {
-    "down": 4433,
+    "down": 4690,
     "total": 5195,
-    "down_ratio": 0.853320500481232,
-    "limit_down": 85,
-    "limit_up": 25,
-    "ld_lu_ratio": 3.4,
-    "sh_chg": -2.25,
-    "cyb_chg": -6.08,
-    "etf_down_ratio": 0.5714285714285714,
-    "volume_mult": 1.2672337128355624,
+    "down_ratio": 0.9027911453320501,
+    "limit_down": 131,
+    "limit_up": 24,
+    "ld_lu_ratio": 5.458333333333333,
+    "sh_chg": -2.97,
+    "cyb_chg": -7.34,
+    "etf_down_ratio": 0.6222222222222222,
+    "volume_mult": 1.380961098357559,
     "_data_date": "2026-07-17"
   }
 }
