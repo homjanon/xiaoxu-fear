@@ -9,7 +9,7 @@
 每个交易日 **14:30（UTC+8）** cron 触发（cron `"30 6 * * 1-5"`），产物提交到 `output/`。GitHub Actions 实际存在约 2h 排队延迟（实测 07-14/07-15 自动运行 ~+2h，07-13 拥堵日 +3h09m），实跑时间约 16:30 北京，恰好盘后数据定稿窗口：
 
 - 📄 [`output/xxfi_report.md`](output/xxfi_report.md) — 当日人类可读报告
-- 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段）
+- 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段、`_generated_at` 更新时间（北京时间，精确到秒）、`_data_date` 数据日期）
 - 📈 [`output/history.jsonl`](output/history.jsonl) — 每日一行历史：`{date, xxfi, greed, signal, level}`（由每日 cron 自动累积）
 - ❄ [`output/bingdian_report.json`](output/bingdian_report.json) — 冰点参考结构化结果（4 维度明细 + 判定标准 + 溯源标记），旁挂展示、不影响 XXFI
 
@@ -22,6 +22,7 @@
 - **对照参考表**：XXFI 绝对区间 → 等级 / 信号 / 含义，并标注「两表独立、非互补」
 - **历史趋势**：内联 SVG 折线（XXFI vs 贪婪）+ 近 10 日数据表（运行数日后自动出现）
 - **冰点参考卡**（旁挂右侧）：独立"A股冰点"参考指标（不影响 XXFI 任何原始计算/展示）。含冰点结论 + 4 格冰冷计（满足维度点亮）+ 4 维度明细（下跌广度 / 指数·ETF跌幅 / 跌停数量 / 放量恐慌），**每个维度下方用小字标注判定标准**（如 `D1 下跌广度` 下注明 `（下跌≥4000 且 占比≥85%）`），溯源标记（legu / sina_spot / eastmoney_spot）一并呈现
+- **页头时间标识**：顶部一行同时标注「数据日期」（数据所属交易日，周末/非交易日运行时≠当天）与「更新时间」（数据生成的**北京时间，精确到秒**，如 `2026-07-20 16:35:12`），与 douban-tracker 看板口径一致，便于核对数据时效
 
 由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
 
