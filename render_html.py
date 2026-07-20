@@ -11,6 +11,9 @@
       可直接由 GitHub Pages（main/docs）或任意静态托管发布。
 """
 import argparse, json, os
+import datetime
+
+CST = datetime.timezone(datetime.timedelta(hours=8))  # 北京时间 UTC+8
 
 # ---- 静态对照表（XXFI 绝对区间判定，来自 calibration）----
 REF_TABLE = [
@@ -263,6 +266,7 @@ def render(r, hist, bingdian=None):
     greed_c = comp.get("greed", {})
     inp = r.get("inputs", {})
     data_date = r.get("_data_date", "")
+    gen_at = r.get("_generated_at", "")
     idx_name = r.get("_index_name", "")
     vw = r.get("_vol_window", 60)
     bsrc = r.get("_breadth_source") or inp.get("_breadth_source", "-")
@@ -342,7 +346,7 @@ def render(r, hist, bingdian=None):
 <title>小旭恐惧指数 XXFI · 实时</title><style>{CSS}</style></head>
 <body><div class="wrap">
 <h1>小旭恐惧指数 · XXFI</h1>
-<div class="sub">反向情绪指标（散户行为版）　|　数据日期：{data_date}　|　基准：{idx_name}　|　波动率窗口：{vw} 日</div>
+<div class="sub">反向情绪指标（散户行为版）　|　数据日期：{data_date}　|　更新时间：{gen_at}　|　基准：{idx_name}　|　波动率窗口：{vw} 日</div>
 
 <div class="card" style="border-top:4px solid {scolor}">
   <div class="hero">
