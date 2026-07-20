@@ -21,6 +21,9 @@
   广度缺失时自动降级为「指数版 XXFI」（仅用沪深300派生分量），并在报告中标注。
 """
 import argparse, json, os, sys
+import datetime
+
+CST = datetime.timezone(datetime.timedelta(hours=8))  # 北京时间 UTC+8
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
@@ -171,6 +174,7 @@ def write_outputs(res, d, out_dir, vol_window=260):
     p_json = os.path.join(out_dir, "xxfi_report.json")
     out = dict(res)
     out["_data_date"] = str(d.get("_hs300_date", "") or d.get("_breadth_date", ""))[:10]
+    out["_generated_at"] = datetime.datetime.now(CST).strftime("%Y-%m-%d %H:%M:%S")
     out["_index_name"] = d.get("_index_name", "")
     out["_vol_window"] = d.get("vol_window", vol_window)
     # 溯源提顶层，便于 HTML/历史展示（缺失容错）
