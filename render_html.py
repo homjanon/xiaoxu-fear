@@ -85,6 +85,34 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .ice-plan .ttl{font-weight:800;color:#dc2626;margin-bottom:4px;font-size:11.5px;}
 .ice-plan .rw{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 @media(max-width:560px){ .ice-plan{font-size:10.5px;} }
+/* —— 底部区域判断卡（旁挂 XXFI，置于冰点参考与背离诊断之间）—— */
+.dip-card{background:linear-gradient(160deg,#f0fdf4 0%,#dcfce7 100%);border:1px solid #bbf7d0;border-radius:16px;
+  padding:16px 18px;box-shadow:var(--shadow);}
+.dip-head{font-size:13px;font-weight:800;color:#15803d;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
+.dip-tag{font-size:10px;font-weight:600;color:#16a34a;background:#dcfce7;border:1px solid #bbf7d0;
+  border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
+.dip-main{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.dip-status{font-size:clamp(21px,5.5vw,30px);font-weight:800;line-height:1.1;}
+.dip-status.hit{color:#16a34a;}        /* 底部区域日 = 地量机会 */
+.dip-status.idle{color:#64748b;}       /* 非底部区域日 */
+.dip-status.na{color:#94a3b8;}         /* 暂未获取 */
+.dip-sub{font-size:11.5px;color:#475569;margin-top:2px;line-height:1.3;}
+.dip-right{text-align:right;min-width:150px;}
+.dip-date{font-size:15px;font-weight:800;color:#15803d;font-variant-numeric:tabular-nums;}
+.dip-date-label{font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:2px;}
+.dip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px;
+  border-top:1px dashed #bbf7d0;padding-top:12px;}
+.dip-cell{background:rgba(255,255,255,.65);border:1px solid #c7f0d2;border-radius:10px;
+  padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.dip-cell .k{font-size:11px;font-weight:700;color:#15803d;}
+.dip-cell .v{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#1f2937;line-height:1.3;overflow-wrap:anywhere;}
+.dip-cell .th{font-size:10px;color:#94a3b8;line-height:1.3;}
+.dip-bar-wrap{margin-top:12px;}
+.dip-bar-track{height:10px;background:#e8edf3;border-radius:6px;overflow:hidden;position:relative;}
+.dip-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#86efac,#16a34a);}
+.dip-bar-mark{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;background:#dc2626;}  /* 50%阈值线 */
+.dip-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:4px;}
+.dip-note{font-size:11px;color:#64748b;margin-top:11px;line-height:1.6;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -131,6 +159,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   .ice-grid{grid-template-columns:repeat(2,1fr);}
   .ice-right{text-align:left;min-width:0;}
   .ice-meter{margin-left:0;}
+  .dip-grid{grid-template-columns:repeat(2,1fr);}
+  .dip-right{text-align:left;min-width:0;}
 }
 """
 
@@ -255,7 +285,81 @@ def render_ice_card(b):
       <div class="ice-grid">{cells}</div>{plan_html}
     </div>'''
 
-def render(r, hist, bingdian=None):
+def _fmt_yi(v):
+    """元 → 亿元字符串（NaN/None 返回 —）"""
+    try:
+        fv = float(v)
+        if fv != fv:
+            return "—"
+        return f"{fv/1e8:.0f} 亿"
+    except Exception:
+        return "—"
+
+
+def render_dibudian_card(d):
+    """底部区域判断卡（旁挂 XXFI，独立、不影响原指标）。无数据返回空串。
+    结构：标题栏 + 主区（左 状态/副标题 · 右 持久日期）+ 3列明细网格 + 比率进度条(含50%阈值线)。
+    """
+    if not d:
+        return ""
+    is_hit = d.get("is_bottom_today")
+    last_date = d.get("last_bottom_date") or "暂未记录"
+    ratio = d.get("ratio")
+    today_total = d.get("today_total")
+    max90 = d.get("max90_total")
+    threshold = d.get("threshold", 0.5)
+    verdict = d.get("verdict_text", "")
+    emoji = d.get("verdict_emoji", "—")
+
+    if is_hit is True:
+        s_cls, s_txt, sub = "hit", "底部区域日", "地量 · 抛压衰竭，关注机会区域"
+    elif is_hit is False:
+        s_cls, s_txt, sub = "idle", "非底部区域日", "成交额未缩至近90日峰值一半以下"
+    else:
+        s_cls, s_txt, sub = "na", "暂未获取", "数据源暂不可用"
+
+    # 进度条：以近90日最高为 100%，当日占比填充；50% 处红线即阈值
+    pct_fill = min(100.0, float(ratio) * 100.0) if ratio is not None and max90 else 0.0
+    ratio_txt = f"{ratio*100:.1f}%" if ratio is not None else "—"
+
+    detail = (
+        f'<div class="dip-cell"><div class="k">当日全市场成交额</div>'
+        f'<div class="v">{_fmt_yi(today_total)}</div>'
+        f'<div class="th">上证+深证 · 单位元</div></div>'
+        f'<div class="dip-cell"><div class="k">近90日最高成交额</div>'
+        f'<div class="v">{_fmt_yi(max90)}</div>'
+        f'<div class="th">约一个完整季度峰值</div></div>'
+        f'<div class="dip-cell"><div class="k">当前比率 / 阈值</div>'
+        f'<div class="v">{ratio_txt} / {int(threshold*100)}%</div>'
+        f'<div class="th">当日 ≤ 峰值×{int(threshold*100)}% 即底部区域</div></div>'
+    )
+
+    return f'''
+    <div class="card dip-card">
+      <div class="dip-head">🌱 底部区域判断（地量区域） <span class="dip-tag">参考指标·不影响XXFI</span></div>
+      <div class="dip-main">
+        <div>
+          <div class="dip-status {s_cls}">{emoji} {s_txt}</div>
+          <div class="dip-sub">{sub}</div>
+        </div>
+        <div class="dip-right">
+          <div class="dip-date-label">最近一次底部区域日</div>
+          <div class="dip-date">{last_date}</div>
+        </div>
+      </div>
+      <div class="dip-grid">{detail}</div>
+      <div class="dip-bar-wrap">
+        <div class="dip-bar-track">
+          <div class="dip-bar-fill" style="width:{pct_fill:.1f}%"></div>
+          <div class="dip-bar-mark"></div>
+        </div>
+        <div class="dip-bar-labels"><span>0%</span><span style="color:#dc2626">阈值 {int(threshold*100)}%</span><span>100%（近90日峰值）</span></div>
+      </div>
+      <div class="dip-note">底部区域 = 地量区域。当日全市场成交额缩至近90日最高的一半及以下，视为抛压衰竭的底部信号。该日期持续显示，直到被下一个满足条件的交易日取代。</div>
+    </div>'''
+
+
+def render(r, hist, bingdian=None, dibudian=None):
     xxfi = float(r.get("XXFI", 0))
     greed = float(r.get("GreedIndex", 0))
     signal = r.get("contrarian_signal") or signal_of(xxfi)
@@ -321,6 +425,7 @@ def render(r, hist, bingdian=None):
     fear_html = rows_html(fear_rows, "fear", "var(--fear)")
     greed_html = rows_html(greed_rows, "greed", "var(--greed)")
     ice_html = render_ice_card(bingdian)
+    dip_html = render_dibudian_card(dibudian)
 
     # 对照表行
     ref_rows = ""
@@ -366,6 +471,7 @@ def render(r, hist, bingdian=None):
 </div>
 
 {ice_html}
+{dip_html}
 
 <div class="card" style="border-color:#fcd34d">
   <div class="sec-h" style="color:#b45309">主力—散户背离诊断（v2）</div>
@@ -422,6 +528,7 @@ def main():
     ap.add_argument("--json", required=True, help="xxfi_report.json 路径")
     ap.add_argument("--history", default="output/history.jsonl", help="history.jsonl 路径")
     ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示）")
+    ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示）")
     ap.add_argument("--out", required=True, help="输出 HTML 路径，如 docs/index.html")
     args = ap.parse_args()
 
@@ -434,7 +541,14 @@ def main():
             bingdian = load_json(args.bingdian)
         except Exception as e:
             print(f"[warn] 冰点报告读取失败，跳过冰点卡: {e}")
-    html = render(r, hist, bingdian)
+    # 底部区域判断卡：独立产物，存在才加载；缺失则页面不显示该卡（XXFI 不受影响）
+    dibudian = None
+    if args.dibudian and os.path.exists(args.dibudian):
+        try:
+            dibudian = load_json(args.dibudian)
+        except Exception as e:
+            print(f"[warn] 底部区域报告读取失败，跳过该卡: {e}")
+    html = render(r, hist, bingdian, dibudian)
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:

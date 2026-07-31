@@ -49,6 +49,34 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .ice-plan .ttl{font-weight:800;color:#dc2626;margin-bottom:4px;font-size:11.5px;}
 .ice-plan .rw{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 @media(max-width:560px){ .ice-plan{font-size:10.5px;} }
+/* —— 底部区域判断卡（旁挂 XXFI，置于冰点参考与背离诊断之间）—— */
+.dip-card{background:linear-gradient(160deg,#f0fdf4 0%,#dcfce7 100%);border:1px solid #bbf7d0;border-radius:16px;
+  padding:16px 18px;box-shadow:var(--shadow);}
+.dip-head{font-size:13px;font-weight:800;color:#15803d;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
+.dip-tag{font-size:10px;font-weight:600;color:#16a34a;background:#dcfce7;border:1px solid #bbf7d0;
+  border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
+.dip-main{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.dip-status{font-size:clamp(21px,5.5vw,30px);font-weight:800;line-height:1.1;}
+.dip-status.hit{color:#16a34a;}        /* 底部区域日 = 地量机会 */
+.dip-status.idle{color:#64748b;}       /* 非底部区域日 */
+.dip-status.na{color:#94a3b8;}         /* 暂未获取 */
+.dip-sub{font-size:11.5px;color:#475569;margin-top:2px;line-height:1.3;}
+.dip-right{text-align:right;min-width:150px;}
+.dip-date{font-size:15px;font-weight:800;color:#15803d;font-variant-numeric:tabular-nums;}
+.dip-date-label{font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:2px;}
+.dip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px;
+  border-top:1px dashed #bbf7d0;padding-top:12px;}
+.dip-cell{background:rgba(255,255,255,.65);border:1px solid #c7f0d2;border-radius:10px;
+  padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.dip-cell .k{font-size:11px;font-weight:700;color:#15803d;}
+.dip-cell .v{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:#1f2937;line-height:1.3;overflow-wrap:anywhere;}
+.dip-cell .th{font-size:10px;color:#94a3b8;line-height:1.3;}
+.dip-bar-wrap{margin-top:12px;}
+.dip-bar-track{height:10px;background:#e8edf3;border-radius:6px;overflow:hidden;position:relative;}
+.dip-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#86efac,#16a34a);}
+.dip-bar-mark{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;background:#dc2626;}  /* 50%阈值线 */
+.dip-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:4px;}
+.dip-note{font-size:11px;color:#64748b;margin-top:11px;line-height:1.6;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -95,6 +123,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   .ice-grid{grid-template-columns:repeat(2,1fr);}
   .ice-right{text-align:left;min-width:0;}
   .ice-meter{margin-left:0;}
+  .dip-grid{grid-template-columns:repeat(2,1fr);}
+  .dip-right{text-align:left;min-width:0;}
 }
 </style></head>
 <body><div class="wrap">
@@ -140,6 +170,29 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
       <div class="rw">• 退出：沪深300 自低点 +8~12% / 高β +15~25% 分批止盈；D1 下跌&lt;2000、涨停&gt;跌停连续 2 日退场</div>
       <div class="rw">• 铁律：战术桶 ≠ 战略桶（红利/债券不动）· 单信号 ≤ 1/3 · 获利转回红利/债券</div>
     </div>
+    </div>
+
+    <div class="card dip-card">
+      <div class="dip-head">🌱 底部区域判断（地量区域） <span class="dip-tag">参考指标·不影响XXFI</span></div>
+      <div class="dip-main">
+        <div>
+          <div class="dip-status idle">⚪ 非底部区域日</div>
+          <div class="dip-sub">成交额未缩至近90日峰值一半以下</div>
+        </div>
+        <div class="dip-right">
+          <div class="dip-date-label">最近一次底部区域日</div>
+          <div class="dip-date">暂未记录</div>
+        </div>
+      </div>
+      <div class="dip-grid"><div class="dip-cell"><div class="k">当日全市场成交额</div><div class="v">13169 亿</div><div class="th">上证+深证 · 单位元</div></div><div class="dip-cell"><div class="k">近90日最高成交额</div><div class="v">16744 亿</div><div class="th">约一个完整季度峰值</div></div><div class="dip-cell"><div class="k">当前比率 / 阈值</div><div class="v">78.6% / 50%</div><div class="th">当日 ≤ 峰值×50% 即底部区域</div></div></div>
+      <div class="dip-bar-wrap">
+        <div class="dip-bar-track">
+          <div class="dip-bar-fill" style="width:78.6%"></div>
+          <div class="dip-bar-mark"></div>
+        </div>
+        <div class="dip-bar-labels"><span>0%</span><span style="color:#dc2626">阈值 50%</span><span>100%（近90日峰值）</span></div>
+      </div>
+      <div class="dip-note">底部区域 = 地量区域。当日全市场成交额缩至近90日最高的一半及以下，视为抛压衰竭的底部信号。该日期持续显示，直到被下一个满足条件的交易日取代。</div>
     </div>
 
 <div class="card" style="border-color:#fcd34d">

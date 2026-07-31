@@ -1,0 +1,21 @@
+{
+  "today_total": 1316925371000.0,
+  "sh_today": 597529427000.0,
+  "sz_today": 719395944000.0,
+  "max90_total": 1674371146000.0,
+  "ratio": 0.7865,
+  "threshold": 0.5,
+  "is_bottom_today": false,
+  "verdict_text": "非底部区域日",
+  "verdict_emoji": "⚪",
+  "_data_date": "2026-07-31",
+  "last_bottom_date": null,
+  "last_bottom_volume": null,
+  "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
+  "inputs": {
+    "today_total": 1316925371000.0,
+    "sh_today": 597529427000.0,
+    "sz_today": 719395944000.0,
+    "max90_total": 1674371146000.0
+  }
+}

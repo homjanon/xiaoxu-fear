@@ -81,6 +81,12 @@ jobs:
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         run: python run_bingdian.py --akshare --out output
 
+      # 底部区域判断（旁挂指标，不影响XXFI）：新浪双源取全市场沪深成交额
+      # 与 XXFI 同一 check 闸门；独立产物 output/dibudian_report.json + 跨日状态 output/dibudian_state.json
+      - name: Compute 底部区域判断 (akshare)
+        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        run: python run_dibudian.py --akshare --out output
+
       # 写入历史趋势：仅当 data_date == 今天 且 已收盘(北京时间>=15:00)（避免盘中快照污染趋势）；
       # 同日已存在则跳过（防手动触发与 cron 重复追加）
       - name: Append to history (去重·仅收盘后)
@@ -125,7 +131,7 @@ jobs:
       # 渲染静态 HTML（XXFI + 冰点参考卡 → docs/index.html）
       - name: Render static HTML
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
-        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --out docs/index.html
+        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --dibudian output/dibudian_report.json --out docs/index.html
 
       - name: Commit outputs
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
