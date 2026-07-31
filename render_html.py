@@ -410,7 +410,7 @@ def render(r, hist, bingdian=None, dibudian=None):
     ]
     greed_rows = [
         ("近20日动量", pct(inp.get("ret20", 0)), greed_c.get("momentum", 0)),
-        ("涨停/跌停比", f"{int(lu)}/{int(ld)}（比 {lu/ld:.2f}）", greed_c.get("limitup", 0)),
+        ("涨停/跌停比", (f"{int(lu)}/{int(ld)}（比 {lu/ld:.2f}）" if ld else f"{int(lu)}/0（比 ∞）"), greed_c.get("limitup", 0)),
         ("散户净流入", retail_raw, greed_c.get("retailin", 0)),
         ("高于20日均线", pct(inp.get("above_ma20", 0)), greed_c.get("overbought", 0)),
         ("主力—散户背离", div_raw, greed_c.get("divergence", 0)),
