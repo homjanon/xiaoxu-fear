@@ -99,7 +99,7 @@ def write(res, m, out_dir):
 
 def main():
     ap = argparse.ArgumentParser(description="底部区域判断 编排入口")
-    ap.add_argument("--akshare", action="store_true", help="联网取数（新浪双源）")
+    ap.add_argument("--akshare", action="store_true", help="联网取数（东财 daily_em 全市场口径 + 新浪 spot 交叉校验）")
     ap.add_argument("--demo-bottom", action="store_true", help="内置底部区域日样例")
     ap.add_argument("--demo-normal", action="store_true", help="内置非底部区域日样例")
     ap.add_argument("--json", default=None, help="直接传入输入 JSON 字符串")
