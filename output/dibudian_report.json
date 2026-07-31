@@ -9,6 +9,8 @@
   "verdict_text": "非底部区域日",
   "verdict_emoji": "⚪",
   "_data_date": "2026-08-01",
+  "_src": "em_spot+cache(2026-08-01)",
+  "_sina_src": "sina_spot(2026-08-01)",
   "last_bottom_date": null,
   "last_bottom_volume": null,
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
