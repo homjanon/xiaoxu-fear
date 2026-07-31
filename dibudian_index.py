@@ -68,6 +68,7 @@ def compute(d: Dict[str, Any]) -> Dict[str, Any]:
             "is_bottom_today": None,
             "verdict_text": "暂未获取", "verdict_emoji": "—",
             "_data_date": str(d.get("_data_date", ""))[:10],
+            "_src": d.get("_src"), "_sina_src": d.get("_sina_src"),
         }
 
     ratio = today / max90
@@ -81,6 +82,7 @@ def compute(d: Dict[str, Any]) -> Dict[str, Any]:
         "verdict_text": "底部区域日" if is_bottom_today else "非底部区域日",
         "verdict_emoji": "🟢" if is_bottom_today else "⚪",
         "_data_date": str(d.get("_data_date", ""))[:10],
+        "_src": d.get("_src"), "_sina_src": d.get("_sina_src"),
     }
 
 
