@@ -81,7 +81,7 @@ jobs:
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         run: python run_bingdian.py --akshare --out output
 
-      # 底部区域判断（旁挂指标，不影响XXFI）：东财 daily_em 全市场口径 + 新浪 spot 交叉校验
+      # 底部区域判断（旁挂指标，不影响XXFI）：新浪实时 spot 当日全市场口径 + 本地通达信回填滚动缓存(近90日峰值)
       # 与 XXFI 同一 check 闸门；独立产物 output/dibudian_report.json + 跨日状态 output/dibudian_state.json
       - name: Compute 底部区域判断 (akshare)
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'

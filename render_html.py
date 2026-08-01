@@ -113,6 +113,9 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .dip-bar-mark{position:absolute;top:-3px;bottom:-3px;left:50%;width:2px;background:#dc2626;}  /* 50%阈值线 */
 .dip-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:4px;}
 .dip-note{font-size:11px;color:#64748b;margin-top:11px;line-height:1.6;}
+.dip-trend{margin-top:14px;}
+.dip-trend svg{width:100%;height:auto;display:block;}
+.dip-trend-note{font-size:10.5px;color:#94a3b8;margin-top:6px;line-height:1.5;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -213,6 +216,70 @@ def trend_svg(hist):
     svg.append(f'</svg>')
     return "".join(svg)
 
+
+def dip_trend_svg(hist):
+    """底部区域判断卡 · 近30日全市场成交额趋势（内联 SVG，无 JS/CDN）。
+
+    hist: list[{"date":"YYYY-MM-DD","total":float(元)}]（通常尾部 30 日）。
+    绘制：柱体（低于红色阈值线=底部区域日，绿色；其余浅灰）
+        + 淡灰虚线（近90日峰值 100%）+ 红色虚线（峰值×50% 底部阈值）。
+    Y 轴以「万亿」刻度。无/不足 2 点返回提示。
+    """
+    if not hist or len(hist) < 2:
+        return '<p class="muted">近30日成交额样本不足（需 ≥2 个交易日），暂无法绘制趋势。</p>'
+    pts = [(h.get("date", ""), float(h.get("total", 0)))
+           for h in hist if isinstance(h.get("total"), (int, float)) and h.get("total", 0) > 0]
+    if len(pts) < 2:
+        return '<p class="muted">近30日成交额样本不足，暂无法绘制趋势。</p>'
+    w, h = 680, 200
+    pad_l, pad_r, pad_t, pad_b = 44, 12, 14, 24
+    n = len(pts)
+    totals = [v for _, v in pts]
+    peak = max(totals)
+    threshold = peak * 0.5
+    vmin, vmax = 0.0, peak * 1.08
+
+    def X(i):
+        return pad_l + (w - pad_l - pad_r) * i / (n - 1)
+
+    def Y(v):
+        return pad_t + (h - pad_t - pad_b) * (vmax - v) / (vmax - vmin)
+
+    svg = [f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="近30日全市场成交额趋势">']
+    # 横向网格 + 万亿刻度
+    for g in (0.0, 0.25, 0.5, 0.75, 1.0):
+        val = vmin + (vmax - vmin) * g
+        y = Y(val)
+        svg.append(f'<line x1="{pad_l}" y1="{y:.1f}" x2="{w-pad_r}" y2="{y:.1f}" stroke="#eef2f7"/>')
+        svg.append(f'<text x="{pad_l-6}" y="{y+4:.1f}" font-size="10" fill="#9aa3af" text-anchor="end">{val/1e12:.2f}万亿</text>')
+    # 峰值参考线（淡灰虚线）
+    yp = Y(peak)
+    svg.append(f'<line x1="{pad_l}" y1="{yp:.1f}" x2="{w-pad_r}" y2="{yp:.1f}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3"/>')
+    svg.append(f'<text x="{w-pad_r}" y="{yp-4:.1f}" font-size="9" fill="#94a3b8" text-anchor="end">近90日峰值 {peak/1e12:.2f}万亿</text>')
+    # 底部阈值线（红虚线 = 峰值×50%）
+    yt = Y(threshold)
+    svg.append(f'<line x1="{pad_l}" y1="{yt:.1f}" x2="{w-pad_r}" y2="{yt:.1f}" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="5 3"/>')
+    svg.append(f'<text x="{w-pad_r}" y="{yt+10:.1f}" font-size="9" fill="#dc2626" text-anchor="end">底部阈值(峰值×50%)</text>')
+    # 柱体
+    bw = (w - pad_l - pad_r) / n * 0.62
+    base = h - pad_b
+    for i, (_, v) in enumerate(pts):
+        x = X(i) - bw / 2
+        yv = Y(v)
+        bh = base - yv
+        is_today = (i == n - 1)
+        is_bottom = v <= threshold
+        fill = "#22c55e" if is_bottom else "#cbd5e1"
+        stroke = "#15803d" if is_today else "none"
+        sw = 1.4 if is_today else 0
+        svg.append(f'<rect x="{x:.1f}" y="{yv:.1f}" width="{bw:.1f}" height="{max(bh,0.5):.1f}" rx="1.5" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
+    # x 轴日期标签（首/中/尾）
+    for i in (0, n // 2, n - 1):
+        d = pts[i][0][5:]  # MM-DD
+        svg.append(f'<text x="{X(i):.1f}" y="{h-8:.1f}" font-size="9" fill="#9aa3af" text-anchor="middle">{d}</text>')
+    svg.append('</svg>')
+    return "".join(svg)
+
 def bar(score, cls):
     s = max(0, min(100, float(score)))
     return f'<div class="bar {cls}"><i style="width:{s:.1f}%"></i></div>'
@@ -296,9 +363,21 @@ def _fmt_yi(v):
         return "—"
 
 
+def _fmt_wanyi(v):
+    """元 → 万亿元字符串（NaN/None/≤0 返回 —）"""
+    try:
+        fv = float(v)
+        if fv != fv or fv <= 0:
+            return "—"
+        return f"{fv/1e12:.2f} 万亿"
+    except Exception:
+        return "—"
+
+
 def render_dibudian_card(d):
     """底部区域判断卡（旁挂 XXFI，独立、不影响原指标）。无数据返回空串。
-    结构：标题栏 + 主区（左 状态/副标题 · 右 持久日期）+ 3列明细网格 + 比率进度条(含50%阈值线)。
+    结构：标题栏 + 主区（左 状态/副标题 · 右 持久日期）+ 3列明细网格 + 比率进度条(含50%阈值线)
+          + 近30日成交额趋势柱图（峰值 / 底部阈值 参考线）。
     """
     if not d:
         return ""
@@ -308,8 +387,8 @@ def render_dibudian_card(d):
     today_total = d.get("today_total")
     max90 = d.get("max90_total")
     threshold = d.get("threshold", 0.5)
-    verdict = d.get("verdict_text", "")
     emoji = d.get("verdict_emoji", "—")
+    src = d.get("_src") or "—"
 
     if is_hit is True:
         s_cls, s_txt, sub = "hit", "底部区域日", "地量 · 抛压衰竭，关注机会区域"
@@ -324,15 +403,27 @@ def render_dibudian_card(d):
 
     detail = (
         f'<div class="dip-cell"><div class="k">当日全市场成交额</div>'
-        f'<div class="v">{_fmt_yi(today_total)}</div>'
-        f'<div class="th">上证+深证 · 单位元</div></div>'
+        f'<div class="v">{_fmt_wanyi(today_total)}</div>'
+        f'<div class="th">上证+深证 · 全市场口径</div></div>'
         f'<div class="dip-cell"><div class="k">近90日最高成交额</div>'
-        f'<div class="v">{_fmt_yi(max90)}</div>'
+        f'<div class="v">{_fmt_wanyi(max90)}</div>'
         f'<div class="th">约一个完整季度峰值</div></div>'
         f'<div class="dip-cell"><div class="k">当前比率 / 阈值</div>'
         f'<div class="v">{ratio_txt} / {int(threshold*100)}%</div>'
         f'<div class="th">当日 ≤ 峰值×{int(threshold*100)}% 即底部区域</div></div>'
     )
+
+    # 近30日成交额趋势（柱 + 峰值 / 底部阈值参考线）
+    hist30 = d.get("hist30") or ((d.get("inputs") or {}) or {}).get("hist30")
+    if hist30:
+        trend_html = (
+            '<div class="dip-trend">'
+            + dip_trend_svg(hist30)
+            + f'<div class="dip-trend-note">柱体低于红色虚线（近90日峰值×50%）即触发底部区域；最右一根为当日。'
+            + f'数据来源：{src}</div></div>'
+        )
+    else:
+        trend_html = '<div class="dip-trend"><p class="muted">近30日成交额样本不足，暂无法绘制趋势。</p></div>'
 
     return f'''
     <div class="card dip-card">
@@ -355,6 +446,7 @@ def render_dibudian_card(d):
         </div>
         <div class="dip-bar-labels"><span>0%</span><span style="color:#dc2626">阈值 {int(threshold*100)}%</span><span>100%（近90日峰值）</span></div>
       </div>
+      {trend_html}
       <div class="dip-note">底部区域 = 地量区域。当日全市场成交额缩至近90日最高的一半及以下，视为抛压衰竭的底部信号。该日期持续显示，直到被下一个满足条件的交易日取代。</div>
     </div>'''
 

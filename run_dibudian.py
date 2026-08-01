@@ -18,7 +18,8 @@
 
 产物 output/dibudian_report.json 字段：
   {today_total, sh_today, sz_today, max90_total, ratio, threshold,
-   is_bottom_today, last_bottom_date, last_bottom_volume, _data_date, _note}
+   is_bottom_today, last_bottom_date, last_bottom_volume, hist30(近30日回看),
+   _data_date, _src, _note}
 产物 output/dibudian_state.json 字段（跨日保留）：
   {last_bottom_date, last_bottom_volume, _updated_at}
 """
@@ -80,6 +81,7 @@ def write(res, m, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     out = dict(res)
     out["_note"] = "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数"
+    out["hist30"] = m.get("hist30")   # 近30日成交额回看（供趋势图）
     out["inputs"] = {k: v for k, v in m.items() if not k.startswith("_")}
     # 报告
     p_json = os.path.join(out_dir, REPORT_FILE)
@@ -99,7 +101,7 @@ def write(res, m, out_dir):
 
 def main():
     ap = argparse.ArgumentParser(description="底部区域判断 编排入口")
-    ap.add_argument("--akshare", action="store_true", help="联网取数（东财 daily_em 全市场口径 + 新浪 spot 交叉校验）")
+    ap.add_argument("--akshare", action="store_true", help="联网取数（新浪实时 spot 当日全市场口径 + 本地通达信回填滚动缓存）")
     ap.add_argument("--demo-bottom", action="store_true", help="内置底部区域日样例")
     ap.add_argument("--demo-normal", action="store_true", help="内置非底部区域日样例")
     ap.add_argument("--json", default=None, help="直接传入输入 JSON 字符串")
