@@ -4,14 +4,27 @@
 
 > **核心思想**：散户（尤其小旭式）的"恐惧"常出现在阶段底部、"贪婪"常出现在阶段顶部。把市场当下的恐惧/贪婪量化 → 反向参考：越恐惧越该买、越贪婪越该卖。
 
+### 三个指标（一主两挂）
+
+| 指标 | 角色 | 判定 | 产物 |
+|---|---|---|---|
+| **XXFI 小旭恐惧指数** | **主指标**，决定信号 | 0–100 反向情绪分 → BUY / ACCUMULATE / HOLD / REDUCE / SELL | `xxfi_report.json` |
+| **❄ 冰点参考** | 旁挂，不影响 XXFI | 4 维度（下跌广度 / 指数·ETF跌幅 / 跌停数量 / 放量恐慌）**全部满足**才判冰点（一年 ≤3 次） | `bingdian_report.json` |
+| **🌱 底部区域判断** | 旁挂，不影响 XXFI | 地量：当日全市场成交额 **≤ 近90日峰值 × 50%** | `dibudian_report.json` + `dibudian_state.json` |
+
+两个旁挂指标**只做展示与参考**，绝不修改 XXFI 的任何原始计算与输出；任一旁挂取数失败只标「暂未获取」，不拖累主指标。
+
 ## 实时结果（GitHub Actions 自动更新）
 
-每个交易日 **14:30（UTC+8）** cron 触发（cron `"30 6 * * 1-5"`），产物提交到 `output/`。GitHub Actions 实际存在约 2h 排队延迟（实测 07-14/07-15 自动运行 ~+2h，07-13 拥堵日 +3h09m），实跑时间约 16:30 北京，恰好盘后数据定稿窗口：
+每个交易日 **14:30（UTC+8）** cron 触发（cron `"30 6 * * 1-5"`），产物提交到 `output/`。GitHub Actions 实际存在约 2h 排队延迟（实测 07-14/07-15 自动运行 ~+2h，07-13 拥堵日 +3h09m），实跑时间约 **16:30–17:00 北京**，恰好落在盘后数据定稿窗口：
 
 - 📄 [`output/xxfi_report.md`](output/xxfi_report.md) — 当日人类可读报告
 - 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段、`_generated_at` 更新时间（北京时间，精确到秒）、`_data_date` 数据日期）
 - 📈 [`output/history.jsonl`](output/history.jsonl) — 每日一行历史：`{date, xxfi, greed, signal, level}`（由每日 cron 自动累积）
 - ❄ [`output/bingdian_report.json`](output/bingdian_report.json) — 冰点参考结构化结果（4 维度明细 + 判定标准 + 溯源标记），旁挂展示、不影响 XXFI
+- 🌱 [`output/dibudian_report.json`](output/dibudian_report.json) — 底部区域判断（地量）结构化结果（当日/近90日峰值成交额 + 比率 + 近30日回看 `hist30`），旁挂展示、不影响 XXFI
+- 🗓 [`output/dibudian_state.json`](output/dibudian_state.json) — 底部区域**跨日持久状态**：`{last_bottom_date, last_bottom_volume}`，让"最近一次底部区域日"一直显示到被新的满足日取代
+- 💾 [`output/_turnover_cache.json`](output/_turnover_cache.json) — 全市场成交额滚动缓存 `{date: 元}`，底部区域的近90日峰值来源（由 CI 每交易日追加、自动提交持久化）
 
 ### 🌐 网页版（GitHub Pages 自动发布）
 
@@ -22,9 +35,11 @@
 - **对照参考表**：XXFI 绝对区间 → 等级 / 信号 / 含义，并标注「两表独立、非互补」
 - **历史趋势**：内联 SVG 折线（XXFI vs 贪婪）+ 近 10 日数据表（运行数日后自动出现）
 - **冰点参考卡**（旁挂右侧）：独立"A股冰点"参考指标（不影响 XXFI 任何原始计算/展示）。含冰点结论 + 4 格冰冷计（满足维度点亮）+ 4 维度明细（下跌广度 / 指数·ETF跌幅 / 跌停数量 / 放量恐慌），**每个维度下方用小字标注判定标准**（如 `D1 下跌广度` 下注明 `（下跌≥4000 且 占比≥85%）`），溯源标记（legu / sina_spot / eastmoney_spot）一并呈现
+- **底部区域判断卡**（旁挂，🌱 地量区域）：独立参考指标（同样不影响 XXFI）。含判定状态（底部区域日 / 非底部区域日）+ **最近一次底部区域日**（跨日持久显示）+ 3 格明细（当日全市场成交额 / 近90日最高 / 当前比率与阈值）+ 比率进度条（50% 处标红线阈值）+ **近30日成交额趋势柱图**
+- **近30日趋势柱图**（底部区域卡内，内联 SVG）：柱体 ≤ 阈值染绿、其余灰，最右一根为当日（加描边）；灰色虚线=近90日峰值、红色虚线=底部阈值（峰值×50%，标注具体万亿值），**参考线与文字绘制在柱体之上并带白色描边 halo**，任何底色下都清晰；x 轴标注首/中/尾三日，并额外用绿色加粗 + ▲ 标出**窗口内成交额最低日**（若最低日恰为首/中/尾则不重复标注）；日期统一 `MM-DD` 不含年份，跨年窗口直接显示 `12-31` / `01-05`
 - **页头时间标识**：顶部一行同时标注「数据日期」（数据所属交易日，周末/非交易日运行时≠当天）与「更新时间」（数据生成的**北京时间，精确到秒**，如 `2026-07-20 16:35:12`），与 douban-tracker 看板口径一致，便于核对数据时效
 
-由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
+由 `render_html.py` 读取 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染，并经 Actions 提交到 `docs/index.html`；GitHub Pages 源已设为 `main/docs` 自动发布，永远是最新结果。
 
 ## 自动运行触发方案
 
@@ -32,7 +47,7 @@
 
 ```
 09:30 开盘 → 15:00 收盘 → 15:00~16:00 涨跌家数 / 涨停跌停池 / 主力资金流向 陆续定稿（注：上证指数日K接口滞后约1天，当日指数值改由新浪实时 spot 补充）
-                              ↑ 14:30 cron（CI 实际约 16:30 执行，数据已就绪）
+                              ↑ 14:30 cron（CI 实际约 16:30–17:00 执行，数据已就绪）
 ```
 
 三条约束的落地：
@@ -40,9 +55,10 @@
 | 约束 | 方案 | 实现 |
 |---|---|---|
 | **① 交易日筛选** | 仅在交易日执行，非交易日（含节假日/休市）完全不触发 | cron 仅覆盖周一至五；`check` 步骤用 `tool_trade_date_hist_sina()` **精确排除法定节假日/休市日（含调休）**，不靠"周一到五"硬猜 |
-| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | cron `"30 6 * * 1-5"` = **北京 14:30**（GitHub Actions ~2h 延迟，实际约 16:30 执行）；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
+| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | cron `"30 6 * * 1-5"` = **北京 14:30**（GitHub Actions ~2h 延迟，实测实际约 16:30–17:00 执行）；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
 | **③ 每日频次** | 单日单次，不产生无效执行 | 盘后单次运行；非交易日 / 数据未就绪由 `check` 步骤 `skip`，后续步骤 `if: steps.check.outputs.trade == '1'` 全部跳过 |
 
+- **三个指标同进同退**：XXFI 主表、冰点参考、底部区域判断没有各自独立的触发器，都是 `xxfi-daily.yml` 里的并列 step，`if` 条件逐字相同（`steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'`）——同一个 cron、同一个交易日闸门、同一次提交。
 - 也可在 Actions 页面 **手动触发**（`workflow_dispatch`，无参数）：任意时间强制重算「当日」XXFI——盘中出**盘中快照**、收盘后出**当日收盘值**（周末/非交易日仍取最近交易日），用于验证链路或补算。
 - 防污染：仅当 `_data_date` == 当天 且 已收盘（北京时间 ≥15:00）才写入历史趋势；`_data_date` ≠ 当天（周末/非交易日）或盘中快照（<15:00）均跳过写入，避免脏数据/盘中值污染趋势；同日已存在则跳过（防手动触发与 cron 重复追加）。
 - **桌面 tdx 实时播报仍保留 09:30**：那是 WorkBuddy 交互场景（用通达信连接器实时取数，小旭可在开盘看一眼），与 Actions 盘后跑（akshare 开盘数据不全）职责互补。
@@ -125,6 +141,37 @@ XXFI 原为「散户情绪反向器」，v2 引入**聪明钱确认**——把�
 - **板块差异化跌停**：主板 ±10%（≤-9.5%）、创业板/科创板 ±20%（≤-19.5%）、北交所 ±30%（≤-29.5%）、**ST/*ST 不纳入跌停统计**（按代码前缀 + 名称识别）。
 - **溯源标记**：维度命中源记入 `_src_D1/D2/D3/D4`，取值 `legu` / `legu(reuse)` / `legu(reuse)-approx` / `sina_spot` / `eastmoney_spot` / `eastmoney_index` / `eastmoney_etf` / `eastmoney_etf(secids)` / `eastmoney_spot+cache`；任一维度取数失败 → 该维度标 `暂未获取`；全部失败 → 冰点整体 `暂未获取`。
 
+### 底部区域判断（旁挂指标 · 地量区域）
+
+> 与冰点参考平行的**第二个旁挂指标**，同样**独立于 XXFI**，不修改 XXFI 任何原始计算/展示。
+
+**判定逻辑**（`dibudian_index.py`，纯标准库、零依赖）：
+
+```
+底部区域日  ⇔  当日全市场成交额 ≤ 近 90 个交易日最高成交额 × 50%
+```
+
+立场：**底部区域 = 地量区域**。成交额缩至近一个季度峰值的一半及以下，视为市场极度冷清、抛压衰竭。它是一个**状态标记而非瞬时值**——某日一旦满足，该日期就持续显示在卡片上，直到下一个满足条件的日期取代它（由 `run_dibudian.py` 编排层读写 `dibudian_state.json` 实现跨日持久）。
+
+**口径：全市场，非指数成分股**
+
+`全市场成交额 = 上证指数(sh000001) + 深证成指(sz399001) 的全市场成交额之和`（单位：元）。当日与历史峰值**必须同口径**，否则比率失真。
+
+| 分量 | 数据源 | 说明 |
+|---|---|---|
+| **当日** `today_total` | 新浪实时 spot `stock_zh_index_spot_sina()` | 返回**全市场**成交额，本地/CI 均直连可用（实测 2026-07-31 ≈ 2.542 万亿） |
+| **近90日峰值** `max90_total`<br>**近30日回看** `hist30` | 本地滚动缓存 `output/_turnover_cache.json` | 冷启动由**通达信连接器 `tdx_kline`** 一次性回填 2026 全年交易日（139 天，2026-01-05 ~ 07-31），经 `build_cache.py` 合并为 `{date: 元}` 提交入库；此后每个交易日把当日值追加进缓存，保留最近 `CACHE_KEEP=400` 日滚动，由 CI 的 `git-auto-commit` 持久化回仓库 |
+
+**弃用记录（避免重复踩坑）**：
+
+- ❌ 东财 `stock_zh_index_daily_em`（push2his）/ 东财指数 spot：本机被代理拦截、`push2delay` 改写后 kline 端点返回空，**不可靠**。
+- ❌ 腾讯 `stock_zh_index_daily_tx`：其 `amount` 是**指数成分股成交额（约半量，≈1.3 万亿）**，与全市场口径（≈2.54 万亿）对不上，会让卡片绝对值与用户实际查到的数字不符。
+- ❌ 新浪历史日线 `stock_zh_index_daily`：**不含成交额列**，故历史峰值只能走缓存。
+
+**防污染**：仅在**工作日（周一~周五）**写入缓存。周末/非交易日运行时新浪 spot 会回显上一交易日的值，若照写会重复污染 90 日峰值窗口——已在 `fetch_dibudian_akshare.fetch_em_total()` 用 `_bj_now().weekday() < 5` 闸门拦截（实测周六手动触发后缓存仍为 139 天，无新增条目）。
+
+**降级**：新浪 spot 不可达时全部字段返回 `None`，卡片显示「暂未获取」，**不影响 XXFI 与冰点**。
+
 ## 运行方式
 
 ### 1) 纯 akshare 模式（CI / 无通达信环境，直接联网）
@@ -150,10 +197,36 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 python run_xxfi.py --json '{"drawdown":-0.08,"ret20":0.02,"above_ma20":0.01,"up":1800,"down":3200,"limit_up":40,"limit_down":30,"vol_pct":0.78,"retail_net":-0.02}'
 ```
 
-### 3) 自检
+### 3) 旁挂参考指标（冰点 / 底部区域）
+
+两者均**独立于 XXFI**，可单独运行，产物各自落到 `output/`，由 `render_html.py` 旁挂渲染：
 
 ```bash
-python xiaoxu_fear_index.py --demo   # 内置恐慌/贪婪样例，应分别输出 BUY / SELL
+# 冰点参考（4 维度全满足才判冰点）
+python run_bingdian.py --akshare --out output
+
+# 底部区域判断（地量：当日 ≤ 近90日峰值×50%）
+python run_dibudian.py --akshare --out output
+```
+
+底部区域首次部署需**冷启动缓存**（仅一次）：用通达信连接器 `tdx_kline` 导出上证/深证日 K 原始数据到 `sh_kline_raw.txt` / `sz_kline_raw.txt`，再执行 `python build_cache.py` 合并为 `output/_turnover_cache.json`。之后每交易日由 CI 自动滚动追加，无需再手动干预。
+
+渲染完整页面（含两张旁挂卡）：
+
+```bash
+python render_html.py --json output/xxfi_report.json \
+                      --history output/history.jsonl \
+                      --bingdian output/bingdian_report.json \
+                      --dibudian output/dibudian_report.json \
+                      --out docs/index.html
+```
+
+### 4) 自检
+
+```bash
+python xiaoxu_fear_index.py --demo         # 内置恐慌/贪婪样例，应分别输出 BUY / SELL
+python run_dibudian.py --demo-bottom --out output   # 地量样例：比率 0.375 ≤ 0.5 → 底部区域日
+python run_dibudian.py --demo-normal --out output   # 正常量样例：比率 1.125 > 0.5 → 非底部区域日
 ```
 
 ## 指标定义
@@ -191,12 +264,17 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `bingdian_index.py` | 冰点纯计算（仅标准库，零外部依赖）：输入 4 维度实测 → 输出冰点判定 + 维度明细（含 `threshold` 判定标准）+ 溯源标记 |
 | `fetch_bingdian_akshare.py` | 冰点 akshare 取数器（[P0] D1/D3 优先复用同轮 XXFI 的 legu 广度 → 否则 legu→新浪→东财；D2: 东财指数 + `ulist.np/get`(secids) 精确查 45 只核心 ETF（宽基含中证2000微盘、行业补保险/能源/交运），替代全量分页；[P2] D4: 东财当日额 + 本地滚动缓存近20日均额，去腾讯日K；含多源兜底） |
 | `run_bingdian.py` | 冰点编排入口（`--akshare` / `--demo` / `--json`），产出 `output/bingdian_report.json` + `.md` |
-| `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡，GitHub Pages） |
+| `dibudian_index.py` | 底部区域纯计算（仅标准库，零外部依赖）：输入当日 + 近90日峰值成交额 → 输出是否底部区域日 + 比率 + 判定文案 |
+| `fetch_dibudian_akshare.py` | 底部区域取数器：当日走**新浪实时 spot**（全市场口径），近90日峰值 + 近30日回看走**本地滚动缓存**（通达信冷启动回填）；含周末写入闸门防污染 |
+| `run_dibudian.py` | 底部区域编排入口（`--akshare` / `--demo-bottom` / `--demo-normal` / `--json`），产出 `output/dibudian_report.json` + 跨日持久的 `dibudian_state.json` |
+| `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |
+| `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 底部区域判断卡与30日趋势图，GitHub Pages） |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
-| `.github/workflows/xxfi-daily.yml` | 每日自动播报（14:30 cron · 仅交易日 · 数据就绪校验；实际约 16:30 执行） |
+| `.github/workflows/xxfi-daily.yml` | 每日自动播报（14:30 cron · 仅交易日 · 数据就绪校验；实际约 16:30–17:00 执行）。XXFI / 冰点 / 底部区域三个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
+| `output/_turnover_cache.json` | 全市场成交额滚动缓存（底部区域近90日峰值来源），每交易日由 CI 自动追加并提交 |
 
 ## License
 
