@@ -223,6 +223,10 @@ def dip_trend_svg(hist):
     hist: list[{"date":"YYYY-MM-DD","total":float(元)}]（通常尾部 30 日）。
     绘制：柱体（低于红色阈值线=底部区域日，绿色；其余浅灰）
         + 淡灰虚线（近90日峰值 100%）+ 红色虚线（峰值×50% 底部阈值）。
+    图层顺序：网格 → 柱体 → 参考线 → 文字（参考线与文字始终压在柱体之上，
+        并带白色描边 halo，避免被柱体遮挡）。
+    x 轴日期标注：首 / 中 / 尾 + 窗口内成交额最低日（若最低日恰为首/中/尾则不重复标注）。
+    日期一律 MM-DD，跨年时按自然日显示（如 12-31 → 01-05）。
     Y 轴以「万亿」刻度。无/不足 2 点返回提示。
     """
     if not hist or len(hist) < 2:
@@ -232,7 +236,8 @@ def dip_trend_svg(hist):
     if len(pts) < 2:
         return '<p class="muted">近30日成交额样本不足，暂无法绘制趋势。</p>'
     w, h = 680, 200
-    pad_l, pad_r, pad_t, pad_b = 44, 12, 14, 24
+    # pad_b 留出两行标签空间：柱底三角 + 日期（最低日与首/中/尾过近时可上移一行）
+    pad_l, pad_r, pad_t, pad_b = 44, 12, 14, 30
     n = len(pts)
     totals = [v for _, v in pts]
     peak = max(totals)
@@ -252,15 +257,7 @@ def dip_trend_svg(hist):
         y = Y(val)
         svg.append(f'<line x1="{pad_l}" y1="{y:.1f}" x2="{w-pad_r}" y2="{y:.1f}" stroke="#eef2f7"/>')
         svg.append(f'<text x="{pad_l-6}" y="{y+4:.1f}" font-size="10" fill="#9aa3af" text-anchor="end">{val/1e12:.2f}万亿</text>')
-    # 峰值参考线（淡灰虚线）
-    yp = Y(peak)
-    svg.append(f'<line x1="{pad_l}" y1="{yp:.1f}" x2="{w-pad_r}" y2="{yp:.1f}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3"/>')
-    svg.append(f'<text x="{w-pad_r}" y="{yp-4:.1f}" font-size="9" fill="#94a3b8" text-anchor="end">近90日峰值 {peak/1e12:.2f}万亿</text>')
-    # 底部阈值线（红虚线 = 峰值×50%）
-    yt = Y(threshold)
-    svg.append(f'<line x1="{pad_l}" y1="{yt:.1f}" x2="{w-pad_r}" y2="{yt:.1f}" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="5 3"/>')
-    svg.append(f'<text x="{w-pad_r}" y="{yt+10:.1f}" font-size="9" fill="#dc2626" text-anchor="end">底部阈值(峰值×50%)</text>')
-    # 柱体
+    # 柱体（先画，后续参考线与文字覆盖其上）
     bw = (w - pad_l - pad_r) / n * 0.62
     base = h - pad_b
     for i, (_, v) in enumerate(pts):
@@ -273,10 +270,34 @@ def dip_trend_svg(hist):
         stroke = "#15803d" if is_today else "none"
         sw = 1.4 if is_today else 0
         svg.append(f'<rect x="{x:.1f}" y="{yv:.1f}" width="{bw:.1f}" height="{max(bh,0.5):.1f}" rx="1.5" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
-    # x 轴日期标签（首/中/尾）
-    for i in (0, n // 2, n - 1):
-        d = pts[i][0][5:]  # MM-DD
-        svg.append(f'<text x="{X(i):.1f}" y="{h-8:.1f}" font-size="9" fill="#9aa3af" text-anchor="middle">{d}</text>')
+    # 白色描边 halo：保证文字压在任意颜色柱体上仍清晰
+    halo = 'paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"'
+    # 峰值参考线（淡灰虚线，画在柱体之上）
+    yp = Y(peak)
+    svg.append(f'<line x1="{pad_l}" y1="{yp:.1f}" x2="{w-pad_r}" y2="{yp:.1f}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3"/>')
+    svg.append(f'<text x="{w-pad_r}" y="{yp-4:.1f}" font-size="9" fill="#94a3b8" text-anchor="end" {halo}>近90日峰值 {peak/1e12:.2f}万亿</text>')
+    # 底部阈值线（红虚线 = 峰值×50%，画在柱体之上；文字置于线上方）
+    yt = Y(threshold)
+    svg.append(f'<line x1="{pad_l}" y1="{yt:.1f}" x2="{w-pad_r}" y2="{yt:.1f}" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="5 3"/>')
+    svg.append(f'<text x="{w-pad_r}" y="{yt-4:.1f}" font-size="9" font-weight="600" fill="#dc2626" text-anchor="end" {halo}>底部阈值(峰值×50%) {threshold/1e12:.2f}万亿</text>')
+    # x 轴日期标签：首 / 中 / 尾 + 窗口内成交额最低日
+    base_idx = [0, n // 2, n - 1]
+    imin = min(range(n), key=lambda i: pts[i][1])
+    mark_min = imin not in base_idx          # 最低日恰为首/中/尾时不重复标注
+    for i in sorted(set(base_idx)):
+        d = pts[i][0][5:]  # MM-DD（跨年按自然日显示）
+        svg.append(f'<text x="{X(i):.1f}" y="{h-8:.1f}" font-size="9" fill="#9aa3af" text-anchor="middle" {halo}>{d}</text>')
+    if mark_min:
+        d = pts[imin][0][5:]
+        xm = X(imin)
+        # 与首/中/尾标签过近（横向 <30px）时上移一行，避免重叠
+        too_close = any(abs(xm - X(j)) < 30 for j in base_idx)
+        if too_close:
+            svg.append(f'<text x="{xm:.1f}" y="{h-19:.1f}" font-size="9" font-weight="700" fill="#16a34a" text-anchor="middle" {halo}>{d}</text>')
+        else:
+            # 柱底向上三角，指向窗口内成交额最低日；位于绘图区之外，绝不与参考线/文字冲突
+            svg.append(f'<path d="M{xm:.1f},{base+1:.1f} L{xm-4:.1f},{base+7:.1f} L{xm+4:.1f},{base+7:.1f} Z" fill="#16a34a"/>')
+            svg.append(f'<text x="{xm:.1f}" y="{h-8:.1f}" font-size="9" font-weight="700" fill="#16a34a" text-anchor="middle" {halo}>{d}</text>')
     svg.append('</svg>')
     return "".join(svg)
 
@@ -419,7 +440,7 @@ def render_dibudian_card(d):
         trend_html = (
             '<div class="dip-trend">'
             + dip_trend_svg(hist30)
-            + f'<div class="dip-trend-note">柱体低于红色虚线（近90日峰值×50%）即触发底部区域；最右一根为当日。'
+            + f'<div class="dip-trend-note">柱体低于红色虚线（近90日峰值×50%）即触发底部区域；最右一根为当日；绿色 ▲ 标记为窗口内成交额最低日。'
             + f'数据来源：{src}</div></div>'
         )
     else:
