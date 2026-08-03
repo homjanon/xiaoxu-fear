@@ -1,13 +1,13 @@
 {
-  "today_total": 666149811489.0,
-  "sh_today": 310087392460.0,
-  "sz_today": 356062419029.0,
+  "today_total": 1997385855653.0,
+  "sh_today": 952256890102.0,
+  "sz_today": 1045128965551.0,
   "max90_total": 3737198788608.0,
-  "ratio": 0.1782,
+  "ratio": 0.5345,
   "threshold": 0.5,
-  "is_bottom_today": true,
-  "verdict_text": "底部区域日",
-  "verdict_emoji": "🟢",
+  "is_bottom_today": false,
+  "verdict_text": "非底部区域日",
+  "verdict_emoji": "⚪",
   "_data_date": "2026-08-03",
   "_src": "sina_spot+cache(2026-08-03)",
   "_sina_src": null,
@@ -137,9 +137,9 @@
     }
   ],
   "inputs": {
-    "today_total": 666149811489.0,
-    "sh_today": 310087392460.0,
-    "sz_today": 356062419029.0,
+    "today_total": 1997385855653.0,
+    "sh_today": 952256890102.0,
+    "sz_today": 1045128965551.0,
     "max90_total": 3737198788608.0,
     "hist30": [
       {
