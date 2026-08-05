@@ -141,8 +141,12 @@ def fetch_em_total():
                 "max90_total": None, "hist30": [],
                 "_src": "暂未获取", "_data_date": date}
     cache = _load_turnover_cache()
-    # 仅交易日（周一~周五）写入，避免周末 spot 回显上周五值污染窗口
-    if date not in cache and _bj_now().weekday() < 5:
+    # 防污染（根治）：仅「_data_date==当天(北京) 且 已收盘(≥15:00) 且 工作日 且 同日未写过」写入。
+    # 盘中快照(<15:00)/周末/非交易日(_data_date≠当天) 跳过；同日已存在跳过(防手动&cron重复)。
+    now = _bj_now()
+    date_is_today = (date == now.strftime("%Y-%m-%d"))
+    after_close = (now.hour >= 15)
+    if date_is_today and after_close and now.weekday() < 5 and date not in cache:
         cache[date] = total
     _save_turnover_cache(cache)
     max90 = _max90_from_cache(cache)

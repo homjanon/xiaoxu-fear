@@ -121,17 +121,19 @@ def main():
 
     computed = compute(m)
 
-    # 跨日持久：满足才更新日期，否则保持旧值（从 state.json 读回）
+    # 跨日持久：收盘后且满足才更新日期，否则保持旧值（从 state.json 读回）
     state = load_state(args.out)
-    if computed.get("is_bottom_today") is True:
+    now = datetime.datetime.now(CST)
+    after_close = now.hour >= 15
+    if computed.get("is_bottom_today") is True and after_close:
         new_date = computed.get("_data_date")
         new_vol = computed.get("today_total")
-        print(f"[state] 今日满足条件 → 更新底部区域日为 {new_date}")
+        print(f"[state] 今日满足条件(收盘后) → 更新底部区域日为 {new_date}")
     else:
         new_date = state.get("last_bottom_date")
         new_vol = state.get("last_bottom_volume")
         if new_date:
-            print(f"[state] 今日未满足，保持上次底部区域日 {new_date}")
+            print(f"[state] 非底部区域日或未收盘 → 保持上次底部区域日 {new_date}")
         else:
             print("[state] 今日未满足，且无历史记录")
 

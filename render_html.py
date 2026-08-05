@@ -100,6 +100,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .dip-right{text-align:right;min-width:150px;}
 .dip-date{font-size:15px;font-weight:800;color:#15803d;font-variant-numeric:tabular-nums;}
 .dip-date-label{font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:2px;}
+.dip-date-vol{font-size:12px;color:#0f766e;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px;}
 .dip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px;
   border-top:1px dashed #bbf7d0;padding-top:12px;}
 .dip-cell{background:rgba(255,255,255,.65);border:1px solid #c7f0d2;border-radius:10px;
@@ -404,6 +405,7 @@ def render_dibudian_card(d):
         return ""
     is_hit = d.get("is_bottom_today")
     last_date = d.get("last_bottom_date") or "暂未记录"
+    last_vol = d.get("last_bottom_volume")
     ratio = d.get("ratio")
     today_total = d.get("today_total")
     max90 = d.get("max90_total")
@@ -457,6 +459,7 @@ def render_dibudian_card(d):
         <div class="dip-right">
           <div class="dip-date-label">最近一次底部区域日</div>
           <div class="dip-date">{last_date}</div>
+          <div class="dip-date-vol">{_fmt_wanyi(last_vol) if last_vol else '—'}</div>
         </div>
       </div>
       <div class="dip-grid">{detail}</div>
