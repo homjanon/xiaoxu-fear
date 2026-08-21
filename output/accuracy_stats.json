@@ -2,13 +2,13 @@
   "total_trades": 0,
   "wins": 0,
   "losses": 0,
-  "open": 0,
+  "open": 2,
   "win_rate": 0,
   "avg_win": 0,
   "avg_loss": 0,
   "profit_factor": 0,
-  "latest_nav": 1000000.0,
-  "total_return": 0.0,
-  "max_drawdown": 0.0,
+  "latest_nav": 1004160.4,
+  "total_return": 0.42,
+  "max_drawdown": -7.98,
   "days": 20
 }
