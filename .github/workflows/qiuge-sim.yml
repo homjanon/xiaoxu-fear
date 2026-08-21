@@ -1,0 +1,55 @@
+name: 秋哥操作实盘模拟
+
+# 秋哥操作 · 实盘模拟器（Paper Trading）
+# 每日盘后自动：读昨日 qiuge_report.json（watch/picks/招行判定）→ 验证下一交易日行情
+#   → 买点触发（回踩 MA5/MA10 + 主力确认，按买点价盘中成交）→ 止盈止损（破MA20减/破MA60离场）
+#   → 更新 simulation_state/history/accuracy_stats → 渲染网页区块（底部区域判断下方）
+# 历史回放：workflow_dispatch 带 start 参数可跑 8/3 起全部历史报告回放
+
+on:
+  schedule:
+    - cron: "40 8 * * 1-5"   # 北京 16:40（UTC 08:40），对齐 qiuge_report 更新后
+  workflow_dispatch:
+    inputs:
+      replay:
+        description: "历史回放（1=回放全部历史报告，0=仅当日）"
+        required: false
+        default: "0"
+
+permissions:
+  contents: write
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: 设置 Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: 运行模拟器（历史回放 or 当日）
+        run: |
+          if [ "${{ github.event.inputs.replay }}" = "1" ]; then
+            python simulate_qiuge.py --replay
+          else
+            python simulate_qiuge.py --daily
+          fi
+
+      - name: 渲染网页区块
+        run: |
+          python render_simulation.py
+
+      - name: 提交
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "sim: 每日实盘模拟更新 ($(date +%Y-%m-%d))" || echo "无变更"
+          git push origin main
