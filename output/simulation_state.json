@@ -2,7 +2,7 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 30.0,
+      "cost": 29.891,
       "shares": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
@@ -13,7 +13,7 @@
       "prev_close": 38.86,
       "chg_pct": 0.1,
       "day_pnl": 400.0,
-      "total_pnl": 89000.0
+      "total_pnl": 90090.0
     },
     "601899": {
       "name": "紫金矿业",
