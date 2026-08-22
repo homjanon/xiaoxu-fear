@@ -10,5 +10,10 @@
   "latest_nav": 1092089.7,
   "total_return": -1.04,
   "max_drawdown": -1.82,
-  "days": 14
+  "days": 14,
+  "total_pnl": -11510.3,
+  "hs300_return": 1.67,
+  "excess_hs300": -2.71,
+  "divlow_return": -2.24,
+  "excess_divlow": 1.2
 }
