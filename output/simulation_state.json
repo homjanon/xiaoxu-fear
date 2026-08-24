@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 38.9,
-      "prev_close": 38.86,
-      "chg_pct": 0.1,
-      "day_pnl": 268.0,
-      "total_pnl": 89759.9,
+      "last_close": 39.58,
+      "prev_close": 38.9,
+      "chg_pct": 1.75,
+      "day_pnl": 4556.0,
+      "total_pnl": 94315.9,
       "defence_done": true
     },
     "601899": {
@@ -25,11 +25,11 @@
       "buy_date": "2026-08-21",
       "buy_price": 33.398,
       "target_pos": 163394.793975,
-      "last_close": 34.74,
-      "prev_close": 33.83,
-      "chg_pct": 2.69,
-      "day_pnl": 1547.0,
-      "total_pnl": 2281.4
+      "last_close": 34.54,
+      "prev_close": 34.74,
+      "chg_pct": -0.58,
+      "day_pnl": -340.0,
+      "total_pnl": 1941.4
     }
   },
   "cash": 772145.83235,
@@ -115,7 +115,7 @@
     },
     "300433": {
       "name": "蓝思科技",
-      "confirm_days": 0,
+      "confirm_days": 1,
       "add_date": "2026-08-21"
     },
     "002821": {
@@ -126,6 +126,16 @@
     "000603": {
       "name": "盛达资源",
       "add_date": "2026-08-21"
+    },
+    "002028": {
+      "name": "思源电气(observing-1)",
+      "confirm_days": 1,
+      "add_date": "2026-08-24"
+    },
+    "002353": {
+      "name": "杰瑞股份(observing-1)",
+      "confirm_days": 0,
+      "add_date": "2026-08-24"
     }
   },
   "log": [
@@ -250,9 +260,15 @@
       "nav": 1091833.83,
       "cash": 772145.83,
       "market_value": 319688.0
+    },
+    {
+      "date": "2026-08-24",
+      "nav": 1096049.83,
+      "cash": 772145.83,
+      "market_value": 323904.0
     }
   ],
-  "last_update": "2026-08-22",
+  "last_update": "2026-08-24",
   "profit_pool": 0.0,
-  "last_processed_date": "2026-08-21"
+  "last_processed_date": "2026-08-24"
 }
