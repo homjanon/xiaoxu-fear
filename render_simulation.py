@@ -50,13 +50,18 @@ def load_history(hist_path):
                     out.append(json.loads(line))
     except Exception:
         pass
-    return out
+    # 同日去重（保留最后一条）：多份报告可能验证同一天
+    dedup = {}
+    for rec in out:
+        dedup[rec.get("date")] = rec
+    return [dedup[d] for d in sorted(dedup)]
 
 
 def build_svg(history):
-    """净值曲线 SVG（折线），宽度 680 高 200"""
+    """净值曲线 SVG（折线），宽度 680 高 200；只取最近 180 个交易日"""
     if not history:
         return "<div class='sim-empty'>暂无净值数据（每日盘后自动累积）</div>"
+    history = history[-180:]  # 最近 180 个交易日窗口
     navs = [h["nav"] for h in history]
     ds = [h["date"][5:] for h in history]
     w, h = 680, 200
@@ -81,7 +86,7 @@ def build_svg(history):
     labels = ""
     for idx in (0, len(ds) // 2, len(ds) - 1):
         labels += f'<text x="{x(idx):.1f}" y="{h - 6:.0f}" font-size="9" fill="#9aa3af" text-anchor="middle">{ds[idx]}</text>'
-    color = "#16a34a" if navs[-1] >= navs[0] else "#dc2626"
+    color = "#dc2626" if navs[-1] >= navs[0] else "#16a34a"  # 红涨绿跌
     return (f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="模拟净值曲线">'
             f'{grid_html}'
             f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>'
@@ -92,13 +97,31 @@ def build_svg(history):
 def build_positions_table(state):
     positions = (state or {}).get("positions", {}) or {}
     if not positions:
-        return "<tr><td colspan='6' style='text-align:center;color:#94a3b8'>当前无持仓</td></tr>"
+        return "<tr><td colspan='8' style='text-align:center;color:#94a3b8'>当前无持仓</td></tr>"
     rows = []
     for code, p in positions.items():
+        name = p.get("name", "")
+        # 招行 = 底仓（2024-09-25 起持有，参与模拟交易）
+        tag = "底仓" if code == "600036" else "模拟"
+        px = p.get("last_close", p.get("cost", 0))
+        chg = p.get("chg_pct", 0)
+        day_pnl = p.get("day_pnl", 0)
+        total_pnl = p.get("total_pnl", (px - p.get("cost", 0)) * p.get("shares", 0))
+        # 收益率 = (最新收盘 - 成本) / 成本（与总盈亏金额同口径，摊薄成本基准）
+        cost = p.get("cost", 0) or 0
+        ret_pct = (px - cost) / cost * 100 if cost else 0
+        chg_color = "#dc2626" if chg >= 0 else "#16a34a"  # 中国习惯：红涨绿跌
+        day_color = "#dc2626" if day_pnl >= 0 else "#16a34a"
+        tot_color = "#dc2626" if total_pnl >= 0 else "#16a34a"
+        ret_color = "#dc2626" if ret_pct >= 0 else "#16a34a"
         rows.append(
-            f"<tr><td>{code}</td><td>{p.get('name','')}</td>"
-            f"<td>{p.get('cost',0):.2f}</td><td>{p.get('shares',0)}</td>"
-            f"<td>{p.get('buy_date','')}</td><td>{p.get('buy_price',0):.2f}</td></tr>"
+            f"<tr><td>{code}</td><td>{name}{'<span style="font-size:9px;color:#94a3b8;margin-left:3px;border:1px solid #e2e8f0;border-radius:3px;padding:0 3px;">' + tag + '</span>' if tag == '底仓' else ''}</td>"
+            f"<td>{cost:.2f}</td><td>{p.get('shares', 0)}</td>"
+            f"<td style='font-variant-numeric:tabular-nums;'>{px:.2f}</td>"
+            f"<td style='color:{chg_color};'>{chg:+.2f}%</td>"
+            f"<td style='color:{day_color};'>{day_pnl:+,.0f}</td>"
+            f"<td style='color:{tot_color};'>{total_pnl:+,.0f}</td>"
+            f"<td style='color:{ret_color};'>{ret_pct:+.2f}%</td></tr>"
         )
     return "".join(rows)
 
@@ -108,7 +131,7 @@ def build_trades_table(state):
     if not log:
         return "<tr><td colspan='6' style='text-align:center;color:#94a3b8'>暂无交易记录</td></tr>"
     rows = []
-    for t in log[-15:][::-1]:
+    for t in log[-10:][::-1]:  # 只展示最近 10 笔
         rows.append(
             f"<tr><td>{t.get('date','')}</td><td>{t.get('type','')}</td>"
             f"<td>{t.get('name','')}</td><td>{t.get('price','')}</td>"
@@ -123,25 +146,43 @@ def build_block(state, stats, history):
     ret = stats.get("total_return", 0)
     win = stats.get("win_rate", 0)
     open_n = stats.get("open", 0)
-    ret_color = "#16a34a" if ret >= 0 else "#dc2626"
+    ret_color = "#dc2626" if ret >= 0 else "#16a34a"  # 红涨绿跌
+    pnl = stats.get("total_pnl", ret / 100 * 1_103_600)
+    pnl_color = "#dc2626" if pnl >= 0 else "#16a34a"
+    ex_h = stats.get("excess_hs300")
+    ex_d = stats.get("excess_divlow")
+    h_ret = stats.get("hs300_return")
+    d_ret = stats.get("divlow_return")
+
+    def _excess_cell(title, ex, base_ret):
+        if ex is None:
+            return f'<div class="dip-cell"><div class="k">{title}</div><div class="v">—</div><div class="th">基准数据缺失</div></div>'
+        c = "#dc2626" if ex >= 0 else "#16a34a"
+        return (f'<div class="dip-cell"><div class="k">{title}</div>'
+                f'<div class="v" style="color:{c};">{ex:+.2f} pp</div>'
+                f'<div class="th">基准同期 {base_ret:+.2f}%</div></div>')
+
+    win_disp = win if stats.get("total_trades", 0) >= 5 else "待样本"
     return f"""
   <!-- ===== 秋哥操作 · 实盘模拟区块（render_simulation.py 自动生成） ===== -->
   <div class="card" id="qiuge-sim" style="margin-top:18px;">
     <div class="dip-head">📊 秋哥操作 · 实盘模拟 <span style="font-size:10px;color:#94a3b8;font-weight:600;margin-left:6px;">模拟账户 · 非真实资金 · 按回踩买点纪律自动判定</span></div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
-      <div class="dip-cell"><div class="k">模拟净值</div><div class="v" style="font-variant-numeric:tabular-nums;">{nav:,.0f}</div><div class="th">初始 ¥1,000,000</div></div>
-      <div class="dip-cell"><div class="k">累计收益</div><div class="v" style="color:{ret_color};">{ret:+.2f}%</div><div class="th">vs 初始资金</div></div>
-      <div class="dip-cell"><div class="k">推荐命中率</div><div class="v">{win}%</div><div class="th">已平仓盈利交易占比</div></div>
-      <div class="dip-cell"><div class="k">当前持仓</div><div class="v">{open_n} 只</div><div class="th">上限 5 只</div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
+      <div class="dip-cell"><div class="k">模拟净值</div><div class="v" style="font-variant-numeric:tabular-nums;">{nav:,.0f}</div><div class="th">起点 ¥1,103,600（8/3）</div></div>
+      <div class="dip-cell"><div class="k">总盈亏</div><div class="v" style="color:{pnl_color};">{pnl:+,.0f}</div><div class="th">含交易成本</div></div>
+      <div class="dip-cell"><div class="k">累计收益</div><div class="v" style="color:{ret_color};">{ret:+.2f}%</div><div class="th">vs 起点（8/3）</div></div>
+      {_excess_cell("vs 沪深300", ex_h, h_ret or 0)}
+      {_excess_cell("vs 红利低波", ex_d, d_ret or 0)}
+      <div class="dip-cell"><div class="k">当前持仓 {open_n} 只</div><div class="v">{win_disp}</div><div class="th">命中率（≥5笔才统计）· 上限5只</div></div>
     </div>
-    <div class="dip-trend">{build_svg(history)}<div class="dip-trend-note">模拟账户净值曲线（每日盘后累积）</div></div>
+    <div class="dip-trend">{build_svg(history)}<div class="dip-trend-note">模拟账户净值曲线（自 8/3 起逐日累积，最近 180 交易日）</div></div>
     <div style="font-size:13px;font-weight:700;margin:14px 0 8px;">📌 当前持仓</div>
-    <table class="score-tbl"><thead><tr><th>代码</th><th>名称</th><th>成本</th><th>数量</th><th>买入日</th><th>买入价</th></tr></thead>
+    <table class="score-tbl"><thead><tr><th>代码</th><th>名称</th><th>成本价</th><th>数量</th><th>最新收盘</th><th>当日涨跌</th><th>当日盈亏</th><th>总盈亏</th><th>收益率</th></tr></thead>
     <tbody>{build_positions_table(state)}</tbody></table>
     <div style="font-size:13px;font-weight:700;margin:14px 0 8px;">🔄 最近交易（买卖点复盘）</div>
     <table class="score-tbl"><thead><tr><th>日期</th><th>类型</th><th>标的</th><th>价格</th><th>数量</th><th>原因</th></tr></thead>
     <tbody>{build_trades_table(state)}</tbody></table>
-    <div style="font-size:10.5px;color:#94a3b8;margin-top:12px;line-height:1.6;">⚠️ 本区块为策略方法验证的模拟账户：按秋哥纪律（回踩 MA5/MA10 买点 + 主力确认 / 破 MA20 减仓 / 破 MA60 离场 / 止盈 10–20%）自动判定，仅供回测验证，<b>不构成任何投资建议</b>。数据源：东财/腾讯公开行情。</div>
+    <div style="font-size:10.5px;color:#94a3b8;margin-top:12px;line-height:1.6;">⚠️ 本区块为策略方法验证的模拟账户：按秋哥纪律（回踩 MA5/MA10 买点 + 主力确认 / 破 MA20 减仓 / 破 MA60 离场 / 止盈 10–20%）自动判定，仅供回测验证，<b>不构成任何投资建议</b>。纪律：底仓招行止盈+15%减1/3、破MA20减1/3、破MA60清仓；短线按资金定档（强势档分批10/20/40% / 弱势档+3%全卖）、破MA60或资金撤退全卖。数据源：通达信 + 腾讯自选股（本地采集，每日盘后同步）。</div>
   </div>
   <!-- ===== 秋哥操作 · 实盘模拟区块结束 ===== -->
 """
@@ -150,8 +191,14 @@ def build_block(state, stats, history):
 def inject(index_path, block):
     with open(index_path, encoding="utf-8") as f:
         html = f.read()
+    # 幂等：先删除所有已存在的模拟区块（旧版/新版），避免重复注入
+    html, cnt = re.subn(
+        r"<!-- ===== 秋哥操作 · 实盘模拟区块.*?秋哥操作 · 实盘模拟区块结束 ===== -->",
+        "", html, flags=re.S,
+    )
+    if cnt:
+        print(f"  ♻️ 已移除旧模拟区块 x{cnt}")
     # 定位「底部区域判断」卡片结束位置：找 "dip-note" 的闭合 div（底部区域卡的最后一句说明）
-    # 「底部区域判断」卡以 <div class="dip-note">…</div> 结尾，后面跟 </div>（卡片闭合）
     marker = re.search(r'(<div class="dip-note">.*?</div>\s*</div>)', html, re.S)
     if not marker:
         print("❌ 未找到「底部区域判断」卡结束位置（dip-note），无法注入")

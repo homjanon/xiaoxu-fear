@@ -239,6 +239,8 @@ python render_html.py --json output/xxfi_report.json \
 
 > ⚠️ **两步串联（2026-08-26 事故教训）**：`render_html.py` 只生成基础页（XXFI + 冰点 + 底部区域），**「📊 秋哥操作 · 实盘模拟」区块由 `render_simulation.py` 单独注入**（读 `output/simulation_state.json` 等模拟数据，插在底部区域卡下方；由秋哥操作 skill 的每日流程负责维护，不在 xxfi-daily.yml CI 内）。因此：**任何手动重渲染 `docs/index.html` 之后，必须补跑 `python render_simulation.py` 再推送**——否则实盘模拟板块会被抹掉（2026-08-25 底部区域修复时曾遗漏此步导致板块消失，次日经 render_simulation 重注入恢复）。
 
+> 📌 **版本真源**：`simulate_qiuge.py` / `render_simulation.py` 的最新迭代维护在本地「秋哥操作（每日运行）」工作空间，**改动后需同步覆盖至本仓再推送**（2026-08-26 曾因仓内脚本停留在旧版，重注入出旧样式板块——缺总收益率/底仓标签/收益率列等新功能）。
+
 ### 4) 自检
 
 ```bash
