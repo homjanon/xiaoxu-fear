@@ -7,7 +7,7 @@
     {
       "key": "D1",
       "name": "下跌广度",
-      "value": "下跌 3705/5207（71.2%）",
+      "value": "下跌 1177/5208（22.6%）",
       "threshold": "下跌≥4000 且 占比≥85%",
       "pass": false,
       "source": "legu(reuse)"
@@ -15,7 +15,7 @@
     {
       "key": "D2",
       "name": "指数/ETF跌幅",
-      "value": "上证 -0.59% 创业 -3.21% · ETF跌 22%",
+      "value": "上证 0.19% 创业 -1.00% · ETF跌 2%",
       "threshold": "上证≤-2.0% 创业≤-2.5% ETF跌≥60%",
       "pass": false,
       "source": "eastmoney_index"
@@ -23,7 +23,7 @@
     {
       "key": "D3",
       "name": "跌停数量",
-      "value": "跌停 14/涨停 48（比 0.3）",
+      "value": "跌停 4/涨停 70（比 0.1）",
       "threshold": "跌停≥50 且 比≥3",
       "pass": false,
       "source": "legu(reuse)"
@@ -31,26 +31,26 @@
     {
       "key": "D4",
       "name": "放量恐慌",
-      "value": "0.88 倍",
+      "value": "0.80 倍",
       "threshold": "放量倍数≥1.3",
       "pass": false,
       "source": "eastmoney_spot+cache"
     }
   ],
   "missing": [],
-  "_data_date": "2026-08-24",
+  "_data_date": "2026-08-25",
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
   "inputs": {
-    "down": 3705,
-    "total": 5207,
-    "down_ratio": 0.7115421547916266,
-    "limit_down": 14,
-    "limit_up": 48,
-    "ld_lu_ratio": 0.2916666666666667,
-    "sh_chg": -0.59,
-    "cyb_chg": -3.21,
-    "etf_down_ratio": 0.2222222222222222,
-    "volume_mult": 0.8826846358329944,
-    "_data_date": "2026-08-24"
+    "down": 1177,
+    "total": 5208,
+    "down_ratio": 0.2259984639016897,
+    "limit_down": 4,
+    "limit_up": 70,
+    "ld_lu_ratio": 0.05714285714285714,
+    "sh_chg": 0.19,
+    "cyb_chg": -1.0,
+    "etf_down_ratio": 0.022222222222222223,
+    "volume_mult": 0.7996729002007427,
+    "_data_date": "2026-08-25"
   }
 }
