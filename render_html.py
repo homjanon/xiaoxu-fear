@@ -218,10 +218,13 @@ def trend_svg(hist):
     return "".join(svg)
 
 
-def dip_trend_svg(hist):
+def dip_trend_svg(hist, peak90=None):
     """底部区域判断卡 · 近30日全市场成交额趋势（内联 SVG，无 JS/CDN）。
 
     hist: list[{"date":"YYYY-MM-DD","total":float(元)}]（通常尾部 30 日）。
+    peak90: 真·近90日峰值（来自 _turnover_cache.json 滚动窗口的 max90_total）。
+        参考线与柱体染色统一用它——与卡片右上角明细、is_bottom_today 判定同口径。
+        缺失时回退 hist 窗口内最大值（兼容旧数据；此时标签语义为「窗口内峰值」）。
     绘制：柱体（低于红色阈值线=底部区域日，绿色；其余浅灰）
         + 淡灰虚线（近90日峰值 100%）+ 红色虚线（峰值×50% 底部阈值）。
     图层顺序：网格 → 柱体 → 参考线 → 文字（参考线与文字始终压在柱体之上，
@@ -241,7 +244,13 @@ def dip_trend_svg(hist):
     pad_l, pad_r, pad_t, pad_b = 44, 12, 14, 30
     n = len(pts)
     totals = [v for _, v in pts]
-    peak = max(totals)
+    # 峰值口径修复(2026-08-25)：优先用真·近90日峰值（与右上角明细/is_bottom_today 同源），
+    # 避免此前用 hist30 窗口内最大值冒充「近90日峰值」导致两处数值自相矛盾。
+    try:
+        p90 = float(peak90) if peak90 else 0.0
+    except (TypeError, ValueError):
+        p90 = 0.0
+    peak = p90 if p90 > 0 else max(totals)
     threshold = peak * 0.5
     vmin, vmax = 0.0, peak * 1.08
 
@@ -444,7 +453,7 @@ def render_dibudian_card(d):
     if hist30:
         trend_html = (
             '<div class="dip-trend">'
-            + dip_trend_svg(hist30)
+            + dip_trend_svg(hist30, peak90=max90)
             + f'<div class="dip-trend-note">柱体低于红色虚线（近90日峰值×50%）即触发底部区域；最右一根为当日；绿色 ▲ 标记为窗口内成交额最低日。'
             + f'数据来源：{src}</div></div>'
         )
