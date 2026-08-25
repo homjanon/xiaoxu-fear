@@ -2,20 +2,19 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 25.503,
-      "shares": 6700,
+      "cost": 30.125,
+      "shares": 10000,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 39.58,
-      "prev_close": 38.9,
-      "chg_pct": 1.75,
-      "day_pnl": 4556.0,
-      "total_pnl": 94315.9,
-      "defence_done": true
+      "last_close": 39.5,
+      "prev_close": 39.58,
+      "chg_pct": -0.2,
+      "day_pnl": -800.0,
+      "total_pnl": 93750.0
     },
     "601899": {
       "name": "紫金矿业",
@@ -25,19 +24,22 @@
       "buy_date": "2026-08-21",
       "buy_price": 33.398,
       "target_pos": 163394.793975,
-      "last_close": 34.54,
-      "prev_close": 34.74,
-      "chg_pct": -0.58,
-      "day_pnl": -340.0,
-      "total_pnl": 1941.4
+      "last_close": 33.68,
+      "prev_close": 34.54,
+      "chg_pct": -2.49,
+      "day_pnl": -1462.0,
+      "total_pnl": 479.4
     }
   },
-  "cash": 772145.83235,
+  "cash": 641763.24485,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
       "confirm_days": 0,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-25",
+      "remove_reason": "观察超时未触发"
     },
     "600436": {
       "name": "片仔癀(回踩133-135)",
@@ -115,7 +117,7 @@
     },
     "300433": {
       "name": "蓝思科技",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "add_date": "2026-08-21"
     },
     "002821": {
@@ -129,7 +131,7 @@
     },
     "002028": {
       "name": "思源电气(observing-1)",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "add_date": "2026-08-24"
     },
     "002353": {
@@ -174,6 +176,15 @@
       "price": 33.4,
       "shares": 1700,
       "reason": "买点触发(最低33.6触及买点锚33.4)主力净流入9.35亿"
+    },
+    {
+      "date": "2026-08-25",
+      "type": "BUY",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 39.5,
+      "shares": 3300,
+      "reason": "恢复持有(收回MA20+主力+0.01亿,买回缺口3300股)"
     }
   ],
   "daily_nav": [
@@ -266,9 +277,15 @@
       "nav": 1096049.83,
       "cash": 772145.83,
       "market_value": 323904.0
+    },
+    {
+      "date": "2026-08-25",
+      "nav": 1094019.24,
+      "cash": 641763.24,
+      "market_value": 452256.0
     }
   ],
-  "last_update": "2026-08-24",
+  "last_update": "2026-08-25",
   "profit_pool": 0.0,
-  "last_processed_date": "2026-08-24"
+  "last_processed_date": "2026-08-25"
 }
