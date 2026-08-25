@@ -237,6 +237,8 @@ python render_html.py --json output/xxfi_report.json \
                       --out docs/index.html
 ```
 
+> ⚠️ **两步串联（2026-08-26 事故教训）**：`render_html.py` 只生成基础页（XXFI + 冰点 + 底部区域），**「📊 秋哥操作 · 实盘模拟」区块由 `render_simulation.py` 单独注入**（读 `output/simulation_state.json` 等模拟数据，插在底部区域卡下方；由秋哥操作 skill 的每日流程负责维护，不在 xxfi-daily.yml CI 内）。因此：**任何手动重渲染 `docs/index.html` 之后，必须补跑 `python render_simulation.py` 再推送**——否则实盘模拟板块会被抹掉（2026-08-25 底部区域修复时曾遗漏此步导致板块消失，次日经 render_simulation 重注入恢复）。
+
 ### 4) 自检
 
 ```bash
