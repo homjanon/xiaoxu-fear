@@ -237,9 +237,12 @@ python render_html.py --json output/xxfi_report.json \
                       --out docs/index.html
 ```
 
-> ⚠️ **两步串联（2026-08-26 事故教训）**：`render_html.py` 只生成基础页（XXFI + 冰点 + 底部区域），**「📊 秋哥操作 · 实盘模拟」区块由 `render_simulation.py` 单独注入**（读 `output/simulation_state.json` 等模拟数据，插在底部区域卡下方；由秋哥操作 skill 的每日流程负责维护，不在 xxfi-daily.yml CI 内）。因此：**任何手动重渲染 `docs/index.html` 之后，必须补跑 `python render_simulation.py` 再推送**——否则实盘模拟板块会被抹掉（2026-08-25 底部区域修复时曾遗漏此步导致板块消失，次日经 render_simulation 重注入恢复）。
+> ✅ **模拟区块架构（2026-08-26 根治，动态拉取）**：`render_html.py` 每次生成 `docs/index.html` 时**固定内联**「📊 秋哥操作 · 实盘模拟」区块的 CSS + 容器 + JS（来自 `sim_block.py`，参考 cmb-tracker「雪球大V追踪」模式）。页面加载时 JS 从**本仓 `output/simulation_state.json` / `accuracy_stats.json` / `simulation_history.jsonl`**（jsdelivr CDN → GitHub API 双通道）实时拉取渲染 KPI/净值曲线/持仓表/交易表。因此：
+> - **CI 每天用 render_html.py 覆盖 index.html = 重新生成同一容器+JS，区块永不消失**（此前手动 `render_simulation.py` 注入的内容会被 CI 覆盖抹掉——2026-08-25/26 两次事故根因）
+> - **数据永远新鲜**：本地秋哥操作后把 3 个 simulation JSON 推到 `output/`（与 qiuge_report.json 同链路），网页下次打开即最新，不依赖 CI 时序
+> - 旧 `render_simulation.py` 注入模式仅保留作离线预览（可选），不再作为网页区块维护通道
 
-> 📌 **版本真源**：`simulate_qiuge.py` / `render_simulation.py` 的最新迭代维护在本地「秋哥操作（每日运行）」工作空间，**改动后需同步覆盖至本仓再推送**（2026-08-26 曾因仓内脚本停留在旧版，重注入出旧样式板块——缺总收益率/底仓标签/收益率列等新功能）。
+> 📌 **版本真源**：`simulate_qiuge.py` / `sim_block.py` / `render_html.py` 的最新迭代维护在本地「秋哥操作（每日运行）」工作空间，**改动后需同步覆盖至本仓再推送**。
 
 ### 4) 自检
 
@@ -278,13 +281,15 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 
 > 定位：**秋哥操作推荐质量的客观验证器**——每日报告的 picks/watch 由模拟盘按纪律自动"纸上交易"，用真实行情验证买点是否到达、纪律是否有效，沉淀命中率/净值/超额收益数据，反哺 SKILL 迭代。
 
-### 架构（云端零逻辑）
+### 架构（云端零逻辑 · 2026-08-26 起动态拉取）
 
 ```
 本地：通达信采数(tdx_kline+zjlx) → simulate_qiuge.py --auto（增量幂等，缺跑自动补齐）
-      → 渲染区块注入 docs/index.html → 成品推送到本仓
-本仓：只存产物（output/simulation_* + docs/index.html），无任何计算任务
+      → 推送 output/simulation_state.json + accuracy_stats.json + simulation_history.jsonl 到本仓（与 qiuge_report.json 同链路）
+本仓：只存产物（output/simulation_* + qiuge_report.json），无任何计算任务
 展示：网页「底部区域判断」下方 📊 秋哥操作·实盘模拟 区块
+      = render_html.py 固定内联 sim_block.py 三件套（CSS+容器+JS）→ 页面运行时从本仓 output/ 实时拉取渲染
+      → CI 每天覆盖 index.html 时容器+JS 重新生成 → 区块永不消失；本地推完数据 → 网页下次打开即最新
 ```
 
 ### 核心-卫星模型
@@ -310,7 +315,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `output/simulation_history.jsonl` | 逐日净值（180 日窗口曲线） |
 | `output/accuracy_stats.json` | 统计：总盈亏/收益/回撤/双基准超额/命中率 |
 | `output/simulation_report.md` | 当日模拟可读报告 |
-| `docs/index.html` | 含「📊 秋哥操作·实盘模拟」区块（4→6 卡 KPI + 净值曲线 + 持仓表 + 买卖复盘） |
+| `docs/index.html` | 含「📊 秋哥操作·实盘模拟」区块（6 卡 KPI + 净值曲线 + 持仓表 + 买卖复盘）——由 render_html.py 固定内联容器+JS，运行时从 output/ 实时拉取渲染 |
 
 ## 文件结构
 
@@ -326,14 +331,15 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `fetch_dibudian_akshare.py` | 底部区域取数器：当日走**新浪实时 spot**（全市场口径），近90日峰值 + 近30日回看走**本地滚动缓存**（通达信冷启动回填）；含周末写入闸门防污染 |
 | `run_dibudian.py` | 底部区域编排入口（`--akshare` / `--demo-bottom` / `--demo-normal` / `--json`），产出 `output/dibudian_report.json` + 跨日持久的 `dibudian_state.json` |
 | `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |
-| `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 底部区域判断卡与30日趋势图，GitHub Pages） |
+| `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 底部区域判断卡与30日趋势图 + **固定内联模拟区块三件套**，GitHub Pages） |
+| `sim_block.py` | 「秋哥操作·实盘模拟」区块三件套（CSS + HTML容器 + JS渲染脚本）：render_html.py 每次固定内联；页面运行时从本仓 output/ 拉取 simulation_*.json 渲染（参考 cmb-tracker「雪球大V追踪」动态拉取模式） |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
 | `.github/workflows/xxfi-daily.yml` | 每日自动播报（15:50 cron · 仅交易日 · 数据就绪校验；实跑约 16:00 前后）。XXFI / 冰点 / 底部区域三个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
 | `output/_turnover_cache.json` | 全市场成交额滚动缓存（底部区域近90日峰值来源），每交易日由 CI 自动追加并提交 |
-| `simulate_qiuge.py` / `render_simulation.py` | 秋哥实盘模拟器（--auto 增量模式）与网页区块渲染注入（本地运行后推成品，CI 不执行） |
+| `simulate_qiuge.py` / `render_simulation.py` | 秋哥实盘模拟器（--auto 增量模式）与**离线预览**渲染脚本（本地运行后推 output/ 产物，CI 不执行）；网页区块已改由 sim_block.py 动态拉取 |
 
 ## License
 
