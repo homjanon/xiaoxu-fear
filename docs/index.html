@@ -292,16 +292,26 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   }
   function loadJson(api,cdn){return tryUrl(api,true).catch(function(){return tryUrl(cdn,false);});}
   function loadHist(api,cdn){
-    return tryUrl(api,true).catch(function(){return tryUrl(cdn,false);}).then(function(d){
-      // JSONL：可能被 GitHub API 包成 base64 文本，或 CDN 直接给文本
-      var txt = (typeof d==='string')?d:(d&&d.content?b64ToObj(d.content):d);
-      if(typeof txt==='string'){
-        var out={};var lines=txt.split('\n').filter(function(l){return l.trim();});
-        for(var i=0;i<lines.length;i++){try{var rec=JSON.parse(lines[i]);out[rec.date]=rec;}catch(e){}}
-        return Object.keys(out).sort().map(function(k){return out[k];});
-      }
-      return Array.isArray(txt)?txt:[];
-    });
+    // JSONL 不是合法 JSON，不能用 tryUrl（它用 r.json() / JSON.parse），必须用 r.text() 获取原始文本
+    function fetchText(url,isApi){
+      return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(r.status);
+        if(isApi) return r.json().then(function(d){
+          if(!d||!d.content)throw new Error('no content');
+          var bin=atob(String(d.content).replace(/\s/g,''));
+          var bytes=new Uint8Array(bin.length);
+          for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+          return new TextDecoder('utf-8').decode(bytes);
+        });
+        return r.text();
+      });
+    }
+    function parseJsonl(txt){
+      if(typeof txt!=='string')return Array.isArray(txt)?txt:[];
+      var out={};var lines=txt.split('\n').filter(function(l){return l.trim();});
+      for(var i=0;i<lines.length;i++){try{var rec=JSON.parse(lines[i]);out[rec.date]=rec;}catch(e){}}
+      return Object.keys(out).sort().map(function(k){return out[k];});
+    }
+    return fetchText(api,true).catch(function(){return fetchText(cdn,false);}).then(parseJsonl);
   }
 
   function buildSvg(history){
