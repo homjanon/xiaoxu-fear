@@ -664,10 +664,17 @@ def main():
     ap = argparse.ArgumentParser(description="XXFI 结果渲染为静态 HTML")
     ap.add_argument("--json", required=True, help="xxfi_report.json 路径")
     ap.add_argument("--history", default="output/history.jsonl", help="history.jsonl 路径")
-    ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示）")
-    ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示）")
+    ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
+    ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--out", required=True, help="输出 HTML 路径，如 docs/index.html")
     args = ap.parse_args()
+
+    # 2026-08-27 加固：--bingdian/--dibudian 未显式传参时自动探测 output/ 默认产物，
+    # 防止漏参数导致冰点卡/底部区域卡静默丢失（曾致 8/27 cef5750 事故，两卡被删 46 行）。
+    if not args.bingdian and os.path.exists("output/bingdian_report.json"):
+        args.bingdian = "output/bingdian_report.json"
+    if not args.dibudian and os.path.exists("output/dibudian_report.json"):
+        args.dibudian = "output/dibudian_report.json"
 
     r = load_json(args.json)
     hist = load_history(args.history)
@@ -690,6 +697,17 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
+    # 2026-08-27 加固：生成后自检三大板块（冰点参考卡 / 底部区域判断卡 / 秋哥操作·实盘模拟）。
+    # 任一缺失即打印 warn，防止残缺页被静默提交（曾致 8/27 两张卡丢失事故）。
+    missing = [k for k, kw in [
+        ("冰点参考卡", 'class="card ice-card"'),
+        ("底部区域判断卡", 'class="card dip-card"'),
+        ("秋哥操作·实盘模拟", 'id="qiuge-sim"'),
+    ] if kw not in html]
+    if missing:
+        print(f"[warn] 生成页面缺少板块: {', '.join(missing)}（请检查 --bingdian/--dibudian 参数与产物）")
+    else:
+        print("[ok] 三大板块齐全：冰点参考卡 / 底部区域判断卡 / 秋哥操作·实盘模拟")
     # 一并输出 xxfi_report.json 到 Pages 源目录（docs/），供外部读取原始数据或调试。
     json_out = os.path.join(out_dir, "xxfi_report.json")
     with open(json_out, "w", encoding="utf-8") as f:
