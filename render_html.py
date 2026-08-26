@@ -13,6 +13,14 @@
 import argparse, json, os
 import datetime
 
+# 秋哥操作 · 实盘模拟 区块（动态拉取版，2026-08-26 根治 CI 覆盖）：CSS/容器/JS 三件套
+# 参考 cmb-tracker/scripts/xq_table_block.py 模式——render_html 每次固定内联，数据运行时从 output/ 拉取
+try:
+    from sim_block import SIM_CSS, SIM_HTML, SIM_JS
+except Exception as e:  # sim_block.py 缺失时降级为空（不阻塞主渲染）
+    print(f"[warn] sim_block 加载失败，模拟区块将不显示: {e}")
+    SIM_CSS = SIM_HTML = SIM_JS = ""
+
 CST = datetime.timezone(datetime.timedelta(hours=8))  # 北京时间 UTC+8
 
 # ---- 静态对照表（XXFI 绝对区间判定，来自 calibration）----
@@ -576,7 +584,7 @@ def render(r, hist, bingdian=None, dibudian=None):
     html = f"""<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>小旭恐惧指数 XXFI · 实时</title><style>{CSS}</style></head>
+<title>小旭恐惧指数 XXFI · 实时</title><style>{CSS}{SIM_CSS}</style></head>
 <body><div class="wrap">
 <h1>小旭恐惧指数 · XXFI</h1>
 <div class="sub">反向情绪指标（散户行为版）　|　数据日期：{data_date}　|　更新时间：{gen_at}　|　基准：{idx_name}　|　波动率窗口：{vw} 日</div>
@@ -600,6 +608,7 @@ def render(r, hist, bingdian=None, dibudian=None):
 
 {ice_html}
 {dip_html}
+{SIM_HTML}
 
 <div class="card" style="border-color:#fcd34d">
   <div class="sec-h" style="color:#b45309">主力—散户背离诊断（v2）</div>
@@ -648,7 +657,7 @@ def render(r, hist, bingdian=None, dibudian=None):
   数据溯源：广度源=<code>{bsrc}</code>　资金流源=<code>{rsrc}</code><br>
   指标为反向情绪参考，非投资建议。生成自 xiaoxu-fear-index 技能 · GitHub Actions 每日盘后自动更新。
 </div>
-</div></body></html>"""
+</div><script>{SIM_JS}</script></body></html>"""
     return html
 
 def main():
