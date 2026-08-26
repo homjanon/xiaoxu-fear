@@ -240,7 +240,7 @@ python render_html.py --json output/xxfi_report.json \
 > 📌 **2026-08-27 加固**：`--bingdian` / `--dibudian` 可省略（自动探测 `output/` 默认产物）；生成后**自检三大板块**（冰点参考卡 / 底部区域判断卡 / 秋哥操作·实盘模拟），任一缺失打印 `[warn]` 防残缺页被静默提交（曾因漏传参数导致两卡丢失 46 行事故）。
 
 > ✅ **模拟区块架构（2026-08-26 根治，动态拉取）**：`render_html.py` 每次生成 `docs/index.html` 时**固定内联**「📊 秋哥操作 · 实盘模拟」区块的 CSS + 容器 + JS（来自 `sim_block.py`，参考 cmb-tracker「雪球大V追踪」模式）。页面加载时 JS 从**本仓 `output/simulation_state.json` / `accuracy_stats.json` / `simulation_history.jsonl`** 实时拉取渲染 KPI/净值曲线/持仓表/交易表，数据通道**三级切换（2026-08-27 起）**：
-> - **① 自建 CORS 代理 `proxy.hellohopo.dpdns.org`（优先）**：实时、无缓存，推完即最新——替代原 jsdelivr CDN（有 12h 缓存，数据不新鲜）；
+> - **① 自建 CORS 代理 `xx`（优先）**：实时、无缓存，推完即最新——替代原 jsdelivr CDN（有 12h 缓存，数据不新鲜）；
 > - **② `raw.githubusercontent.com` 直连**（无缓存兜底）；
 > - **③ GitHub Contents API**（base64 解码兜底）；
 > - JSONL 历史文件用 `r.text()` + 逐行解析（不能用 `r.json()`/`JSON.parse`，会整个区块渲染失败——2026-08-27 已修）。因此：
@@ -295,7 +295,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 本仓：只存产物（output/simulation_* + qiuge_report.json），无任何计算任务
 展示：网页「底部区域判断」下方 📊 秋哥操作·实盘模拟 区块
       = render_html.py 固定内联 sim_block.py 三件套（CSS+容器+JS）→ 页面运行时从本仓 output/ 实时拉取渲染
-      → 数据通道三级切换：自建 CORS 代理 proxy.hellohopo.dpdns.org（实时无缓存）→ raw.githubusercontent.com → GitHub API 兜底
+      → 数据通道三级切换：自建 CORS 代理 xx（实时无缓存）→ raw.githubusercontent.com → GitHub API 兜底
       → CI 每天覆盖 index.html 时容器+JS 重新生成 → 区块永不消失；本地推完数据 → 网页下次打开即最新（无需等 CI/Pages）
 ```
 
@@ -339,7 +339,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `run_dibudian.py` | 底部区域编排入口（`--akshare` / `--demo-bottom` / `--demo-normal` / `--json`），产出 `output/dibudian_report.json` + 跨日持久的 `dibudian_state.json` |
 | `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 底部区域判断卡与30日趋势图 + **固定内联模拟区块三件套**，GitHub Pages）；2026-08-27 加固：`--bingdian/--dibudian` 缺省自动探测 `output/` 产物，生成后自检三卡齐全（缺失 warn） |
-| `sim_block.py` | 「秋哥操作·实盘模拟」区块三件套（CSS + HTML容器 + JS渲染脚本）：render_html.py 每次固定内联；页面运行时从本仓 output/ 拉取 simulation_*.json 渲染，**数据通道三级切换**：自建 CORS 代理 `proxy.hellohopo.dpdns.org`（实时无缓存）→ `raw.githubusercontent.com` 直连 → GitHub API 兜底；JSONL 用 `r.text()` 逐行解析（参考 cmb-tracker「雪球大V追踪」动态拉取模式） |
+| `sim_block.py` | 「秋哥操作·实盘模拟」区块三件套（CSS + HTML容器 + JS渲染脚本）：render_html.py 每次固定内联；页面运行时从本仓 output/ 拉取 simulation_*.json 渲染，**数据通道三级切换**：自建 CORS 代理 `xx`（实时无缓存）→ `raw.githubusercontent.com` 直连 → GitHub API 兜底；JSONL 用 `r.text()` 逐行解析（参考 cmb-tracker「雪球大V追踪」动态拉取模式） |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
