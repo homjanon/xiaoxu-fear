@@ -16,7 +16,7 @@ simulation_history.jsonl 动态拉取并渲染「秋哥操作 · 实盘模拟」
 - 数据来自 output/simulation_*.json（本地秋哥操作后推送，像 qiuge_report.json 一样），
   页面每次打开实时拉最新 —— 不依赖 CI 时序，本地推完立即生效。
 
-双通道拉取（照抄 xq_table_block）：jsdelivr CDN 优先（快）→ GitHub Contents API 兜底（base64）。
+双通道拉取（照抄 xq_table_block）：用户自建 CORS 代理优先（无缓存、实时）→ GitHub Contents API 兜底（base64）。
 """
 import json
 import os
@@ -48,12 +48,13 @@ SIM_HTML = """
 # ---------------------------------------------------------------- 渲染脚本（运行时拉取 output/simulation_*.json）
 SIM_JS = r"""
 (function(){
+  var PROXY_URL="https://proxy.hellohopo.dpdns.org/?url=";
+  var STATE_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/simulation_state.json";
+  var STATS_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/accuracy_stats.json";
+  var HIST_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/simulation_history.jsonl";
   var STATE_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/simulation_state.json";
-  var STATE_CDN="https://cdn.jsdelivr.net/gh/homjanon/xiaoxu-fear@main/output/simulation_state.json";
   var STATS_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/accuracy_stats.json";
-  var STATS_CDN="https://cdn.jsdelivr.net/gh/homjanon/xiaoxu-fear@main/output/accuracy_stats.json";
   var HIST_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/simulation_history.jsonl";
-  var HIST_CDN="https://cdn.jsdelivr.net/gh/homjanon/xiaoxu-fear@main/output/simulation_history.jsonl";
 
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
@@ -65,24 +66,52 @@ SIM_JS = r"""
     for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
     return JSON.parse(new TextDecoder('utf-8').decode(bytes));
   }
-  function tryUrl(url,isApi){
-    return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
-      .then(function(d){return isApi?(d&&d.content?b64ToObj(d.content):(function(){throw new Error('empty');})()):d;});
-  }
-  function loadJson(api,cdn){return tryUrl(api,true).catch(function(){return tryUrl(cdn,false);});}
-  function loadHist(api,cdn){
-    // JSONL 不是合法 JSON，不能用 tryUrl（它用 r.json() / JSON.parse），必须用 r.text() 获取原始文本
-    function fetchText(url,isApi){
+  function fetchSmart(rawUrl,apiUrl){
+    var proxyUrl=PROXY_URL+encodeURIComponent(rawUrl);
+    var order=['proxy','raw','api'];
+    var urls={proxy:proxyUrl,raw:rawUrl,api:apiUrl};
+    function tryFetch(url,isApi){
       return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(r.status);
         if(isApi) return r.json().then(function(d){
           if(!d||!d.content)throw new Error('no content');
           var bin=atob(String(d.content).replace(/\s/g,''));
           var bytes=new Uint8Array(bin.length);
           for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
-          return new TextDecoder('utf-8').decode(bytes);
+          return JSON.parse(new TextDecoder('utf-8').decode(bytes));
         });
-        return r.text();
+        return r.json();
       });
+    }
+    function trySeq(i){
+      if(i>=order.length)throw new Error('all sources failed');
+      return tryFetch(urls[order[i]],order[i]==='api').catch(function(){return trySeq(i+1);});
+    }
+    return trySeq(0);
+  }
+  function loadJson(rawUrl,apiUrl){return fetchSmart(rawUrl,apiUrl);}
+  function loadHist(rawUrl,apiUrl){
+    // JSONL 不是合法 JSON，不能用 r.json()，必须用 r.text() 获取原始文本
+    function fetchTextSmart(rawUrl,apiUrl){
+      var proxyUrl=PROXY_URL+encodeURIComponent(rawUrl);
+      var order=['proxy','raw','api'];
+      var urls={proxy:proxyUrl,raw:rawUrl,api:apiUrl};
+      function fetchText(url,isApi){
+        return fetch(url,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(r.status);
+          if(isApi) return r.json().then(function(d){
+            if(!d||!d.content)throw new Error('no content');
+            var bin=atob(String(d.content).replace(/\s/g,''));
+            var bytes=new Uint8Array(bin.length);
+            for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+          });
+          return r.text();
+        });
+      }
+      function trySeq(i){
+        if(i>=order.length)throw new Error('all sources failed');
+        return fetchText(urls[order[i]],order[i]==='api').catch(function(){return trySeq(i+1);});
+      }
+      return trySeq(0);
     }
     function parseJsonl(txt){
       if(typeof txt!=='string')return Array.isArray(txt)?txt:[];
@@ -90,7 +119,7 @@ SIM_JS = r"""
       for(var i=0;i<lines.length;i++){try{var rec=JSON.parse(lines[i]);out[rec.date]=rec;}catch(e){}}
       return Object.keys(out).sort().map(function(k){return out[k];});
     }
-    return fetchText(api,true).catch(function(){return fetchText(cdn,false);}).then(parseJsonl);
+    return fetchTextSmart(rawUrl,apiUrl).then(parseJsonl);
   }
 
   function buildSvg(history){
@@ -187,7 +216,7 @@ SIM_JS = r"""
     root.innerHTML=html;
   }
 
-  Promise.all([loadJson(STATE_API,STATE_CDN),loadJson(STATS_API,STATS_CDN),loadHist(HIST_API,HIST_CDN)])
+  Promise.all([loadJson(STATE_RAW,STATE_API),loadJson(STATS_RAW,STATS_API),loadHist(HIST_RAW,HIST_API)])
     .then(function(r){render(r[0],r[1],r[2]);})
     .catch(function(){
       var root=document.getElementById("qiuge-sim-body");
