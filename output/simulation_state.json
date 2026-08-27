@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 39.8,
-      "prev_close": 39.5,
-      "chg_pct": 0.76,
-      "day_pnl": 3000.0,
-      "total_pnl": 96750.0
+      "last_close": 39.58,
+      "prev_close": 39.8,
+      "chg_pct": -0.55,
+      "day_pnl": -2200.0,
+      "total_pnl": 94550.0
     },
     "601899": {
       "name": "紫金矿业",
@@ -24,14 +24,14 @@
       "buy_date": "2026-08-21",
       "buy_price": 33.398,
       "target_pos": 163394.793975,
-      "last_close": 34.47,
-      "prev_close": 33.68,
-      "chg_pct": 2.35,
-      "day_pnl": 1343.0,
-      "total_pnl": 1822.4
+      "last_close": 34.57,
+      "prev_close": 34.47,
+      "chg_pct": 0.29,
+      "day_pnl": 170.0,
+      "total_pnl": 1992.4
     }
   },
-  "cash": 641763.24485,
+  "cash": 641763.24,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -289,9 +289,15 @@
       "nav": 1098362.24,
       "cash": 641763.24,
       "market_value": 456599.0
+    },
+    {
+      "date": "2026-08-27",
+      "nav": 1096332.24,
+      "cash": 641763.24,
+      "market_value": 454569.0
     }
   ],
-  "last_update": "2026-08-26",
+  "last_update": "2026-08-27",
   "profit_pool": 0.0,
-  "last_processed_date": "2026-08-26"
+  "last_processed_date": "2026-08-27"
 }
