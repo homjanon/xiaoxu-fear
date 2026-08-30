@@ -2,36 +2,23 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 30.125,
-      "shares": 10000,
+      "cost": 25.581,
+      "shares": 6700,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 39.58,
-      "prev_close": 39.8,
-      "chg_pct": -0.55,
-      "day_pnl": -2200.0,
-      "total_pnl": 94550.0
-    },
-    "601899": {
-      "name": "紫金矿业",
-      "cost": 33.398,
-      "shares": 1700,
-      "init_shares": 1700,
-      "buy_date": "2026-08-21",
-      "buy_price": 33.398,
-      "target_pos": 163394.793975,
-      "last_close": 34.57,
-      "prev_close": 34.47,
-      "chg_pct": 0.29,
-      "day_pnl": 170.0,
-      "total_pnl": 1992.4
+      "last_close": 39.35,
+      "prev_close": 39.58,
+      "chg_pct": -0.58,
+      "day_pnl": -1541.0,
+      "total_pnl": 92252.3,
+      "defence_done": true
     }
   },
-  "cash": 641763.24,
+  "cash": 830381.67,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -44,27 +31,42 @@
     "600436": {
       "name": "片仔癀(回踩133-135)",
       "confirm_days": 0,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "601069": {
       "name": "西部黄金(回踩23.5-24)",
       "confirm_days": 0,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "003816": {
       "name": "中国广核(回踩3.95-4.05)",
       "confirm_days": 1,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "002493": {
       "name": "荣盛石化(回踩11.7-11.9)",
       "confirm_days": 0,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "688183": {
       "name": "生益电子(超跌反弹,等二次确认)",
       "confirm_days": 0,
-      "add_date": "2026-08-04"
+      "add_date": "2026-08-04",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "603259": {
       "name": "药明康德(回踩123-125)",
@@ -77,67 +79,96 @@
     "300308": {
       "name": "中际旭创",
       "confirm_days": 0,
-      "add_date": "2026-08-05"
+      "add_date": "2026-08-05",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "601899": {
       "name": "紫金矿业",
       "confirm_days": 0,
       "add_date": "2026-08-06",
-      "status": "bought"
+      "status": "bought",
+      "closed": true,
+      "close_price": 34.65,
+      "close_date": "2026-08-28",
+      "gain_pct": 3.75
     },
     "688256": {
       "name": "AI算力硬件链(长电科技/景旺电子/胜宏科技/工业富联/光迅科技/寒武纪等)",
       "confirm_days": 0,
-      "add_date": "2026-08-07"
+      "add_date": "2026-08-07",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "600183": {
       "name": "AI算力硬件链(光迅科技/生益科技/胜宏科技/沪电股份/寒武纪/北方华创)",
       "confirm_days": 0,
-      "add_date": "2026-08-10"
+      "add_date": "2026-08-10",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "688072": {
       "name": "半导体设备/材料(中微公司/拓荆科技/盛美上海/精智达/雅克科技—等回踩)",
       "confirm_days": 0,
-      "add_date": "2026-08-11"
+      "add_date": "2026-08-11",
+      "status": "expired",
+      "remove_date": "2026-08-27",
+      "remove_reason": "历史回填·观察超时"
     },
     "601138": {
       "name": "工业富联",
       "confirm_days": 0,
-      "add_date": "2026-08-19"
+      "add_date": "2026-08-19",
+      "status": "new"
     },
     "688037": {
       "name": "芯源微(688037)",
       "confirm_days": 1,
-      "add_date": "2026-08-20"
+      "add_date": "2026-08-20",
+      "status": "new"
     },
     "600118": {
       "name": "中国卫星(600118)",
       "confirm_days": 0,
-      "add_date": "2026-08-20"
+      "add_date": "2026-08-20",
+      "status": "new"
     },
     "300433": {
       "name": "蓝思科技",
       "confirm_days": 0,
-      "add_date": "2026-08-21"
+      "add_date": "2026-08-21",
+      "status": "new"
     },
     "002821": {
       "name": "凯莱英",
       "confirm_days": 0,
-      "add_date": "2026-08-21"
+      "add_date": "2026-08-21",
+      "status": "new"
     },
     "000603": {
       "name": "盛达资源",
-      "add_date": "2026-08-21"
+      "add_date": "2026-08-21",
+      "status": "new"
     },
     "002028": {
       "name": "思源电气(observing-1)",
       "confirm_days": 0,
-      "add_date": "2026-08-24"
+      "add_date": "2026-08-24",
+      "status": "observing-1"
     },
     "002353": {
       "name": "杰瑞股份(observing-1)",
       "confirm_days": 0,
-      "add_date": "2026-08-24"
+      "add_date": "2026-08-24",
+      "status": "observing-1"
+    },
+    "002594": {
+      "name": "比亚迪(observing-1·连5日流入首次中断转警示)",
+      "add_date": "2026-08-28",
+      "status": "new"
     }
   },
   "log": [
@@ -185,6 +216,24 @@
       "price": 39.5,
       "shares": 3300,
       "reason": "恢复持有(收回MA20+主力+0.01亿,买回缺口3300股)"
+    },
+    {
+      "date": "2026-08-28",
+      "type": "SELL",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 39.35,
+      "shares": 3300,
+      "reason": "止盈+15%减1/3、主力净流出减仓"
+    },
+    {
+      "date": "2026-08-28",
+      "type": "SELL",
+      "code": "601899",
+      "name": "紫金矿业",
+      "price": 34.65,
+      "shares": 1700,
+      "reason": "主力连2日流出清仓"
     }
   ],
   "daily_nav": [
@@ -295,9 +344,29 @@
       "nav": 1096332.24,
       "cash": 641763.24,
       "market_value": 454569.0
+    },
+    {
+      "date": "2026-08-28",
+      "nav": 1094026.67,
+      "cash": 830381.67,
+      "market_value": 263645.0
     }
   ],
-  "last_update": "2026-08-27",
-  "profit_pool": 0.0,
-  "last_processed_date": "2026-08-27"
+  "last_update": "2026-08-30",
+  "profit_pool": 2128.399999999992,
+  "last_processed_date": "2026-08-28",
+  "unresolved_watch": [
+    {
+      "date": "2026-08-27",
+      "name": "江西铜业(new·有色首日)"
+    },
+    {
+      "date": "2026-08-27",
+      "name": "招商证券(new·券商首日)"
+    },
+    {
+      "date": "2026-08-28",
+      "name": "海光信息(new·算力深回撤后首日放量反包+9.37亿待确认)"
+    }
+  ]
 }
