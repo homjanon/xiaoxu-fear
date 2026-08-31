@@ -2,23 +2,22 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 25.581,
-      "shares": 6700,
+      "cost": 30.382,
+      "shares": 10000,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 39.35,
-      "prev_close": 39.58,
-      "chg_pct": -0.58,
-      "day_pnl": -1541.0,
-      "total_pnl": 92252.3,
-      "defence_done": true
+      "last_close": 40.12,
+      "prev_close": 39.35,
+      "chg_pct": 1.96,
+      "day_pnl": 7700.0,
+      "total_pnl": 97380.0
     }
   },
-  "cash": 830381.67,
+  "cash": 697952.571,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -122,7 +121,9 @@
       "name": "工业富联",
       "confirm_days": 0,
       "add_date": "2026-08-19",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-08-31",
+      "remove_reason": "观察超时未推进"
     },
     "688037": {
       "name": "芯源微(688037)",
@@ -234,6 +235,15 @@
       "price": 34.65,
       "shares": 1700,
       "reason": "主力连2日流出清仓"
+    },
+    {
+      "date": "2026-08-31",
+      "type": "BUY",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 40.12,
+      "shares": 3300,
+      "reason": "恢复持有(收回MA20+主力+0.81亿,买回缺口3300股)"
     }
   ],
   "daily_nav": [
@@ -350,11 +360,17 @@
       "nav": 1094026.67,
       "cash": 830381.67,
       "market_value": 263645.0
+    },
+    {
+      "date": "2026-08-31",
+      "nav": 1099152.57,
+      "cash": 697952.57,
+      "market_value": 401200.0
     }
   ],
-  "last_update": "2026-08-30",
+  "last_update": "2026-08-31",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-08-28",
+  "last_processed_date": "2026-08-31",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
@@ -367,6 +383,10 @@
     {
       "date": "2026-08-28",
       "name": "海光信息(new·算力深回撤后首日放量反包+9.37亿待确认)"
+    },
+    {
+      "date": "2026-08-31",
+      "name": "海光信息(new·算力深回撤反包待回踩确认)"
     }
   ]
 }
