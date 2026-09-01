@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 40.12,
-      "prev_close": 39.35,
-      "chg_pct": 1.96,
-      "day_pnl": 7700.0,
-      "total_pnl": 97380.0
+      "last_close": 40.86,
+      "prev_close": 40.12,
+      "chg_pct": 1.84,
+      "day_pnl": 7400.0,
+      "total_pnl": 104780.0
     }
   },
   "cash": 697952.571,
@@ -127,15 +127,19 @@
     },
     "688037": {
       "name": "芯源微(688037)",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "add_date": "2026-08-20",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-01",
+      "remove_reason": "观察超时未触发"
     },
     "600118": {
       "name": "中国卫星(600118)",
       "confirm_days": 0,
       "add_date": "2026-08-20",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-01",
+      "remove_reason": "观察超时未推进"
     },
     "300433": {
       "name": "蓝思科技",
@@ -169,6 +173,12 @@
     "002594": {
       "name": "比亚迪(observing-1·连5日流入首次中断转警示)",
       "add_date": "2026-08-28",
+      "status": "new"
+    },
+    "688041": {
+      "name": "海光信息(688041·confirmed·等回踩240-245缩量企稳)",
+      "confirm_days": 0,
+      "add_date": "2026-09-01",
       "status": "new"
     }
   },
@@ -366,11 +376,17 @@
       "nav": 1099152.57,
       "cash": 697952.57,
       "market_value": 401200.0
+    },
+    {
+      "date": "2026-09-01",
+      "nav": 1106552.57,
+      "cash": 697952.57,
+      "market_value": 408600.0
     }
   ],
-  "last_update": "2026-08-31",
+  "last_update": "2026-09-01",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-08-31",
+  "last_processed_date": "2026-09-01",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
