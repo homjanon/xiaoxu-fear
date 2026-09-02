@@ -16,7 +16,7 @@
 
 ## 实时结果（GitHub Actions 自动更新）
 
-每个交易日 **15:50（UTC+8）** cron 触发（cron `"50 7 * * 1-5"`），产物提交到 `output/`。GitHub Actions 排队延迟已缩短（2026-08 实测），实跑约 **16:00 北京**，恰在盘后数据定稿之后：
+每个交易日 **16:20（北京时间）** 由 Cloudflare Worker qdii-dispatch 触发（心跳每 5 分钟，到点 workflow_dispatch），产物提交到 `output/`。16:20 触发恰在盘后数据（16:00+ 定稿）之后，非交易日由下方 check 门控跳过：
 
 - 📄 [`output/xxfi_report.md`](output/xxfi_report.md) — 当日人类可读报告
 - 🧾 [`output/xxfi_report.json`](output/xxfi_report.json) — 当日结构化结果（含 `_breadth_source` / `_retail_net_source` 溯源字段、`_generated_at` 更新时间（北京时间，精确到秒）、`_data_date` 数据日期）
