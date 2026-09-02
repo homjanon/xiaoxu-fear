@@ -20,8 +20,7 @@ name: XXFI Daily
 #   周末也能取到周五数据。历史趋势曲线由每日 cron 自动累积，无需手动回溯。
 # =====================================================================
 on:
-  schedule:
-    - cron: "50 7 * * 1-5"
+  # 单通道（2026-09-02 起）：由 Cloudflare Worker qdii-dispatch 每天 16:20（北京时间）触发 workflow_dispatch（原 GitHub schedule 已移除，非交易日由下方 check 门控跳过）
   workflow_dispatch:
 
 permissions:
