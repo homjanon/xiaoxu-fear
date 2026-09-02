@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 40.86,
-      "prev_close": 40.12,
-      "chg_pct": 1.84,
-      "day_pnl": 7400.0,
-      "total_pnl": 104780.0
+      "last_close": 40.87,
+      "prev_close": 40.86,
+      "chg_pct": 0.02,
+      "day_pnl": 100.0,
+      "total_pnl": 104880.0
     }
   },
   "cash": 697952.571,
@@ -145,18 +145,24 @@
       "name": "蓝思科技",
       "confirm_days": 0,
       "add_date": "2026-08-21",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-02",
+      "remove_reason": "观察超时未推进"
     },
     "002821": {
       "name": "凯莱英",
       "confirm_days": 0,
       "add_date": "2026-08-21",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-02",
+      "remove_reason": "观察超时未推进"
     },
     "000603": {
       "name": "盛达资源",
       "add_date": "2026-08-21",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-02",
+      "remove_reason": "观察超时未推进"
     },
     "002028": {
       "name": "思源电气(observing-1)",
@@ -179,6 +185,16 @@
       "name": "海光信息(688041·confirmed·等回踩240-245缩量企稳)",
       "confirm_days": 0,
       "add_date": "2026-09-01",
+      "status": "new"
+    },
+    "300604": {
+      "name": "长川科技(300604·new·半导体设备点火待确认)",
+      "add_date": "2026-09-02",
+      "status": "new"
+    },
+    "600410": {
+      "name": "华胜天成(600410·new·首日涨停+6.23亿待确认)",
+      "add_date": "2026-09-02",
       "status": "new"
     }
   },
@@ -382,11 +398,17 @@
       "nav": 1106552.57,
       "cash": 697952.57,
       "market_value": 408600.0
+    },
+    {
+      "date": "2026-09-02",
+      "nav": 1106652.57,
+      "cash": 697952.57,
+      "market_value": 408700.0
     }
   ],
-  "last_update": "2026-09-01",
+  "last_update": "2026-09-02",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-01",
+  "last_processed_date": "2026-09-02",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
