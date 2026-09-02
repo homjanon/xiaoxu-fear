@@ -47,7 +47,7 @@
 
 ```
 09:30 开盘 → 15:00 收盘 → 15:00~16:00 涨跌家数 / 涨停跌停池 / 主力资金流向 陆续定稿（注：上证指数日K接口滞后约1天，当日指数值改由新浪实时 spot 补充）
-                              ↑ 15:50 cron（CI 实跑约 16:00 前后，数据已就绪）
+                              ↑ 16:20 Cloudflare 触发（数据已就绪）
 ```
 
 三条约束的落地：
@@ -55,7 +55,7 @@
 | 约束 | 方案 | 实现 |
 |---|---|---|
 | **① 交易日筛选** | 仅在交易日执行，非交易日（含节假日/休市）完全不触发 | cron 仅覆盖周一至五；`check` 步骤用 `tool_trade_date_hist_sina()` **精确排除法定节假日/休市日（含调休）**，不靠"周一到五"硬猜 |
-| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | cron `"50 7 * * 1-5"` = **北京 15:50**（GitHub Actions 延迟已缩短，实跑约 16:00 前后）；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
+| **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | Cloudflare qdii-dispatch 每天 **16:20**（北京时间）触发 workflow_dispatch；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
 | **③ 每日频次** | 单日单次，不产生无效执行 | 盘后单次运行；非交易日 / 数据未就绪由 `check` 步骤 `skip`，后续步骤 `if: steps.check.outputs.trade == '1'` 全部跳过 |
 
 - **三个指标同进同退**：XXFI 主表、冰点参考、底部区域判断没有各自独立的触发器，都是 `xxfi-daily.yml` 里的并列 step，`if` 条件逐字相同（`steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'`）——同一个 cron、同一个交易日闸门、同一次提交。
@@ -344,7 +344,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
-| `.github/workflows/xxfi-daily.yml` | 每日自动播报（15:50 cron · 仅交易日 · 数据就绪校验；实跑约 16:00 前后）。XXFI / 冰点 / 底部区域三个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
+| `.github/workflows/xxfi-daily.yml` | 每日自动播报（Cloudflare qdii-dispatch 每天 16:20 触发 · 仅交易日 · 数据就绪校验）。XXFI / 冰点 / 底部区域三个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
 | `output/_turnover_cache.json` | 全市场成交额滚动缓存（底部区域近90日峰值来源），每交易日由 CI 自动追加并提交 |
 | `simulate_qiuge.py` / `render_simulation.py` | 秋哥实盘模拟器（--auto 增量模式）与**离线预览**渲染脚本（本地运行后推 output/ 产物，CI 不执行）；网页区块已改由 sim_block.py 动态拉取 |
 
