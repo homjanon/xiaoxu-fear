@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 40.87,
-      "prev_close": 40.86,
-      "chg_pct": 0.02,
-      "day_pnl": 100.0,
-      "total_pnl": 104880.0
+      "last_close": 41.07,
+      "prev_close": 40.87,
+      "chg_pct": 0.49,
+      "day_pnl": 2000.0,
+      "total_pnl": 106880.0
     }
   },
   "cash": 697952.571,
@@ -404,11 +404,17 @@
       "nav": 1106652.57,
       "cash": 697952.57,
       "market_value": 408700.0
+    },
+    {
+      "date": "2026-09-03",
+      "nav": 1108652.57,
+      "cash": 697952.57,
+      "market_value": 410700.0
     }
   ],
-  "last_update": "2026-09-02",
+  "last_update": "2026-09-03",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-02",
+  "last_processed_date": "2026-09-03",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
