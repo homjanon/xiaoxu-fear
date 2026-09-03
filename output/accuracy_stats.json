@@ -7,13 +7,13 @@
   "avg_win": 3.75,
   "avg_loss": 0,
   "profit_factor": 0,
-  "latest_nav": 1106652.57,
-  "total_return": 0.28,
+  "latest_nav": 1108652.57,
+  "total_return": 0.46,
   "max_drawdown": -1.7,
-  "days": 22,
-  "total_pnl": 3052.57,
-  "hs300_return": 1.5,
-  "excess_hs300": -1.22,
+  "days": 23,
+  "total_pnl": 5052.57,
+  "hs300_return": 0.21,
+  "excess_hs300": 0.25,
   "divlow_return": -1.66,
-  "excess_divlow": 1.94
+  "excess_divlow": 2.12
 }
