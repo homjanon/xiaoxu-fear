@@ -2,22 +2,23 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 30.382,
-      "shares": 10000,
+      "cost": 25.118,
+      "shares": 6700,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 41.69,
-      "prev_close": 41.07,
-      "chg_pct": 1.51,
-      "day_pnl": 6200.0,
-      "total_pnl": 113080.0
+      "last_close": 41.07,
+      "prev_close": 41.69,
+      "chg_pct": -1.49,
+      "day_pnl": -4154.0,
+      "total_pnl": 106878.4,
+      "defence_done": true
     }
   },
-  "cash": 697952.571,
+  "cash": 833381.92275,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -168,13 +169,17 @@
       "name": "思源电气(observing-1)",
       "confirm_days": 0,
       "add_date": "2026-08-24",
-      "status": "observing-1"
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
     },
     "002353": {
       "name": "杰瑞股份(observing-1)",
       "confirm_days": 0,
       "add_date": "2026-08-24",
-      "status": "observing-1"
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未触发"
     },
     "002594": {
       "name": "比亚迪(observing-1·连5日流入首次中断转警示)",
@@ -270,6 +275,15 @@
       "price": 40.12,
       "shares": 3300,
       "reason": "恢复持有(收回MA20+主力+0.81亿,买回缺口3300股)"
+    },
+    {
+      "date": "2026-09-07",
+      "type": "SELL",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 41.07,
+      "shares": 3300,
+      "reason": "止盈+15%减1/3、主力净流出减仓"
     }
   ],
   "daily_nav": [
@@ -416,11 +430,17 @@
       "nav": 1114852.57,
       "cash": 697952.57,
       "market_value": 416900.0
+    },
+    {
+      "date": "2026-09-07",
+      "nav": 1108550.92,
+      "cash": 833381.92,
+      "market_value": 275169.0
     }
   ],
-  "last_update": "2026-09-04",
+  "last_update": "2026-09-07",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-04",
+  "last_processed_date": "2026-09-07",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
