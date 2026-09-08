@@ -2,23 +2,22 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 25.118,
-      "shares": 6700,
+      "cost": 30.329,
+      "shares": 10000,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 41.07,
-      "prev_close": 41.69,
-      "chg_pct": -1.49,
-      "day_pnl": -4154.0,
-      "total_pnl": 106878.4,
-      "defence_done": true
+      "last_close": 40.9,
+      "prev_close": 41.07,
+      "chg_pct": -0.41,
+      "day_pnl": -1700.0,
+      "total_pnl": 105710.0
     }
   },
-  "cash": 833381.92275,
+  "cash": 698378.18025,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -71,10 +70,11 @@
     "603259": {
       "name": "药明康德(回踩123-125)",
       "add_date": "2026-08-04",
-      "confirm_days": 0,
+      "confirm_days": 1,
       "status": "expired",
       "remove_date": "2026-08-21",
-      "remove_reason": "观察超时未触发"
+      "remove_reason": "观察超时未触发",
+      "last_net": 184280576
     },
     "300308": {
       "name": "中际旭创",
@@ -284,6 +284,15 @@
       "price": 41.07,
       "shares": 3300,
       "reason": "止盈+15%减1/3、主力净流出减仓"
+    },
+    {
+      "date": "2026-09-08",
+      "type": "BUY",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 40.9,
+      "shares": 3300,
+      "reason": "恢复持有(收回MA20+主力+0.36亿,买回缺口3300股)"
     }
   ],
   "daily_nav": [
@@ -436,11 +445,17 @@
       "nav": 1108550.92,
       "cash": 833381.92,
       "market_value": 275169.0
+    },
+    {
+      "date": "2026-09-08",
+      "nav": 1107378.18,
+      "cash": 698378.18,
+      "market_value": 409000.0
     }
   ],
-  "last_update": "2026-09-07",
+  "last_update": "2026-09-08",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-07",
+  "last_processed_date": "2026-09-08",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
