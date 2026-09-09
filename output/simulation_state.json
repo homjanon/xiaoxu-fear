@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 40.9,
-      "prev_close": 41.07,
-      "chg_pct": -0.41,
-      "day_pnl": -1700.0,
-      "total_pnl": 105710.0
+      "last_close": 41.0,
+      "prev_close": 40.9,
+      "chg_pct": 0.24,
+      "day_pnl": 1000.0,
+      "total_pnl": 106710.0
     }
   },
   "cash": 698378.18025,
@@ -74,7 +74,7 @@
       "status": "expired",
       "remove_date": "2026-08-21",
       "remove_reason": "观察超时未触发",
-      "last_net": 184280576
+      "last_net": 45241627
     },
     "300308": {
       "name": "中际旭创",
@@ -92,7 +92,8 @@
       "closed": true,
       "close_price": 34.65,
       "close_date": "2026-08-28",
-      "gain_pct": 3.75
+      "gain_pct": 3.75,
+      "last_net": 911968179
     },
     "688256": {
       "name": "AI算力硬件链(长电科技/景旺电子/胜宏科技/工业富联/光迅科技/寒武纪等)",
@@ -184,7 +185,9 @@
     "002594": {
       "name": "比亚迪(observing-1·连5日流入首次中断转警示)",
       "add_date": "2026-08-28",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-09",
+      "remove_reason": "观察超时未推进"
     },
     "688041": {
       "name": "海光信息(688041·confirmed·等回踩240-245缩量企稳)",
@@ -451,11 +454,17 @@
       "nav": 1107378.18,
       "cash": 698378.18,
       "market_value": 409000.0
+    },
+    {
+      "date": "2026-09-09",
+      "nav": 1108378.18,
+      "cash": 698378.18,
+      "market_value": 410000.0
     }
   ],
-  "last_update": "2026-09-08",
+  "last_update": "2026-09-09",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-08",
+  "last_processed_date": "2026-09-09",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
