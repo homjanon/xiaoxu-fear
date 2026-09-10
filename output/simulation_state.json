@@ -2,19 +2,20 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 30.329,
-      "shares": 10000,
+      "cost": 24.792,
+      "shares": 6700,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 41.0,
-      "prev_close": 40.9,
-      "chg_pct": 0.24,
-      "day_pnl": 1000.0,
-      "total_pnl": 106710.0
+      "last_close": 41.57,
+      "prev_close": 41.0,
+      "chg_pct": 1.39,
+      "day_pnl": 3819.0,
+      "total_pnl": 112412.6,
+      "defence_done": true
     },
     "603259": {
       "name": "药明康德",
@@ -31,7 +32,7 @@
       "total_pnl": -1.8
     }
   },
-  "cash": 651900.7638,
+  "cash": 788978.8780499999,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
@@ -218,6 +219,26 @@
       "name": "华胜天成(600410·new·首日涨停+6.23亿待确认)",
       "add_date": "2026-09-02",
       "status": "new"
+    },
+    "600150": {
+      "name": "中国船舶(600150·observing-1·点火T+3存活·站稳38上看40)",
+      "add_date": "2026-09-10",
+      "status": "new"
+    },
+    "300408": {
+      "name": "三环集团(300408·new·桶A接近未命中·5日+9.2%超8%红线·观察横住消化后回踩113-115)",
+      "add_date": "2026-09-10",
+      "status": "new"
+    },
+    "601872": {
+      "name": "招商轮船(601872·new·航运点火4.7亿·次日看资金延续)",
+      "add_date": "2026-09-10",
+      "status": "new"
+    },
+    "000988": {
+      "name": "华工科技(000988·new·光通信点火22.2亿·回踩不破108且资金续流入升observing-1)",
+      "add_date": "2026-09-10",
+      "status": "new"
     }
   },
   "log": [
@@ -319,6 +340,15 @@
       "price": 154.89,
       "shares": 300,
       "reason": "买点触发(最低152.89触及买点锚154.89)主力净流入0.45亿"
+    },
+    {
+      "date": "2026-09-10",
+      "type": "SELL",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 41.57,
+      "shares": 3300,
+      "reason": "止盈+15%减1/3、主力净流出减仓"
     }
   ],
   "daily_nav": [
@@ -483,11 +513,17 @@
       "nav": 1108364.76,
       "cash": 651900.76,
       "market_value": 456464.0
+    },
+    {
+      "date": "2026-09-10",
+      "nav": 1113961.88,
+      "cash": 788978.88,
+      "market_value": 324983.0
     }
   ],
-  "last_update": "2026-09-09",
+  "last_update": "2026-09-10",
   "profit_pool": 2128.399999999992,
-  "last_processed_date": "2026-09-09",
+  "last_processed_date": "2026-09-10",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
