@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 41.35,
-      "prev_close": 41.57,
-      "chg_pct": -0.53,
-      "day_pnl": -1474.0,
-      "total_pnl": 110938.6,
+      "last_close": 41.83,
+      "prev_close": 41.35,
+      "chg_pct": 1.16,
+      "day_pnl": 3216.0,
+      "total_pnl": 114154.6,
       "defence_done": true
     }
   },
@@ -198,17 +198,23 @@
       "name": "海光信息(688041·confirmed·等回踩240-245缩量企稳)",
       "confirm_days": 0,
       "add_date": "2026-09-01",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-14",
+      "remove_reason": "观察超时未推进"
     },
     "300604": {
       "name": "长川科技(300604·new·半导体设备点火待确认)",
       "add_date": "2026-09-02",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-14",
+      "remove_reason": "观察超时未推进"
     },
     "600410": {
       "name": "华胜天成(600410·new·首日涨停+6.23亿待确认)",
       "add_date": "2026-09-02",
-      "status": "new"
+      "status": "expired",
+      "remove_date": "2026-09-14",
+      "remove_reason": "观察超时未触发"
     },
     "600150": {
       "name": "中国船舶(600150·observing-1·点火T+3存活·站稳38上看40)",
@@ -220,14 +226,14 @@
       "name": "三环集团(300408·new·桶A接近未命中·5日+9.2%超8%红线·观察横住消化后回踩113-115)",
       "add_date": "2026-09-10",
       "status": "new",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "last_net": 212378896.0
     },
     "601872": {
       "name": "招商轮船(601872·new·航运点火4.7亿·次日看资金延续)",
       "add_date": "2026-09-10",
       "status": "new",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "last_net": 274728832.0
     },
     "000988": {
@@ -244,10 +250,20 @@
     },
     "600176": {
       "name": "中国巨石(600176·new·连2日流入·5日涨幅1.95%·明日续流入升confirmed)",
-      "last_net": 139053424.0,
+      "last_net": 314098142,
       "status": "new",
-      "confirm_days": 0,
+      "confirm_days": 1,
       "add_date": "2026-09-11"
+    },
+    "688002": {
+      "name": "睿创微纳(688002·new·回踩MA5=180.53+逆势资金6.50亿·明日缩量即桶A达标)",
+      "add_date": "2026-09-14",
+      "status": "new"
+    },
+    "300548": {
+      "name": "长芯博创(300548·new·待回踩·云端吸纳)",
+      "add_date": "2026-09-14",
+      "status": "new"
     }
   },
   "log": [
@@ -543,11 +559,17 @@
       "nav": 1111367.45,
       "cash": 834322.45,
       "market_value": 277045.0
+    },
+    {
+      "date": "2026-09-14",
+      "nav": 1114583.45,
+      "cash": 834322.45,
+      "market_value": 280261.0
     }
   ],
-  "last_update": "2026-09-11",
+  "last_update": "2026-09-14",
   "profit_pool": 1034.5999999999874,
-  "last_processed_date": "2026-09-11",
+  "last_processed_date": "2026-09-14",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
