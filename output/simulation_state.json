@@ -10,11 +10,11 @@
       "buy_price": 30.0,
       "target_pos": 300000.0,
       "tp_done": true,
-      "last_close": 41.83,
-      "prev_close": 41.35,
-      "chg_pct": 1.16,
-      "day_pnl": 3216.0,
-      "total_pnl": 114154.6,
+      "last_close": 41.1,
+      "prev_close": 41.83,
+      "chg_pct": -1.75,
+      "day_pnl": -4891.0,
+      "total_pnl": 109263.6,
       "defence_done": true
     }
   },
@@ -71,11 +71,11 @@
     "603259": {
       "name": "药明康德(回踩123-125)",
       "add_date": "2026-08-04",
-      "confirm_days": 0,
+      "confirm_days": 1,
       "status": "bought",
       "remove_date": "2026-08-21",
       "remove_reason": "观察超时未触发",
-      "last_net": 45241627,
+      "last_net": 105517980,
       "closed": true,
       "close_price": 151.24,
       "close_date": "2026-09-11",
@@ -233,8 +233,8 @@
       "name": "招商轮船(601872·new·航运点火4.7亿·次日看资金延续)",
       "add_date": "2026-09-10",
       "status": "new",
-      "confirm_days": 0,
-      "last_net": 274728832.0
+      "confirm_days": 1,
+      "last_net": 131651551
     },
     "000988": {
       "name": "华工科技(000988·new·光通信点火22.2亿·回踩不破108且资金续流入升observing-1)",
@@ -245,25 +245,43 @@
     "002185": {
       "name": "华天科技(002185·new·连2日递增流入+2.16→+2.47亿·明日续流入升confirmed)",
       "status": "new",
-      "confirm_days": 0,
-      "add_date": "2026-09-11"
+      "confirm_days": 1,
+      "add_date": "2026-09-11",
+      "last_net": 325247488
     },
     "600176": {
       "name": "中国巨石(600176·new·连2日流入·5日涨幅1.95%·明日续流入升confirmed)",
       "last_net": 314098142,
       "status": "new",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "add_date": "2026-09-11"
     },
     "688002": {
       "name": "睿创微纳(688002·new·回踩MA5=180.53+逆势资金6.50亿·明日缩量即桶A达标)",
       "add_date": "2026-09-14",
-      "status": "new"
+      "status": "new",
+      "confirm_days": 0
     },
     "300548": {
       "name": "长芯博创(300548·new·待回踩·云端吸纳)",
       "add_date": "2026-09-14",
       "status": "new"
+    },
+    "002436": {
+      "name": "兴森科技(002436·new·云端对拍核验·5日-0.15%站MA20但资金断(9/9-9.58亿)·等资金连续性恢复)",
+      "confirm_days": 0,
+      "add_date": "2026-09-15",
+      "status": "new"
+    },
+    "300759": {
+      "name": "康龙化成(300759·new·桶B-CXO回流·主力+2.88亿·回踩MA5缩量)",
+      "add_date": "2026-09-15",
+      "status": "new"
+    },
+    "002080": {
+      "name": "中材科技(002080·回踩51.5-52.5上车·止损50)",
+      "confirm_days": 1,
+      "last_net": 217697193
     }
   },
   "log": [
@@ -565,11 +583,17 @@
       "nav": 1114583.45,
       "cash": 834322.45,
       "market_value": 280261.0
+    },
+    {
+      "date": "2026-09-15",
+      "nav": 1109692.45,
+      "cash": 834322.45,
+      "market_value": 275370.0
     }
   ],
-  "last_update": "2026-09-14",
+  "last_update": "2026-09-15",
   "profit_pool": 1034.5999999999874,
-  "last_processed_date": "2026-09-14",
+  "last_processed_date": "2026-09-15",
   "unresolved_watch": [
     {
       "date": "2026-08-27",
