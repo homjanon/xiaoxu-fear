@@ -1,193 +1,156 @@
 {
+  "cash": 772879.9827499999,
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 24.792,
+      "cost": 24.836,
       "shares": 6700,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
-      "target_pos": 300000.0,
-      "tp_done": true,
+      "stop_loss": null,
       "last_close": 41.1,
+      "tp_done": true,
       "prev_close": 41.83,
       "chg_pct": -1.75,
       "day_pnl": -4891.0,
-      "total_pnl": 109263.6,
+      "total_pnl": 108968.8,
       "defence_done": true
     },
     "002080": {
       "stop_loss": 50.0,
       "name": "中材科技",
-      "cost": 51.89200000000001,
+      "cost": 52.55,
       "shares": 1100,
       "init_shares": 1100,
       "buy_date": "2026-09-15",
-      "buy_price": 51.89200000000001,
-      "target_pos": 166453.86756749998,
+      "buy_price": 52.55,
+      "target_pos": 166644.06509999998,
       "last_close": 53.77,
       "prev_close": 52.79,
       "chg_pct": 1.86,
       "day_pnl": 1078.0,
-      "total_pnl": 2065.8
+      "total_pnl": 1342.0
     }
   },
-  "cash": 777226.98015,
   "tracker": {
     "601318": {
       "name": "中国平安(回踩53-54)",
       "confirm_days": 0,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-25",
-      "remove_reason": "观察超时未触发"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "600436": {
       "name": "片仔癀(回踩133-135)",
       "confirm_days": 0,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "601069": {
       "name": "西部黄金(回踩23.5-24)",
       "confirm_days": 0,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "003816": {
       "name": "中国广核(回踩3.95-4.05)",
       "confirm_days": 1,
+      "last_net": 6545256,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "002493": {
       "name": "荣盛石化(回踩11.7-11.9)",
       "confirm_days": 0,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "688183": {
       "name": "生益电子(超跌反弹,等二次确认)",
       "confirm_days": 0,
       "add_date": "2026-08-04",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
+    },
+    "600036": {
+      "name": "招商银行(600036·持有·confirmed)",
+      "confirm_days": 0,
+      "last_net": 94508814.69
     },
     "603259": {
       "name": "药明康德(回踩123-125)",
       "add_date": "2026-08-04",
-      "confirm_days": 1,
       "status": "bought",
-      "remove_date": "2026-08-21",
-      "remove_reason": "观察超时未触发",
+      "confirm_days": 1,
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进",
       "last_net": 105517980,
       "closed": true,
-      "close_price": 151.24,
-      "close_date": "2026-09-11",
-      "gain_pct": -2.35
+      "close_price": 154.5,
+      "close_date": "2026-09-10",
+      "gain_pct": -0.46
     },
     "300308": {
       "name": "中际旭创",
       "confirm_days": 0,
       "add_date": "2026-08-05",
       "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
+    },
+    "300750": {
+      "name": "宁德时代",
+      "confirm_days": 0,
+      "add_date": "2026-08-05",
+      "status": "expired",
+      "remove_date": "2026-08-17",
+      "remove_reason": "观察超时未推进"
     },
     "601899": {
       "name": "紫金矿业",
       "confirm_days": 0,
       "add_date": "2026-08-06",
       "status": "bought",
+      "remove_date": "2026-08-19",
+      "remove_reason": "观察超时未推进",
+      "last_net": 13045328.0,
       "closed": true,
-      "close_price": 34.65,
-      "close_date": "2026-08-28",
-      "gain_pct": 3.75,
-      "last_net": 911968179
-    },
-    "688256": {
-      "name": "AI算力硬件链(长电科技/景旺电子/胜宏科技/工业富联/光迅科技/寒武纪等)",
-      "confirm_days": 0,
-      "add_date": "2026-08-07",
-      "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
-    },
-    "600183": {
-      "name": "AI算力硬件链(光迅科技/生益科技/胜宏科技/沪电股份/寒武纪/北方华创)",
-      "confirm_days": 0,
-      "add_date": "2026-08-10",
-      "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
-    },
-    "688072": {
-      "name": "半导体设备/材料(中微公司/拓荆科技/盛美上海/精智达/雅克科技—等回踩)",
-      "confirm_days": 0,
-      "add_date": "2026-08-11",
-      "status": "expired",
-      "remove_date": "2026-08-27",
-      "remove_reason": "历史回填·观察超时"
-    },
-    "601138": {
-      "name": "工业富联",
-      "confirm_days": 0,
-      "add_date": "2026-08-19",
-      "status": "expired",
-      "remove_date": "2026-08-31",
-      "remove_reason": "观察超时未推进"
+      "close_price": 32.26,
+      "close_date": "2026-09-11",
+      "gain_pct": -3.7
     },
     "688037": {
-      "name": "芯源微(688037)",
+      "name": "芯源微",
       "confirm_days": 0,
-      "add_date": "2026-08-20",
+      "last_net": 22406469.38,
+      "add_date": "2026-08-24",
       "status": "expired",
-      "remove_date": "2026-09-01",
-      "remove_reason": "观察超时未触发"
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
+    },
+    "688072": {
+      "name": "拓荆科技",
+      "confirm_days": 0,
+      "last_net": 129643283.01,
+      "add_date": "2026-08-24",
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
     },
     "600118": {
-      "name": "中国卫星(600118)",
-      "confirm_days": 0,
-      "add_date": "2026-08-20",
-      "status": "expired",
-      "remove_date": "2026-09-01",
-      "remove_reason": "观察超时未推进"
-    },
-    "300433": {
-      "name": "蓝思科技",
-      "confirm_days": 0,
-      "add_date": "2026-08-21",
-      "status": "expired",
-      "remove_date": "2026-09-02",
-      "remove_reason": "观察超时未推进"
-    },
-    "002821": {
-      "name": "凯莱英",
-      "confirm_days": 0,
-      "add_date": "2026-08-21",
-      "status": "expired",
-      "remove_date": "2026-09-02",
-      "remove_reason": "观察超时未推进"
-    },
-    "000603": {
-      "name": "盛达资源",
-      "add_date": "2026-08-21",
-      "status": "expired",
-      "remove_date": "2026-09-02",
-      "remove_reason": "观察超时未推进"
-    },
-    "002028": {
-      "name": "思源电气(observing-1)",
+      "name": "中国卫星",
       "confirm_days": 0,
       "add_date": "2026-08-24",
       "status": "expired",
@@ -195,30 +158,62 @@
       "remove_reason": "观察超时未推进"
     },
     "002353": {
-      "name": "杰瑞股份(observing-1)",
+      "name": "杰瑞股份",
       "confirm_days": 0,
       "add_date": "2026-08-24",
       "status": "expired",
       "remove_date": "2026-09-07",
-      "remove_reason": "观察超时未触发"
+      "remove_reason": "观察超时未触发",
+      "last_net": 139731561.42
+    },
+    "002028": {
+      "name": "思源电气",
+      "confirm_days": 0,
+      "add_date": "2026-08-25",
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
+    },
+    "300433": {
+      "name": "蓝思科技",
+      "confirm_days": 0,
+      "add_date": "2026-08-25",
+      "status": "expired",
+      "last_net": 237810581.45,
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
     },
     "002594": {
-      "name": "比亚迪(observing-1·连5日流入首次中断转警示)",
+      "name": "比亚迪",
+      "add_date": "2026-08-25",
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
+    },
+    "603993": {
+      "name": "洛阳钼业",
+      "add_date": "2026-08-25",
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
+    },
+    "000617": {
+      "name": "中油资本(new)",
+      "add_date": "2026-08-26",
+      "status": "expired",
+      "remove_date": "2026-09-07",
+      "remove_reason": "观察超时未推进"
+    },
+    "688041": {
+      "name": "海光信息(new·算力深回撤后首日放量反包+9.37亿待确认)",
       "add_date": "2026-08-28",
       "status": "expired",
       "remove_date": "2026-09-09",
       "remove_reason": "观察超时未推进"
     },
-    "688041": {
-      "name": "海光信息(688041·confirmed·等回踩240-245缩量企稳)",
-      "confirm_days": 0,
-      "add_date": "2026-09-01",
-      "status": "expired",
-      "remove_date": "2026-09-14",
-      "remove_reason": "观察超时未推进"
-    },
     "300604": {
       "name": "长川科技(300604·new·半导体设备点火待确认)",
+      "confirm_days": 0,
       "add_date": "2026-09-02",
       "status": "expired",
       "remove_date": "2026-09-14",
@@ -233,49 +228,51 @@
     },
     "600150": {
       "name": "中国船舶(600150·observing-1·点火T+3存活·站稳38上看40)",
+      "confirm_days": 0,
+      "last_net": 342124320.0,
       "add_date": "2026-09-10",
-      "status": "new",
-      "confirm_days": 0
+      "status": "new"
     },
     "300408": {
       "name": "三环集团(300408·new·桶A接近未命中·5日+9.2%超8%红线·观察横住消化后回踩113-115)",
+      "confirm_days": 0,
       "add_date": "2026-09-10",
       "status": "new",
-      "confirm_days": 0,
       "last_net": 212378896.0
     },
     "601872": {
       "name": "招商轮船(601872·new·航运点火4.7亿·次日看资金延续)",
+      "confirm_days": 1,
       "add_date": "2026-09-10",
       "status": "new",
-      "confirm_days": 1,
       "last_net": 131651551
     },
     "000988": {
       "name": "华工科技(000988·new·光通信点火22.2亿·回踩不破108且资金续流入升observing-1)",
+      "confirm_days": 0,
       "add_date": "2026-09-10",
-      "status": "new",
-      "confirm_days": 0
+      "status": "new"
     },
     "002185": {
       "name": "华天科技(002185·new·连2日递增流入+2.16→+2.47亿·明日续流入升confirmed)",
-      "status": "new",
       "confirm_days": 1,
       "add_date": "2026-09-11",
+      "status": "new",
       "last_net": 325247488
     },
     "600176": {
       "name": "中国巨石(600176·new·连2日流入·5日涨幅1.95%·明日续流入升confirmed)",
-      "last_net": 314098142,
-      "status": "new",
       "confirm_days": 0,
-      "add_date": "2026-09-11"
+      "add_date": "2026-09-11",
+      "status": "new",
+      "last_net": 314098142
     },
     "688002": {
       "name": "睿创微纳(688002·new·回踩MA5=180.53+逆势资金6.50亿·明日缩量即桶A达标)",
+      "confirm_days": 0,
+      "last_net": 84925385,
       "add_date": "2026-09-14",
-      "status": "new",
-      "confirm_days": 0
+      "status": "new"
     },
     "300548": {
       "name": "长芯博创(300548·new·待回踩·云端吸纳)",
@@ -288,16 +285,16 @@
       "add_date": "2026-09-15",
       "status": "new"
     },
+    "002080": {
+      "name": "中材科技(002080·回踩51.5-52.5上车·confirmed·止损50)",
+      "confirm_days": 1,
+      "last_net": 217697193,
+      "status": "bought"
+    },
     "300759": {
       "name": "康龙化成(300759·new·桶B-CXO回流·主力+2.88亿·回踩MA5缩量)",
       "add_date": "2026-09-15",
       "status": "new"
-    },
-    "002080": {
-      "name": "中材科技(002080·回踩51.5-52.5上车·止损50)",
-      "last_net": 217697193,
-      "confirm_days": 1,
-      "status": "bought"
     }
   },
   "log": [
@@ -329,22 +326,13 @@
       "reason": "破MA20减仓1/3、止盈+15%减1/3、主力净流出减仓"
     },
     {
-      "date": "2026-08-21",
-      "type": "BUY",
-      "code": "601899",
-      "name": "紫金矿业",
-      "price": 33.4,
-      "shares": 1700,
-      "reason": "买点触发(最低33.6触及买点锚33.4)主力净流入9.35亿"
-    },
-    {
-      "date": "2026-08-25",
+      "date": "2026-08-24",
       "type": "BUY",
       "code": "600036",
       "name": "招商银行",
-      "price": 39.5,
+      "price": 39.58,
       "shares": 3300,
-      "reason": "恢复持有(收回MA20+主力+0.01亿,买回缺口3300股)"
+      "reason": "恢复持有(收回MA20+主力+0.95亿,买回缺口3300股)"
     },
     {
       "date": "2026-08-28",
@@ -354,15 +342,6 @@
       "price": 39.35,
       "shares": 3300,
       "reason": "止盈+15%减1/3、主力净流出减仓"
-    },
-    {
-      "date": "2026-08-28",
-      "type": "SELL",
-      "code": "601899",
-      "name": "紫金矿业",
-      "price": 34.65,
-      "shares": 1700,
-      "reason": "主力连2日流出清仓"
     },
     {
       "date": "2026-08-31",
@@ -389,16 +368,25 @@
       "name": "招商银行",
       "price": 40.9,
       "shares": 3300,
-      "reason": "恢复持有(收回MA20+主力+0.36亿,买回缺口3300股)"
+      "reason": "恢复持有(收回MA20+主力+0.06亿,买回缺口3300股)"
+    },
+    {
+      "date": "2026-09-08",
+      "type": "BUY",
+      "code": "603259",
+      "name": "药明康德",
+      "price": 155.21,
+      "shares": 300,
+      "reason": "买点触发(最低152.05触及买点锚155.21·成交155.21)主力净流入2.69亿"
     },
     {
       "date": "2026-09-09",
       "type": "BUY",
-      "code": "603259",
-      "name": "药明康德",
-      "price": 154.89,
-      "shares": 300,
-      "reason": "买点触发(最低152.89触及买点锚154.89)主力净流入0.45亿"
+      "code": "601899",
+      "name": "紫金矿业",
+      "price": 33.5,
+      "shares": 1700,
+      "reason": "买点触发(最低33.49触及买点锚33.5·成交33.5)主力净流入9.12亿"
     },
     {
       "date": "2026-09-10",
@@ -410,12 +398,21 @@
       "reason": "止盈+15%减1/3、主力净流出减仓"
     },
     {
-      "date": "2026-09-11",
+      "date": "2026-09-10",
       "type": "SELL",
       "code": "603259",
       "name": "药明康德",
-      "price": 151.24,
+      "price": 154.5,
       "shares": 300,
+      "reason": "破MA20+主力流出清仓"
+    },
+    {
+      "date": "2026-09-11",
+      "type": "SELL",
+      "code": "601899",
+      "name": "紫金矿业",
+      "price": 32.26,
+      "shares": 1700,
       "reason": "破MA20+主力流出清仓"
     },
     {
@@ -423,9 +420,9 @@
       "type": "BUY",
       "code": "002080",
       "name": "中材科技",
-      "price": 51.89,
+      "price": 52.55,
       "shares": 1100,
-      "reason": "买点触发(最低52.55触及买点锚51.89)主力净流入2.18亿"
+      "reason": "买点触发(最低52.55触及买点锚51.89·成交52.55)主力净流入2.18亿"
     }
   ],
   "daily_nav": [
@@ -509,117 +506,279 @@
     },
     {
       "date": "2026-08-21",
-      "nav": 1091833.83,
-      "cash": 772145.83,
-      "market_value": 319688.0
+      "nav": 1089566.63,
+      "cash": 828936.63,
+      "market_value": 260630.0
     },
     {
       "date": "2026-08-24",
-      "nav": 1096049.83,
-      "cash": 772145.83,
-      "market_value": 323904.0
+      "nav": 1094089.97,
+      "cash": 698289.97,
+      "market_value": 395800.0
     },
     {
       "date": "2026-08-25",
-      "nav": 1094019.24,
-      "cash": 641763.24,
-      "market_value": 452256.0
+      "nav": 1093289.97,
+      "cash": 698289.97,
+      "market_value": 395000.0
     },
     {
       "date": "2026-08-26",
-      "nav": 1098362.24,
-      "cash": 641763.24,
-      "market_value": 456599.0
+      "nav": 1096289.97,
+      "cash": 698289.97,
+      "market_value": 398000.0
     },
     {
       "date": "2026-08-27",
-      "nav": 1096332.24,
-      "cash": 641763.24,
-      "market_value": 454569.0
+      "nav": 1094089.97,
+      "cash": 698289.97,
+      "market_value": 395800.0
     },
     {
       "date": "2026-08-28",
-      "nav": 1094026.67,
-      "cash": 830381.67,
+      "nav": 1091692.58,
+      "cash": 828047.58,
       "market_value": 263645.0
     },
     {
       "date": "2026-08-31",
-      "nav": 1099152.57,
-      "cash": 697952.57,
+      "nav": 1096818.48,
+      "cash": 695618.48,
       "market_value": 401200.0
     },
     {
       "date": "2026-09-01",
-      "nav": 1106552.57,
-      "cash": 697952.57,
+      "nav": 1104218.48,
+      "cash": 695618.48,
       "market_value": 408600.0
     },
     {
       "date": "2026-09-02",
-      "nav": 1106652.57,
-      "cash": 697952.57,
+      "nav": 1104318.48,
+      "cash": 695618.48,
       "market_value": 408700.0
     },
     {
       "date": "2026-09-03",
-      "nav": 1108652.57,
-      "cash": 697952.57,
+      "nav": 1106318.48,
+      "cash": 695618.48,
       "market_value": 410700.0
     },
     {
       "date": "2026-09-04",
-      "nav": 1114852.57,
-      "cash": 697952.57,
+      "nav": 1112518.48,
+      "cash": 695618.48,
       "market_value": 416900.0
     },
     {
       "date": "2026-09-07",
-      "nav": 1108550.92,
-      "cash": 833381.92,
+      "nav": 1106216.83,
+      "cash": 831047.83,
       "market_value": 275169.0
     },
     {
       "date": "2026-09-08",
-      "nav": 1107378.18,
-      "cash": 698378.18,
-      "market_value": 409000.0
+      "nav": 1105374.45,
+      "cash": 649469.45,
+      "market_value": 455905.0
     },
     {
       "date": "2026-09-09",
-      "nav": 1108364.76,
-      "cash": 651900.76,
-      "market_value": 456464.0
+      "nav": 1107449.21,
+      "cash": 592505.21,
+      "market_value": 514944.0
     },
     {
       "date": "2026-09-10",
-      "nav": 1113961.88,
-      "cash": 788978.88,
-      "market_value": 324983.0
+      "nav": 1112404.57,
+      "cash": 775898.57,
+      "market_value": 336506.0
     },
     {
       "date": "2026-09-11",
-      "nav": 1111367.45,
-      "cash": 834322.45,
+      "nav": 1107744.43,
+      "cash": 830699.43,
       "market_value": 277045.0
     },
     {
       "date": "2026-09-14",
-      "nav": 1114583.45,
-      "cash": 834322.45,
+      "nav": 1110960.43,
+      "cash": 830699.43,
       "market_value": 280261.0
     },
     {
       "date": "2026-09-15",
-      "nav": 1111743.98,
-      "cash": 777226.98,
+      "nav": 1107396.98,
+      "cash": 772879.98,
       "market_value": 334517.0
     }
   ],
-  "last_update": "2026-09-15",
-  "profit_pool": 1034.5999999999874,
-  "last_processed_date": "2026-09-15",
+  "profit_pool": -2320.9999999999973,
   "unresolved_watch": [
+    {
+      "date": "2026-08-05",
+      "name": "胜宏科技"
+    },
+    {
+      "date": "2026-08-05",
+      "name": "剑桥科技"
+    },
+    {
+      "date": "2026-08-06",
+      "name": "北方华创"
+    },
+    {
+      "date": "2026-08-06",
+      "name": "天赐材料"
+    },
+    {
+      "date": "2026-08-06",
+      "name": "盛新锂能"
+    },
+    {
+      "date": "2026-08-06",
+      "name": "淳中科技"
+    },
+    {
+      "date": "2026-08-07",
+      "name": "中国稀土"
+    },
+    {
+      "date": "2026-08-07",
+      "name": "AI算力硬件链(长电科技/景旺电子/胜宏科技/工业富联/光迅科技/寒武纪等)"
+    },
+    {
+      "date": "2026-08-07",
+      "name": "煤炭(潞安环能/淮北矿业)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "AI算力硬件链(光迅科技/生益科技/胜宏科技/沪电股份/寒武纪/北方华创)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "稀土(中国稀土—等回踩)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "创新药(恒瑞医药/药明康德—等回踩)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "低位价值(潍柴动力/德业股份/陕西煤业/格力电器)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "AI算力硬件链(光迅科技/生益科技/胜宏科技/沪电股份/寒武纪/北方华创—等回踩)"
+    },
+    {
+      "date": "2026-08-10",
+      "name": "稀土(中国稀土—涨停后等回踩)"
+    },
+    {
+      "date": "2026-08-11",
+      "name": "半导体设备/材料(中微公司/拓荆科技/盛美上海/精智达/雅克科技—等回踩)"
+    },
+    {
+      "date": "2026-08-11",
+      "name": "军工(长城军工—等回踩不追)"
+    },
+    {
+      "date": "2026-08-11",
+      "name": "新能源(宁德时代/盛屯矿业/华友钴业—等回踩)"
+    },
+    {
+      "date": "2026-08-11",
+      "name": "低位价值/红利(格力电器/伊利股份/中国神华/陕西煤业/国金证券—小仓观察)"
+    },
+    {
+      "date": "2026-08-13",
+      "name": "工商银行"
+    },
+    {
+      "date": "2026-08-14",
+      "name": "财通证券"
+    },
+    {
+      "date": "2026-08-14",
+      "name": "广发证券"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "贵州茅台"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "三一重工"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "中国电信"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "光大银行"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "兖矿能源"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "保利发展"
+    },
+    {
+      "date": "2026-08-17",
+      "name": "节能风电"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "交通银行"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "格力电器"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "中国中车"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "国泰海通"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "中国石油"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "京沪高铁"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "海尔智家"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "中国移动"
+    },
+    {
+      "date": "2026-08-19",
+      "name": "顺丰控股"
+    },
+    {
+      "date": "2026-08-20",
+      "name": "金风科技"
+    },
+    {
+      "date": "2026-08-20",
+      "name": "农业银行"
+    },
+    {
+      "date": "2026-08-20",
+      "name": "中国神华"
+    },
     {
       "date": "2026-08-27",
       "name": "江西铜业(new·有色首日)"
@@ -627,14 +786,8 @@
     {
       "date": "2026-08-27",
       "name": "招商证券(new·券商首日)"
-    },
-    {
-      "date": "2026-08-28",
-      "name": "海光信息(new·算力深回撤后首日放量反包+9.37亿待确认)"
-    },
-    {
-      "date": "2026-08-31",
-      "name": "海光信息(new·算力深回撤反包待回踩确认)"
     }
-  ]
+  ],
+  "last_processed_date": "2026-09-15",
+  "last_update": "2026-09-15"
 }
