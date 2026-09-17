@@ -1,5 +1,5 @@
 {
-  "cash": 773583.9201499998,
+  "cash": 733378.3818999999,
   "positions": {
     "600036": {
       "name": "招商银行",
@@ -18,15 +18,33 @@
       "total_pnl": 105618.8,
       "defence_done": true
     },
+    "002080": {
+      "stop_loss": 50.0,
+      "is_fastlane": true,
+      "name": "中材科技",
+      "cost": 50.248,
+      "shares": 800,
+      "init_shares": 1100,
+      "buy_date": "2026-09-15",
+      "buy_price": 52.55,
+      "target_pos": 165951.3,
+      "last_close": 58.69,
+      "prev_close": 55.88,
+      "chg_pct": 5.03,
+      "day_pnl": 2248.0,
+      "total_pnl": 6753.6,
+      "tp10_done": true
+    },
     "603920": {
       "stop_loss": 40.5,
+      "is_fastlane": true,
       "name": "世运电路",
       "cost": 42.064,
       "shares": 1400,
       "init_shares": 1400,
       "buy_date": "2026-09-16",
       "buy_price": 42.064,
-      "target_pos": 166450.78226249994,
+      "target_pos": 166652.9323125,
       "last_close": 43.47,
       "prev_close": 42.77,
       "chg_pct": 1.64,
@@ -290,11 +308,11 @@
       "name": "中材科技(002080·回踩51.5-52.5上车·confirmed·止损50)",
       "confirm_days": 1,
       "last_net": 217697193,
-      "status": "bought",
       "closed": true,
       "close_price": 55.88,
       "close_date": "2026-09-16",
-      "gain_pct": 6.34
+      "gain_pct": 6.34,
+      "status": "bought"
     },
     "300759": {
       "name": "康龙化成(300759·new·桶B-CXO回流·主力+2.88亿·回踩MA5缩量)",
@@ -315,11 +333,11 @@
     "600989": {
       "name": "宝丰能源(600989·回踩24.0-24.4上车·confirmed·止损23.5)",
       "confirm_days": 0,
-      "status": "bought",
       "closed": true,
       "close_price": 23.5,
       "close_date": "2026-09-17",
-      "gain_pct": -3.02
+      "gain_pct": -3.02,
+      "status": "bought"
     }
   },
   "log": [
@@ -451,15 +469,6 @@
     },
     {
       "date": "2026-09-16",
-      "type": "SELL",
-      "code": "002080",
-      "name": "中材科技",
-      "price": 55.88,
-      "shares": 1100,
-      "reason": "破MA60清仓"
-    },
-    {
-      "date": "2026-09-16",
       "type": "BUY",
       "code": "603920",
       "name": "世运电路",
@@ -475,6 +484,15 @@
       "price": 24.23,
       "shares": 2400,
       "reason": "买点触发(最低23.81触及买点锚24.23·成交24.23)主力净流入-0.13亿"
+    },
+    {
+      "date": "2026-09-17",
+      "type": "SELL",
+      "code": "002080",
+      "name": "中材科技",
+      "price": 58.69,
+      "shares": 300,
+      "reason": "分批止盈+10%卖1/3"
     },
     {
       "date": "2026-09-17",
@@ -669,24 +687,24 @@
     },
     {
       "date": "2026-09-15",
-      "nav": 1107396.98,
-      "cash": 772879.98,
+      "nav": 1111019.55,
+      "cash": 776502.55,
       "market_value": 334517.0
     },
     {
       "date": "2026-09-16",
-      "nav": 1109012.22,
-      "cash": 717226.22,
-      "market_value": 391786.0
+      "nav": 1112680.89,
+      "cash": 659426.89,
+      "market_value": 453254.0
     },
     {
       "date": "2026-09-17",
-      "nav": 1106461.92,
-      "cash": 773583.92,
-      "market_value": 332878.0
+      "nav": 1113208.38,
+      "cash": 733378.38,
+      "market_value": 379830.0
     }
   ],
-  "profit_pool": -414.7999999999897,
+  "profit_pool": -329.59999999998786,
   "unresolved_watch": [
     {
       "date": "2026-08-05",
