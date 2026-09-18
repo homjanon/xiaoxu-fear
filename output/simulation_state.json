@@ -1,5 +1,5 @@
 {
-  "cash": 687272.8766,
+  "cash": 794372.22,
   "positions": {
     "600036": {
       "name": "招商银行",
@@ -34,38 +34,6 @@
       "day_pnl": 1224.0,
       "total_pnl": 7977.6,
       "tp10_done": true
-    },
-    "603920": {
-      "stop_loss": 40.5,
-      "is_fastlane": true,
-      "name": "世运电路",
-      "cost": 42.064,
-      "shares": 1400,
-      "init_shares": 1400,
-      "buy_date": "2026-09-16",
-      "buy_price": 42.064,
-      "target_pos": 166652.9323125,
-      "last_close": 43.6,
-      "prev_close": 43.47,
-      "chg_pct": 0.3,
-      "day_pnl": 182.0,
-      "total_pnl": 2150.4
-    },
-    "601869": {
-      "stop_loss": 445.0,
-      "is_fastlane": true,
-      "name": "长飞光纤",
-      "cost": 460.936,
-      "shares": 100,
-      "init_shares": 100,
-      "buy_date": "2026-09-18",
-      "buy_price": 460.936,
-      "target_pos": 166971.15,
-      "last_close": 454.99,
-      "prev_close": 467.03,
-      "chg_pct": -2.58,
-      "day_pnl": -1204.0,
-      "total_pnl": -594.6
     }
   },
   "tracker": {
@@ -334,7 +302,8 @@
       "name": "康龙化成(300759·new·桶B-CXO回流·主力+2.88亿·回踩MA5缩量)",
       "add_date": "2026-09-15",
       "status": "new",
-      "confirm_days": 0
+      "confirm_days": 1,
+      "last_net": 23842277.0
     },
     "000657": {
       "name": "中钨高新(000657·new·钨板块首日异动·主力+5.39亿·回踩确认)",
@@ -345,7 +314,11 @@
     "603920": {
       "name": "世运电路(603920·回踩41.5-42.5上车·confirmed·止损40.5)",
       "confirm_days": 0,
-      "status": "bought"
+      "status": "bought",
+      "closed": true,
+      "close_price": 43.6,
+      "close_date": "2026-09-18",
+      "gain_pct": 3.65
     },
     "600989": {
       "name": "宝丰能源(600989·回踩24.0-24.4上车·confirmed·止损23.5)",
@@ -538,12 +511,12 @@
     },
     {
       "date": "2026-09-18",
-      "type": "BUY",
-      "code": "601869",
-      "name": "长飞光纤",
-      "price": 460.94,
-      "shares": 100,
-      "reason": "买点触发(最低450.18触及买点锚460.94·成交460.94)主力净流入0.0亿"
+      "type": "SELL",
+      "code": "603920",
+      "name": "世运电路",
+      "price": 43.6,
+      "shares": 1400,
+      "reason": "短线+3%止盈全卖"
     }
   ],
   "daily_nav": [
@@ -747,12 +720,12 @@
     },
     {
       "date": "2026-09-18",
-      "nav": 1113940.88,
-      "cash": 687272.88,
-      "market_value": 426668.0
+      "nav": 1114501.22,
+      "cash": 794372.22,
+      "market_value": 320129.0
     }
   ],
-  "profit_pool": -329.59999999998786,
+  "profit_pool": 1820.800000000014,
   "unresolved_watch": [
     {
       "date": "2026-08-05",
