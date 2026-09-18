@@ -1,5 +1,5 @@
 {
-  "cash": 794372.22,
+  "cash": 733378.0,
   "positions": {
     "600036": {
       "name": "招商银行",
@@ -34,6 +34,22 @@
       "day_pnl": 1224.0,
       "total_pnl": 7977.6,
       "tp10_done": true
+    },
+    "603920": {
+      "stop_loss": 40.5,
+      "is_fastlane": true,
+      "name": "世运电路",
+      "cost": 42.064,
+      "shares": 1400,
+      "init_shares": 1400,
+      "buy_date": "2026-09-16",
+      "buy_price": 42.064,
+      "target_pos": 166652.9323125,
+      "last_close": 43.6,
+      "prev_close": 43.47,
+      "chg_pct": 0.3,
+      "day_pnl": 182.0,
+      "total_pnl": 2150.4
     }
   },
   "tracker": {
@@ -314,11 +330,7 @@
     "603920": {
       "name": "世运电路(603920·回踩41.5-42.5上车·confirmed·止损40.5)",
       "confirm_days": 0,
-      "status": "bought",
-      "closed": true,
-      "close_price": 43.6,
-      "close_date": "2026-09-18",
-      "gain_pct": 3.65
+      "status": "bought"
     },
     "600989": {
       "name": "宝丰能源(600989·回踩24.0-24.4上车·confirmed·止损23.5)",
@@ -508,15 +520,6 @@
       "price": 23.5,
       "shares": 2400,
       "reason": "触发止损位离场"
-    },
-    {
-      "date": "2026-09-18",
-      "type": "SELL",
-      "code": "603920",
-      "name": "世运电路",
-      "price": 43.6,
-      "shares": 1400,
-      "reason": "短线+3%止盈全卖"
     }
   ],
   "daily_nav": [
@@ -720,12 +723,12 @@
     },
     {
       "date": "2026-09-18",
-      "nav": 1114501.22,
-      "cash": 794372.22,
-      "market_value": 320129.0
+      "nav": 1114547.0,
+      "cash": 733378.0,
+      "market_value": 381169.0
     }
   ],
-  "profit_pool": 1820.800000000014,
+  "profit_pool": -329.59999999998786,
   "unresolved_watch": [
     {
       "date": "2026-08-05",
