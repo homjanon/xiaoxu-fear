@@ -1,5 +1,5 @@
 {
-  "cash": 733378.3818999999,
+  "cash": 687272.8766,
   "positions": {
     "600036": {
       "name": "招商银行",
@@ -10,12 +10,12 @@
       "buy_date": "2024-09-25",
       "buy_price": 30.0,
       "stop_loss": null,
-      "last_close": 40.6,
+      "last_close": 40.59,
       "tp_done": true,
-      "prev_close": 40.92,
-      "chg_pct": -0.78,
-      "day_pnl": -2144.0,
-      "total_pnl": 105618.8,
+      "prev_close": 40.6,
+      "chg_pct": -0.02,
+      "day_pnl": -67.0,
+      "total_pnl": 105551.8,
       "defence_done": true
     },
     "002080": {
@@ -28,11 +28,11 @@
       "buy_date": "2026-09-15",
       "buy_price": 52.55,
       "target_pos": 165951.3,
-      "last_close": 58.69,
-      "prev_close": 55.88,
-      "chg_pct": 5.03,
-      "day_pnl": 2248.0,
-      "total_pnl": 6753.6,
+      "last_close": 60.22,
+      "prev_close": 58.69,
+      "chg_pct": 2.61,
+      "day_pnl": 1224.0,
+      "total_pnl": 7977.6,
       "tp10_done": true
     },
     "603920": {
@@ -45,11 +45,27 @@
       "buy_date": "2026-09-16",
       "buy_price": 42.064,
       "target_pos": 166652.9323125,
-      "last_close": 43.47,
-      "prev_close": 42.77,
-      "chg_pct": 1.64,
-      "day_pnl": 980.0,
-      "total_pnl": 1968.4
+      "last_close": 43.6,
+      "prev_close": 43.47,
+      "chg_pct": 0.3,
+      "day_pnl": 182.0,
+      "total_pnl": 2150.4
+    },
+    "601869": {
+      "stop_loss": 445.0,
+      "is_fastlane": true,
+      "name": "长飞光纤",
+      "cost": 460.936,
+      "shares": 100,
+      "init_shares": 100,
+      "buy_date": "2026-09-18",
+      "buy_price": 460.936,
+      "target_pos": 166971.15,
+      "last_close": 454.99,
+      "prev_close": 467.03,
+      "chg_pct": -2.58,
+      "day_pnl": -1204.0,
+      "total_pnl": -594.6
     }
   },
   "tracker": {
@@ -317,7 +333,8 @@
     "300759": {
       "name": "康龙化成(300759·new·桶B-CXO回流·主力+2.88亿·回踩MA5缩量)",
       "add_date": "2026-09-15",
-      "status": "new"
+      "status": "new",
+      "confirm_days": 0
     },
     "000657": {
       "name": "中钨高新(000657·new·钨板块首日异动·主力+5.39亿·回踩确认)",
@@ -337,6 +354,22 @@
       "close_price": 23.5,
       "close_date": "2026-09-17",
       "gain_pct": -3.02,
+      "status": "bought"
+    },
+    "688256": {
+      "name": "寒武纪(688256·回踩1075-1090上车·confirmed·止损1050)",
+      "confirm_days": 0,
+      "status": "bought"
+    },
+    "600522": {
+      "name": "中天科技(600522·观察·连3日流入但5日涨幅9.28%超8%红线·等涨幅回落)",
+      "add_date": "2026-09-18",
+      "status": "new",
+      "confirm_days": 0
+    },
+    "601869": {
+      "name": "长飞光纤(601869·回踩455-465上车·confirmed·止损445)",
+      "confirm_days": 0,
       "status": "bought"
     }
   },
@@ -502,6 +535,15 @@
       "price": 23.5,
       "shares": 2400,
       "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-09-18",
+      "type": "BUY",
+      "code": "601869",
+      "name": "长飞光纤",
+      "price": 460.94,
+      "shares": 100,
+      "reason": "买点触发(最低450.18触及买点锚460.94·成交460.94)主力净流入0.0亿"
     }
   ],
   "daily_nav": [
@@ -702,6 +744,12 @@
       "nav": 1113208.38,
       "cash": 733378.38,
       "market_value": 379830.0
+    },
+    {
+      "date": "2026-09-18",
+      "nav": 1113940.88,
+      "cash": 687272.88,
+      "market_value": 426668.0
     }
   ],
   "profit_pool": -329.59999999998786,
@@ -879,6 +927,6 @@
       "name": "招商证券(new·券商首日)"
     }
   ],
-  "last_processed_date": "2026-09-17",
-  "last_update": "2026-09-17"
+  "last_processed_date": "2026-09-18",
+  "last_update": "2026-09-18"
 }
