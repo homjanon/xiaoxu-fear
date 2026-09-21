@@ -244,11 +244,9 @@ python render_html.py --json output/xxfi_report.json \
 > - **② `raw.githubusercontent.com` 直连**（无缓存兜底）；
 > - **③ GitHub Contents API**（base64 解码兜底）；
 > - JSONL 历史文件用 `r.text()` + 逐行解析（不能用 `r.json()`/`JSON.parse`，会整个区块渲染失败——2026-08-27 已修）。因此：
-> - **CI 每天用 render_html.py 覆盖 index.html = 重新生成同一容器+JS，区块永不消失**（此前手动 `render_simulation.py` 注入的内容会被 CI 覆盖抹掉——2026-08-25/26 两次事故根因）
+> - **CI 每天用 render_html.py 覆盖 index.html = 重新生成同一容器+JS，区块永不消失**（此前手动注入的内容会被 CI 覆盖抹掉——2026-08-25/26 两次事故根因）
 > - **数据永远新鲜**：本地秋哥操作后把 3 个 simulation JSON 推到 `output/`（与 qiuge_report.json 同链路），网页下次打开即最新（走代理实时拉取，无需等 CI / Pages 重建）
-> - 旧 `render_simulation.py` 注入模式仅保留作离线预览（可选），不再作为网页区块维护通道
 
-> 📌 **版本真源**：`simulate_qiuge.py` / `sim_block.py` / `render_html.py` 的最新迭代维护在本地「秋哥操作（每日运行）」工作空间，**改动后需同步覆盖至本仓再推送**。
 
 ### 4) 自检
 
@@ -283,45 +281,39 @@ python run_dibudian.py --demo-normal --out output   # 正常量样例：比率 1
 git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 ```
 
-## 秋哥操作 · 实盘模拟（核心-卫星模型 · 本地运算成品同步）
+## 秋哥操作 · 实盘模拟（本地运算成品同步）
 
-> 定位：**秋哥操作推荐质量的客观验证器**——每日报告的 picks/watch 由模拟盘按纪律自动"纸上交易"，用真实行情验证买点是否到达、纪律是否有效，沉淀命中率/净值/超额收益数据，反哺 SKILL 迭代。
+> 定位：**推荐质量的客观验证器**——每日 picks/holdings 由模拟盘自动记录，用真实行情检验净值与命中率，沉淀客观统计。
 
 ### 架构（云端零逻辑 · 2026-08-26 起动态拉取）
 
 ```
-本地：通达信采数(tdx_kline+zjlx) → simulate_qiuge.py --auto（增量幂等，缺跑自动补齐）
+本地：采数 → 模拟器（增量幂等，缺跑自动补齐）
       → 推送 output/simulation_state.json + accuracy_stats.json + simulation_history.jsonl 到本仓（与 qiuge_report.json 同链路）
 本仓：只存产物（output/simulation_* + qiuge_report.json），无任何计算任务
 展示：网页「底部区域判断」下方 📊 秋哥操作·实盘模拟 区块
       = render_html.py 固定内联 sim_block.py 三件套（CSS+容器+JS）→ 页面运行时从本仓 output/ 实时拉取渲染
-      → 数据通道三级切换：自建 CORS 代理 xx（实时无缓存）→ raw.githubusercontent.com → GitHub API 兜底
+      → 数据通道多级自动切换（自建代理 → raw.githubusercontent.com → GitHub API 兜底）
       → CI 每天覆盖 index.html 时容器+JS 重新生成 → 区块永不消失；本地推完数据 → 网页下次打开即最新（无需等 CI/Pages）
 ```
 
-### 核心-卫星模型
+### 区块显示内容
 
-| 仓 | 规则要点 |
+| 模块 | 内容 |
 |---|---|
-| **🏦 核心（招行 600036 底仓）** | 初始10000股@30(2024-09-25)。卖出状态机：止盈+15%/破MA20各减1/3（一次性）、破MA60清仓；**恢复型买入**=收回MA20+主力>0 买回缺口（防务重新武装）；**扩大型加仓**=估值(PB<0.9&股息≥4%)/盈利回落≥15pp 每次+1000股，🔒受利润池（短线已实现盈亏）约束；硬顶=市值≤总资产55%；满仓基准=历史峰值持股(base)；成本=摊薄法 |
-| **🛰️ 卫星（短线 watch/picks ≤5只）** | 买入9条：双锚取低min(MA5,报告买区)+触及+未破位+主力>0+二次确认(2日)或强资金例外(单日≥5亿)+涨停不追+6万预算一手保底；卖出资金定档：强势档分批止盈10/20/40%、弱势档+3%全卖、破MA60/连2日流出/破MA20+流出全卖、射击星减1/3 |
-
-### 防偏差设计
-
-- **日期切片**：每份报告只用其下一交易日行情验证，MA 只取当日之前（杜绝未来数据泄漏）
-- **快照本地化**：19 只标的 K线+资金流全部本地快照，回放确定性（不依赖网络兜底偶然性）
-- **全量 tracker**：观察池含超时/移除案例，统计无幸存者偏差；胜率 <5 笔平仓显示"待样本"
-- **双基准超额**：vs 沪深300(000300) / vs 红利低波(512890)，8/3 起同口径对比
+| KPI 卡 | 模拟净值 / 累计收益 / 交易笔数 / 胜率（不足 5 笔平仓显示"待样本"）/ 总盈亏 |
+| 净值曲线 | 逐日净值（180 日窗口），双基准超额（vs 沪深300 / vs 红利低波） |
+| 持仓表 | 代码 / 名称 / 成本 / 股数 / 现价 / 当日涨跌 / 当日盈亏 / 累计盈亏 |
+| 买卖复盘 | 最近 10 笔交易（日期 / 方向 / 标的 / 价格 / 股数 / 备注） |
 
 ### 相关文件
 
 | 文件 | 说明 |
 |---|---|
 | `output/qiuge_report.json` | 每日秋哥操作报告（本地推送；holdings 字段由推送脚本按模拟器 state 自动对账覆写） |
-| `output/simulation_state.json` | 模拟账户状态（现金/持仓/tracker/利润池/last_processed_date） |
+| `output/simulation_state.json` | 账户状态公开版（持仓 + 交易记录 + 现金） |
 | `output/simulation_history.jsonl` | 逐日净值（180 日窗口曲线） |
 | `output/accuracy_stats.json` | 统计：总盈亏/收益/回撤/双基准超额/命中率 |
-| `output/simulation_report.md` | 当日模拟可读报告 |
 | `docs/index.html` | 含「📊 秋哥操作·实盘模拟」区块（6 卡 KPI + 净值曲线 + 持仓表 + 买卖复盘）——由 render_html.py 固定内联容器+JS，运行时从 output/ 实时拉取渲染 |
 
 ## 文件结构
@@ -339,14 +331,13 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `run_dibudian.py` | 底部区域编排入口（`--akshare` / `--demo-bottom` / `--demo-normal` / `--json`），产出 `output/dibudian_report.json` + 跨日持久的 `dibudian_state.json` |
 | `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 底部区域判断卡与30日趋势图 + **固定内联模拟区块三件套**，GitHub Pages）；2026-08-27 加固：`--bingdian/--dibudian` 缺省自动探测 `output/` 产物，生成后自检三卡齐全（缺失 warn） |
-| `sim_block.py` | 「秋哥操作·实盘模拟」区块三件套（CSS + HTML容器 + JS渲染脚本）：render_html.py 每次固定内联；页面运行时从本仓 output/ 拉取 simulation_*.json 渲染，**数据通道三级切换**：自建 CORS 代理 `xx`（实时无缓存）→ `raw.githubusercontent.com` 直连 → GitHub API 兜底；JSONL 用 `r.text()` 逐行解析（参考 cmb-tracker「雪球大V追踪」动态拉取模式） |
+| `sim_block.py` | 「秋哥操作·实盘模拟」区块的样式与渲染脚本（CSS + 容器 + JS）：render_html.py 每次固定内联；页面运行时从本仓 output/ 拉取数据渲染 |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
 | `.github/workflows/xxfi-daily.yml` | 每日自动播报（Cloudflare qdii-dispatch 每天 16:20 触发 · 仅交易日 · 数据就绪校验）。XXFI / 冰点 / 底部区域三个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
 | `output/_turnover_cache.json` | 全市场成交额滚动缓存（底部区域近90日峰值来源），每交易日由 CI 自动追加并提交 |
-| `simulate_qiuge.py` / `render_simulation.py` | 秋哥实盘模拟器（--auto 增量模式）与**离线预览**渲染脚本（本地运行后推 output/ 产物，CI 不执行）；网页区块已改由 sim_block.py 动态拉取 |
 
 ## License
 
