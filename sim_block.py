@@ -38,9 +38,9 @@ SIM_CSS = """
 SIM_HTML = """
 <!-- ===== 秋哥操作 · 实盘模拟区块（sim_block.py 动态拉取，2026-08-26 起） ===== -->
 <div class="card" id="qiuge-sim" style="margin-top:18px;">
-  <div class="dip-head">📊 秋哥操作 · 实盘模拟 <span style="font-size:10px;color:#94a3b8;font-weight:600;margin-left:6px;">模拟账户 · 非真实资金 · 按回踩买点纪律自动判定 · 数据来自本仓 output/</span></div>
+  <div class="dip-head">📊 秋哥操作 · 实盘模拟 <span style="font-size:10px;color:#94a3b8;font-weight:600;margin-left:6px;">模拟账户 · 非真实资金 · 按既定纪律自动判定 · 数据来自本仓 output/</span></div>
   <div id="qiuge-sim-body"><div class="sim-empty">模拟数据加载中…</div></div>
-  <div class="sim-note">⚠️ 本区块为策略方法验证的模拟账户：按秋哥纪律（回踩 MA5/MA10 买点 + 主力确认 / 破 MA20 减仓 / 破 MA60 离场 / 止盈 10–20%）自动判定，仅供回测验证，<b>不构成任何投资建议</b>。数据源：通达信 + 腾讯自选股（本地采集，每日盘后同步至 output/）。</div>
+  <div class="sim-note">⚠️ 本区块为模拟账户记录，按既定纪律自动判定，仅供记录与验证，<b>不构成任何投资建议</b>。数据为本地采集，每日盘后同步至 output/。</div>
 </div>
 <!-- ===== 秋哥操作 · 实盘模拟区块结束 ===== -->
 """
