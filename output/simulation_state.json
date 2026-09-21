@@ -2,8 +2,8 @@
   "positions": {
     "600036": {
       "name": "招商银行",
-      "cost": 24.836,
-      "shares": 6700,
+      "cost": 30.187,
+      "shares": 10000,
       "base": 10000,
       "init_shares": 10000,
       "buy_date": "2024-09-25",
@@ -11,55 +11,56 @@
       "target_pos": 300000.0,
       "realized": 659735.82,
       "tp_done": true,
-      "zh_dd_pp": 3.39,
+      "zh_dd_pp": 2.16,
       "zh_dd_lvl": 0,
       "zh_dd_high": 41.83,
-      "last_close": 40.59,
-      "prev_close": 40.6,
-      "chg_pct": -0.02,
-      "day_pnl": -67.0,
-      "total_pnl": 105551.8,
-      "defence_done": true
+      "last_close": 41.04,
+      "prev_close": 40.59,
+      "chg_pct": 1.11,
+      "day_pnl": 4500.0,
+      "total_pnl": 108530.0
     },
     "002080": {
       "stop_loss": 50.0,
       "is_fastlane": true,
       "name": "中材科技",
-      "cost": 50.248,
-      "shares": 800,
+      "cost": 40.653,
+      "shares": 500,
       "init_shares": 1100,
       "buy_date": "2026-09-15",
       "buy_price": 52.55,
-      "realized": 17593.79,
+      "realized": 37450.89,
       "invested": 57819.45,
       "target_pos": 166654.05759749998,
-      "last_close": 60.22,
-      "prev_close": 58.69,
-      "chg_pct": 2.61,
-      "day_pnl": 1224.0,
-      "total_pnl": 7977.6,
-      "tp10_done": true
+      "last_close": 66.24,
+      "prev_close": 60.22,
+      "chg_pct": 10.0,
+      "day_pnl": 3010.0,
+      "total_pnl": 12793.5,
+      "tp10_done": true,
+      "tp20_done": true
     },
     "603920": {
       "stop_loss": 40.5,
       "is_fastlane": true,
       "name": "世运电路",
-      "cost": 42.064,
-      "shares": 1400,
+      "cost": 40.314,
+      "shares": 1000,
       "init_shares": 1400,
       "buy_date": "2026-09-16",
       "buy_price": 42.064,
-      "realized": 0.0,
+      "realized": 18562.07,
       "invested": 58904.32,
       "target_pos": 166119.53990999996,
-      "last_close": 43.6,
-      "prev_close": 43.47,
-      "chg_pct": 0.3,
-      "day_pnl": 182.0,
-      "total_pnl": 2150.4
+      "last_close": 46.44,
+      "prev_close": 43.6,
+      "chg_pct": 6.51,
+      "day_pnl": 2840.0,
+      "total_pnl": 6126.0,
+      "tp10_done": true
     }
   },
-  "cash": 729822.4325499998,
+  "cash": 632775.7385499998,
   "tracker": {
     "601318": {
       "name": "中国平安",
@@ -115,7 +116,7 @@
       "last_net": 94508814.69
     },
     "603259": {
-      "name": "药明康德(603259·observing-1·主力+3.04亿连3日·站稳MA20则confirmed)",
+      "name": "药明康德(603259·降级观察·距20日高仅2.77%触高位保护·等回落3%以上)",
       "add_date": "2026-09-03",
       "status": "bought",
       "last_net": 493540832.0,
@@ -128,11 +129,9 @@
       "realized": 46315.24
     },
     "300308": {
-      "name": "中际旭创(300308·观察·光模块主线强等回调)",
-      "add_date": "2026-09-02",
-      "status": "expired",
-      "remove_date": "2026-09-14",
-      "remove_reason": "观察超时未推进"
+      "name": "中际旭创(300308·观察·光模块+16.64亿·等回踩)",
+      "add_date": "2026-09-21",
+      "status": "new"
     },
     "300750": {
       "name": "宁德时代",
@@ -210,9 +209,11 @@
     "002353": {
       "name": "杰瑞股份(002353·observing-1·连2日正递减·等回踩125)",
       "add_date": "2026-09-08",
-      "status": "new",
+      "status": "expired",
       "last_net": 139731561.42,
-      "confirm_days": 0
+      "confirm_days": 0,
+      "remove_date": "2026-09-21",
+      "remove_reason": "观察超时未推进"
     },
     "002028": {
       "name": "思源电气",
@@ -311,7 +312,7 @@
       "status": "new"
     },
     "002185": {
-      "name": "华天科技(002185·降级·主力-4.07亿转负·观察)",
+      "name": "华天科技(002185·观察·封测+26.35亿涨停·涨停不追等回踩)",
       "confirm_days": 0,
       "add_date": "2026-09-11",
       "status": "new",
@@ -338,7 +339,7 @@
     },
     "300759": {
       "name": "康龙化成(300759·new·CXO回流·主力+1.75亿连4日·回踩MA5缩量)",
-      "confirm_days": 1,
+      "confirm_days": 0,
       "add_date": "2026-09-15",
       "status": "new",
       "last_net": 23842277.0
@@ -391,6 +392,12 @@
     "601869": {
       "name": "长飞光纤(601869·回踩455-465上车·confirmed·止损445)",
       "confirm_days": 0
+    },
+    "603986": {
+      "name": "兆易创新(603986·观察·存储+15.59亿·等回踩)",
+      "confirm_days": 0,
+      "add_date": "2026-09-21",
+      "status": "new"
     }
   },
   "log": [
@@ -555,6 +562,33 @@
       "price": 23.5,
       "shares": 2400,
       "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-09-21",
+      "type": "SELL",
+      "code": "002080",
+      "name": "中材科技",
+      "price": 66.24,
+      "shares": 300,
+      "reason": "分批止盈+20%卖1/3"
+    },
+    {
+      "date": "2026-09-21",
+      "type": "SELL",
+      "code": "603920",
+      "name": "世运电路",
+      "price": 46.44,
+      "shares": 400,
+      "reason": "分批止盈+10%卖1/3"
+    },
+    {
+      "date": "2026-09-21",
+      "type": "BUY",
+      "code": "600036",
+      "name": "招商银行",
+      "price": 41.04,
+      "shares": 3300,
+      "reason": "恢复持有(收回MA20+主力+0.24亿,买回缺口3300股)"
     }
   ],
   "daily_nav": [
@@ -761,10 +795,16 @@
       "nav": 1110991.43,
       "cash": 729822.43,
       "market_value": 381169.0
+    },
+    {
+      "date": "2026-09-21",
+      "nav": 1122735.74,
+      "cash": 632775.74,
+      "market_value": 489960.0
     }
   ],
-  "last_update": "2026-09-19",
-  "profit_pool": -2169.2000000000016,
+  "last_update": "2026-09-21",
+  "profit_pool": 4378.799999999997,
   "unresolved_watch": [
     {
       "date": "2026-08-05",
@@ -923,5 +963,5 @@
       "name": "招商证券(new·券商首日)"
     }
   ],
-  "last_processed_date": "2026-09-18"
+  "last_processed_date": "2026-09-21"
 }
