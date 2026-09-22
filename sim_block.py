@@ -158,7 +158,8 @@ SIM_JS = r"""
       var cost=p.cost||0,px=p.last_close||p.cost||0;
       var chg=p.chg_pct||0,day=p.day_pnl||0;
       var tot=p.total_pnl!==undefined?p.total_pnl:((px-cost)*p.shares||0);
-      var ret=cost?(px-cost)/cost*100:0;
+      // P4（2026-09-22）：优先用累计收益率（含已实现）；缺失时回退"相对成本"口径
+      var ret=(p.cum_ret!==undefined&&p.cum_ret!==null)?p.cum_ret:(cost?(px-cost)/cost*100:0);
       return '<tr><td>'+code+'</td><td>'+name+tag+'</td>'
         +'<td class="sim-num">'+cost.toFixed(2)+'</td><td class="sim-num">'+p.shares+'</td>'
         +'<td class="sim-num">'+px.toFixed(2)+'</td>'
