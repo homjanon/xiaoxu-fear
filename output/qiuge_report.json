@@ -1,16 +1,48 @@
 {
-  "data_date": "2026-09-21",
   "report_type": "操作",
+  "data_date": "2026-09-22",
   "index": {
     "name": "上证指数",
-    "close": 3949.91,
-    "change_pct": 0.97
+    "close": 3952.13,
+    "change_pct": 0.06
   },
   "levels": {
-    "support": 3900,
-    "pressure": 3980,
-    "strong_support": 3860
+    "support": 3920,
+    "pressure": 3995,
+    "strong_support": 3910
   },
+  "position_max": 0.6,
+  "picks_name": [
+    "康龙化成",
+    "博迁新材",
+    "沃森生物"
+  ],
+  "picks_detail": [
+    {
+      "name": "康龙化成",
+      "code": "300759",
+      "price": 44.46,
+      "action": "回踩43.43-44.00上车",
+      "position": "短线6万仓",
+      "stop_loss": 42.43
+    },
+    {
+      "name": "博迁新材",
+      "code": "605376",
+      "price": 141.33,
+      "action": "回踩136.64-138.44上车",
+      "position": "短线6万仓",
+      "stop_loss": 133.5
+    },
+    {
+      "name": "沃森生物",
+      "code": "300142",
+      "price": 14.02,
+      "action": "回踩13.25-13.42上车",
+      "position": "短线6万仓",
+      "stop_loss": 12.95
+    }
+  ],
   "holdings": [
     {
       "name": "招商银行",
@@ -20,44 +52,18 @@
     {
       "name": "中材科技",
       "code": "002080",
-      "action": "✅持有(09/15上车·浮盈+62.9%)"
+      "action": "✅持有(09/15上车·浮盈+692.8%)"
     },
     {
       "name": "世运电路",
       "code": "603920",
-      "action": "✅持有(09/16上车·浮盈+15.2%)"
-    }
-  ],
-  "picks_name": [
-    "寒武纪",
-    "康龙化成",
-    "日联科技"
-  ],
-  "picks_detail": [
-    {
-      "name": "寒武纪",
-      "code": "688256",
-      "price": 1112.77,
-      "action": "回踩1095-1110上车",
-      "position": "一手超6万买一手",
-      "stop_loss": 1052
-    },
-    {
-      "name": "康龙化成",
-      "code": "300759",
-      "price": 45.13,
-      "action": "回踩43.0-43.8上车",
-      "position": "短线6万仓",
-      "stop_loss": 42.0
+      "action": "✅持有(09/16上车·浮盈+14.5%)"
     },
     {
       "name": "日联科技",
       "code": "688531",
-      "price": 148.0,
-      "action": "回踩141.5-144.5上车",
-      "position": "短线6万仓",
-      "stop_loss": 135.0
+      "action": "✅持有(09/22上车·浮盈+0.3%)"
     }
   ],
-  "position_max": 0.6
+  "summary": "主仓招行持有，短线上康龙化成/博迁新材/沃森生物等回踩，寒武纪与兆易创新挂观察，光模块PCB老主线不抄底"
 }
