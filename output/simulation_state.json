@@ -5,21 +5,21 @@
       "cost": 30.187,
       "shares": 10000,
       "buy_date": "2024-09-25",
-      "last_close": 41.04,
-      "chg_pct": 1.11,
-      "day_pnl": 4500.0,
-      "total_pnl": 108530.0
+      "last_close": 40.82,
+      "chg_pct": -0.54,
+      "day_pnl": -2200.0,
+      "total_pnl": 106330.0
     },
     "002080": {
       "stop_loss": 50.0,
       "name": "中材科技",
-      "cost": 40.653,
-      "shares": 500,
+      "cost": 7.883,
+      "shares": 200,
       "buy_date": "2026-09-15",
-      "last_close": 66.24,
-      "chg_pct": 10.0,
-      "day_pnl": 3010.0,
-      "total_pnl": 12793.5
+      "last_close": 62.5,
+      "chg_pct": -5.65,
+      "day_pnl": -748.0,
+      "total_pnl": 10923.4
     },
     "603920": {
       "stop_loss": 40.5,
@@ -27,13 +27,24 @@
       "cost": 40.314,
       "shares": 1000,
       "buy_date": "2026-09-16",
-      "last_close": 46.44,
-      "chg_pct": 6.51,
-      "day_pnl": 2840.0,
-      "total_pnl": 6126.0
+      "last_close": 46.15,
+      "chg_pct": -0.62,
+      "day_pnl": -290.0,
+      "total_pnl": 5836.0
+    },
+    "688531": {
+      "stop_loss": 135.0,
+      "name": "日联科技",
+      "cost": 144.5,
+      "shares": 400,
+      "buy_date": "2026-09-22",
+      "last_close": 145.0,
+      "chg_pct": -2.03,
+      "day_pnl": -1200.0,
+      "total_pnl": 200.0
     }
   },
-  "cash": 632775.7385499998,
+  "cash": 593697.2260499998,
   "log": [
     {
       "date": "2026-08-04",
@@ -223,7 +234,25 @@
       "price": 41.04,
       "shares": 3300,
       "reason": "恢复持有(收回MA20+主力+0.24亿,买回缺口3300股)"
+    },
+    {
+      "date": "2026-09-22",
+      "type": "SELL",
+      "code": "002080",
+      "name": "中材科技",
+      "price": 62.5,
+      "shares": 300,
+      "reason": "分批止盈+40%卖1/3"
+    },
+    {
+      "date": "2026-09-22",
+      "type": "BUY",
+      "code": "688531",
+      "name": "日联科技",
+      "price": 144.5,
+      "shares": 400,
+      "reason": "买点触发(最低144.44触及买点锚144.5·成交144.5)主力净流入-0.22亿"
     }
   ],
-  "last_update": "2026-09-21"
+  "last_update": "2026-09-22"
 }
