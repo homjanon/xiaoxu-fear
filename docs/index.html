@@ -140,6 +140,47 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
 #qiuge-sim .sim-tag{font-size:9px;color:#94a3b8;margin-left:3px;border:1px solid #e2e8f0;border-radius:3px;padding:0 3px;}
 #qiuge-sim .sim-num{font-variant-numeric:tabular-nums;}
 @media(max-width:640px){#qiuge-sim .sim-kpis{grid-template-columns:repeat(2,1fr);}}
+/* —— 移动端（≤640px）：持仓/交易表转卡片；主页面 .score-tbl 是 table-layout:fixed+width:100%，
+      9 列在窄屏会被压成每列约 40px（中文竖排），这里改为卡片式重排 —— */
+@media(max-width:640px){
+  #qiuge-sim .sim-tbl-wrap{overflow:visible;}
+  #qiuge-sim table.sim-tbl-pos,#qiuge-sim table.sim-tbl-trade{table-layout:auto;display:block;margin-bottom:10px;}
+  #qiuge-sim .sim-tbl-pos thead,#qiuge-sim .sim-tbl-trade thead{display:none;}
+  #qiuge-sim .sim-tbl-pos tbody,#qiuge-sim .sim-tbl-trade tbody{display:block;}
+  /* 持仓卡片：首行 代码 | 名称(+底仓) | 收益率；其后 6 字段 3 列 × 2 行 */
+  #qiuge-sim .sim-tbl-pos tr{display:grid;grid-template-columns:3.3fr 4.6fr 3.3fr;gap:8px 10px;border:1px solid var(--line);border-radius:11px;padding:12px 13px 13px;margin-bottom:10px;background:#fff;}
+  #qiuge-sim .sim-tbl-pos td{display:flex;flex-direction:column;gap:2px;border:none;padding:0;min-width:0;font-size:13px;}
+  #qiuge-sim .sim-tbl-pos td::before{font-size:11px;color:#94a3b8;font-weight:500;line-height:1.3;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(1){grid-row:1;grid-column:1;font-size:12px;color:#8a9099;justify-content:center;white-space:nowrap;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(1)::before{display:none;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(2){grid-row:1;grid-column:2;flex-direction:row;align-items:center;flex-wrap:wrap;gap:5px;font-weight:700;font-size:14px;color:var(--ink);}
+  #qiuge-sim .sim-tbl-pos td:nth-child(2)::before{display:none;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(9){grid-row:1;grid-column:3;align-items:flex-end;font-weight:700;font-size:15px;justify-content:center;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(9)::before{content:"收益率";font-weight:500;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(3){grid-row:2;grid-column:1;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(3)::before{content:"成本价*";}
+  #qiuge-sim .sim-tbl-pos td:nth-child(4){grid-row:2;grid-column:2;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(4)::before{content:"数量";}
+  #qiuge-sim .sim-tbl-pos td:nth-child(5){grid-row:2;grid-column:3;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(5)::before{content:"最新收盘";}
+  #qiuge-sim .sim-tbl-pos td:nth-child(6){grid-row:3;grid-column:1;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(6)::before{content:"当日涨跌";}
+  #qiuge-sim .sim-tbl-pos td:nth-child(7){grid-row:3;grid-column:2;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(7)::before{content:"当日盈亏";}
+  #qiuge-sim .sim-tbl-pos td:nth-child(8){grid-row:3;grid-column:3;}
+  #qiuge-sim .sim-tbl-pos td:nth-child(8)::before{content:"总盈亏";}
+  /* 交易卡片：日期 类型 标的 价格 数量 一行 + 原因独立一行 */
+  #qiuge-sim .sim-tbl-trade tr{display:grid;grid-template-columns:5.4fr 3fr 5.6fr 3.4fr 3.4fr;gap:5px 6px;border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px;background:#fff;}
+  #qiuge-sim .sim-tbl-trade td{display:block;border:none;padding:0;min-width:0;font-size:12.5px;overflow-wrap:anywhere;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(1){grid-row:1;grid-column:1;color:#6b7280;font-size:11.5px;white-space:nowrap;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(2){grid-row:1;grid-column:2;font-weight:600;font-size:11.5px;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(3){grid-row:1;grid-column:3;font-weight:600;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(4){grid-row:1;grid-column:4;text-align:right;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(5){grid-row:1;grid-column:5;text-align:right;color:#6b7280;font-size:11.5px;}
+  #qiuge-sim .sim-tbl-trade td:nth-child(6){grid-row:2;grid-column:1/-1;font-size:11.5px;color:#64748b;line-height:1.5;border-top:1px dashed #eef0f3;padding-top:6px;margin-top:3px;}
+  /* 底仓标签：窄屏改浅底胶囊，避免显示成空心小方框 */
+  #qiuge-sim .sim-tag{background:#f1f5f9;border:none;border-radius:4px;padding:1px 5px;font-size:10px;color:#94a3b8;margin-left:5px;}
+}
 </style></head>
 <body><div class="wrap">
 <h1>小旭恐惧指数 · XXFI</h1>
@@ -382,7 +423,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
       var cost=((code==="600036"&&p.cost_diluted!=null)?p.cost_diluted:p.cost)||0,px=p.last_close||p.cost||0;
       var chg=p.chg_pct||0,day=p.day_pnl||0;
       var tot=p.total_pnl!==undefined?p.total_pnl:((px-cost)*p.shares||0);
-      var ret=cost?(px-cost)/cost*100:0;
+      // P4（2026-09-22）：优先用累计收益率（含已实现）；缺失时回退"相对成本"口径
+      var ret=(p.cum_ret!==undefined&&p.cum_ret!==null)?p.cum_ret:(cost?(px-cost)/cost*100:0);
       return '<tr><td>'+code+'</td><td>'+name+tag+'</td>'
         +'<td class="sim-num">'+cost.toFixed(2)+'</td><td class="sim-num">'+p.shares+'</td>'
         +'<td class="sim-num">'+px.toFixed(2)+'</td>'
@@ -432,11 +474,11 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
     var html='<div class="sim-kpis">'+kpis+'</div>'
       +'<div class="dip-trend">'+buildSvg(history)+'<div class="dip-trend-note">模拟账户净值曲线（自 8/3 起逐日累积，最近 180 交易日）</div></div>'
       +'<div style="font-size:13px;font-weight:700;margin:14px 0 8px;">📌 当前持仓</div>'
-      +'<div class="sim-tbl-wrap"><table class="score-tbl"><thead><tr><th>代码</th><th>名称</th><th>成本价*</th><th>数量</th><th>最新收盘</th><th>当日涨跌</th><th>当日盈亏</th><th>总盈亏</th><th>收益率</th></tr></thead>'
+      +'<div class="sim-tbl-wrap"><table class="score-tbl sim-tbl-pos"><thead><tr><th>代码</th><th>名称</th><th>成本价*</th><th>数量</th><th>最新收盘</th><th>当日涨跌</th><th>当日盈亏</th><th>总盈亏</th><th>收益率</th></tr></thead>'
       +'<tbody>'+buildPositions(state)+'</tbody></table></div>'
       +'<div class="sim-note" style="margin-top:6px;">* 底仓（招商银行）成本价按<b>摊薄成本</b>口径（= 券商 App「成本价」，已把历次卖出的实现盈亏摊回）；其余标的为<b>买入均价</b>。「收益率」列为<b>累计收益率</b>（含已实现，按下单投入计）。</div>'
       +'<div style="font-size:13px;font-weight:700;margin:14px 0 8px;">🔄 最近交易（买卖点复盘）</div>'
-      +'<div class="sim-tbl-wrap"><table class="score-tbl"><thead><tr><th>日期</th><th>类型</th><th>标的</th><th>价格</th><th>数量</th><th>原因</th></tr></thead>'
+      +'<div class="sim-tbl-wrap"><table class="score-tbl sim-tbl-trade"><thead><tr><th>日期</th><th>类型</th><th>标的</th><th>价格</th><th>数量</th><th>原因</th></tr></thead>'
       +'<tbody>'+buildTrades(state)+'</tbody></table></div>';
     root.innerHTML=html;
   }
