@@ -486,10 +486,7 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
       +'<div style="font-size:13px;font-weight:700;margin:14px 0 8px;">📌 当前持仓</div>'
       +'<div class="sim-tbl-wrap"><table class="score-tbl sim-tbl-pos"><thead><tr><th>代码</th><th>名称</th><th>成本价*</th><th>数量</th><th>最新收盘</th><th>当日涨跌</th><th>当日盈亏</th><th>总盈亏</th><th>浮动盈亏*</th><th>实际收益率</th></tr></thead>'
       +'<tbody>'+buildPositions(state)+'</tbody></table></div>'
-      +'<div class="sim-note" style="margin-top:6px;">* 「成本价」统一为<b>摊薄成本</b>口径（= 券商 App「成本价」，已把历次卖出的实现盈亏摊回剩余持仓），
-「浮动盈亏」按此计算 —— 与真实股票账户观感一致。因摊薄会把已实现盈利摊回，<b>分批止盈过的标的浮盈%会偏高</b>（券商口径固有特性，非计算错误）。
-「实际收益率」为<b>累计收益率</b>（含已实现，按下单投入计），更贴近真实战绩；底仓（招商银行）属只买不卖的长线底仓，不列此项（显示 —）。
-<b>上述均为展示口径；卖出判定仍按买入均价计算的 10/20/40 档，不受影响。</b></div>'
+      +'<div class="sim-note" style="margin-top:6px;">* 「成本价」统一为<b>摊薄成本</b>口径（= 券商 App「成本价」，已把历次卖出的实现盈亏摊回剩余持仓），「浮动盈亏」按此计算 —— 与真实股票账户观感一致。因摊薄会把已实现盈利摊回，<b>分批止盈过的标的浮盈%会偏高</b>（券商口径固有特性，非计算错误）。「实际收益率」为<b>累计收益率</b>（含已实现，按下单投入计），更贴近真实战绩；底仓（招商银行）属只买不卖的长线底仓，不列此项（显示 —）。<b>上述均为展示口径；卖出判定仍按买入均价计算的 10/20/40 档，不受影响。</b></div>'
       +'<div style="font-size:13px;font-weight:700;margin:14px 0 8px;">🔄 最近交易（买卖点复盘）</div>'
       +'<div class="sim-tbl-wrap"><table class="score-tbl sim-tbl-trade"><thead><tr><th>日期</th><th>类型</th><th>标的</th><th>价格</th><th>数量</th><th>原因</th></tr></thead>'
       +'<tbody>'+buildTrades(state)+'</tbody></table></div>';
