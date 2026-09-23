@@ -1,24 +1,20 @@
 {
-  "today_total": 2135550409931.0,
-  "sh_today": 1007995610882.0,
-  "sz_today": 1127554799049.0,
+  "today_total": 1764976416649.0,
+  "sh_today": 834132862985.0,
+  "sz_today": 930843553664.0,
   "max90_total": 3737198788608.0,
-  "ratio": 0.5714,
+  "ratio": 0.4723,
   "threshold": 0.5,
-  "is_bottom_today": false,
-  "verdict_text": "非底部区域日",
-  "verdict_emoji": "⚪",
-  "_data_date": "2026-09-22",
-  "_src": "sina_spot+cache(2026-09-22)",
+  "is_bottom_today": true,
+  "verdict_text": "底部区域日",
+  "verdict_emoji": "🟢",
+  "_data_date": "2026-09-23",
+  "_src": "sina_spot+cache(2026-09-23)",
   "_sina_src": null,
-  "last_bottom_date": "2026-09-17",
-  "last_bottom_volume": 1823134270447.0,
+  "last_bottom_date": "2026-09-23",
+  "last_bottom_volume": 1764976416649.0,
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
   "hist30": [
-    {
-      "date": "2026-08-12",
-      "total": 2152423109815.0
-    },
     {
       "date": "2026-08-13",
       "total": 2550916739359.0
@@ -134,18 +130,18 @@
     {
       "date": "2026-09-22",
       "total": 2135550409931.0
+    },
+    {
+      "date": "2026-09-23",
+      "total": 1764976416649.0
     }
   ],
   "inputs": {
-    "today_total": 2135550409931.0,
-    "sh_today": 1007995610882.0,
-    "sz_today": 1127554799049.0,
+    "today_total": 1764976416649.0,
+    "sh_today": 834132862985.0,
+    "sz_today": 930843553664.0,
     "max90_total": 3737198788608.0,
     "hist30": [
-      {
-        "date": "2026-08-12",
-        "total": 2152423109815.0
-      },
       {
         "date": "2026-08-13",
         "total": 2550916739359.0
@@ -261,6 +257,10 @@
       {
         "date": "2026-09-22",
         "total": 2135550409931.0
+      },
+      {
+        "date": "2026-09-23",
+        "total": 1764976416649.0
       }
     ]
   }
