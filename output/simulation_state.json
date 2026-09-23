@@ -7,24 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 40.82,
+      "last_close": 40.6,
       "chg_pct": -0.54,
       "day_pnl": -2200.0,
-      "total_pnl": 106330.0,
-      "cum_ret": 11.0
-    },
-    "002080": {
-      "stop_loss": 50.0,
-      "name": "中材科技",
-      "cost": 52.55,
-      "cost_raw": 52.55,
-      "shares": 368,
-      "buy_date": "2026-09-15",
-      "last_close": 62.5,
-      "chg_pct": -5.65,
-      "day_pnl": -1376.32,
-      "total_pnl": 10919.66,
-      "cum_ret": 18.8
+      "total_pnl": 104130.0,
+      "cum_ret": 10.77
     },
     "603920": {
       "stop_loss": 40.5,
@@ -33,27 +20,27 @@
       "cost_raw": 42.064,
       "shares": 934,
       "buy_date": "2026-09-16",
-      "last_close": 46.15,
-      "chg_pct": -0.62,
-      "day_pnl": -270.86,
-      "total_pnl": 5855.25,
-      "cum_ret": 9.89
+      "last_close": 45.96,
+      "chg_pct": -0.41,
+      "day_pnl": -177.46,
+      "total_pnl": 5677.79,
+      "cum_ret": 9.59
     },
-    "688531": {
-      "stop_loss": 135.0,
-      "name": "日联科技",
-      "cost": 144.5,
-      "cost_raw": 144.5,
+    "605376": {
+      "stop_loss": 133.5,
+      "name": "博迁新材",
+      "cost": 138.44,
+      "cost_raw": 138.44,
       "shares": 400,
-      "buy_date": "2026-09-22",
-      "last_close": 145.0,
-      "chg_pct": -2.03,
-      "day_pnl": -1200.0,
-      "total_pnl": 200.0,
-      "cum_ret": 0.32
+      "buy_date": "2026-09-23",
+      "last_close": 139.15,
+      "chg_pct": -1.54,
+      "day_pnl": -872.0,
+      "total_pnl": 284.0,
+      "cum_ret": 0.49
     }
   },
-  "cash": 586263.2257349999,
+  "cash": 612413.7805349999,
   "log": [
     {
       "date": "2026-08-04",
@@ -252,7 +239,34 @@
       "price": 144.5,
       "shares": 400,
       "reason": "买点触发(最低144.44触及买点锚144.5·成交144.5)主力净流入-0.22亿"
+    },
+    {
+      "date": "2026-09-23",
+      "type": "SELL",
+      "code": "002080",
+      "name": "中材科技",
+      "price": 60.7,
+      "shares": 368,
+      "reason": "主力连2日流出清仓"
+    },
+    {
+      "date": "2026-09-23",
+      "type": "SELL",
+      "code": "688531",
+      "name": "日联科技",
+      "price": 148.16,
+      "shares": 400,
+      "reason": "主力连2日流出清仓"
+    },
+    {
+      "date": "2026-09-23",
+      "type": "BUY",
+      "code": "605376",
+      "name": "博迁新材",
+      "price": 138.44,
+      "shares": 400,
+      "reason": "买点触发(最低137.8触及买点锚138.44·成交138.44)主力净流入0.36亿"
     }
   ],
-  "last_update": "2026-09-22"
+  "last_update": "2026-09-23"
 }
