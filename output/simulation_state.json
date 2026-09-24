@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 40.6,
-      "chg_pct": -0.54,
-      "day_pnl": -2200.0,
-      "total_pnl": 104130.0,
-      "cum_ret": 10.77
+      "last_close": 40.69,
+      "chg_pct": 0.22,
+      "day_pnl": 900.0,
+      "total_pnl": 105030.0,
+      "cum_ret": 10.87
     },
     "603920": {
       "stop_loss": 40.5,
@@ -21,28 +21,56 @@
       "cost_raw": 42.064,
       "shares": 934,
       "buy_date": "2026-09-16",
-      "last_close": 45.96,
-      "chg_pct": -0.41,
-      "day_pnl": -177.46,
-      "total_pnl": 5677.79,
-      "cum_ret": 9.59
+      "last_close": 45.5,
+      "chg_pct": -1.0,
+      "day_pnl": -429.64,
+      "total_pnl": 5248.15,
+      "cum_ret": 8.86
     },
-    "605376": {
-      "stop_loss": 133.5,
-      "name": "博迁新材",
-      "cost": 138.44,
-      "cost_diluted": 138.44,
-      "cost_raw": 138.44,
-      "shares": 400,
-      "buy_date": "2026-09-23",
-      "last_close": 139.15,
-      "chg_pct": -1.54,
-      "day_pnl": -872.0,
-      "total_pnl": 284.0,
-      "cum_ret": 0.49
+    "688256": {
+      "stop_loss": 1073.0,
+      "name": "寒武纪",
+      "cost": 1108.294,
+      "cost_diluted": 1108.294,
+      "cost_raw": 1108.294,
+      "shares": 100,
+      "buy_date": "2026-09-24",
+      "last_close": 1091.48,
+      "chg_pct": -1.05,
+      "day_pnl": -1160.0,
+      "total_pnl": -1681.4,
+      "cum_ret": -1.54
+    },
+    "688082": {
+      "stop_loss": 279.7,
+      "name": "盛美上海",
+      "cost": 290.0,
+      "cost_diluted": 290.0,
+      "cost_raw": 290.0,
+      "shares": 200,
+      "buy_date": "2026-09-24",
+      "last_close": 304.11,
+      "chg_pct": 4.39,
+      "day_pnl": 2556.0,
+      "total_pnl": 2822.0,
+      "cum_ret": 4.84
+    },
+    "300811": {
+      "stop_loss": 82.1,
+      "name": "铂科新材",
+      "cost": 85.2,
+      "cost_diluted": 85.2,
+      "cost_raw": 85.2,
+      "shares": 700,
+      "buy_date": "2026-09-24",
+      "last_close": 83.28,
+      "chg_pct": -4.08,
+      "day_pnl": -2478.0,
+      "total_pnl": -1344.0,
+      "cum_ret": -2.28
     }
   },
-  "cash": 612413.7805349999,
+  "cash": 437247.2131849999,
   "log": [
     {
       "date": "2026-08-04",
@@ -268,7 +296,43 @@
       "price": 138.44,
       "shares": 400,
       "reason": "买点触发(最低137.8触及买点锚138.44·成交138.44)主力净流入0.36亿"
+    },
+    {
+      "date": "2026-09-24",
+      "type": "SELL",
+      "code": "605376",
+      "name": "博迁新材",
+      "price": 133.5,
+      "shares": 400,
+      "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-09-24",
+      "type": "BUY",
+      "code": "688256",
+      "name": "寒武纪",
+      "price": 1108.29,
+      "shares": 100,
+      "reason": "买点触发(最低1091.0触及买点锚1108.29·成交1108.29)主力净流入0.67亿"
+    },
+    {
+      "date": "2026-09-24",
+      "type": "BUY",
+      "code": "688082",
+      "name": "盛美上海",
+      "price": 290.0,
+      "shares": 200,
+      "reason": "买点触发(最低288.21触及买点锚290.0·成交290.0)主力净流入2.42亿"
+    },
+    {
+      "date": "2026-09-24",
+      "type": "BUY",
+      "code": "300811",
+      "name": "铂科新材",
+      "price": 85.2,
+      "shares": 700,
+      "reason": "买点触发(最低83.14触及买点锚85.2·成交85.2)主力净流入-0.44亿"
     }
   ],
-  "last_update": "2026-09-23"
+  "last_update": "2026-09-24"
 }
