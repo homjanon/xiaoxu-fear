@@ -15,9 +15,9 @@
     {
       "key": "D2",
       "name": "指数/ETF跌幅",
-      "value": "暂未获取",
+      "value": "上证 -1.22% 创业 -2.68% · ETF跌 11%",
       "threshold": "上证≤-2.0% 创业≤-2.5% ETF跌≥60%",
-      "pass": null,
+      "pass": false,
       "source": "eastmoney_index"
     },
     {
@@ -31,16 +31,14 @@
     {
       "key": "D4",
       "name": "放量恐慌",
-      "value": "0.87 倍",
+      "value": "0.88 倍",
       "threshold": "放量倍数≥1.3",
       "pass": false,
       "source": "eastmoney_spot+cache"
     }
   ],
-  "missing": [
-    "D2"
-  ],
-  "_data_date": "2026-09-24",
+  "missing": [],
+  "_data_date": "2026-09-25",
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
   "inputs": {
     "down": 4001,
@@ -51,8 +49,8 @@
     "ld_lu_ratio": 0.2692307692307692,
     "sh_chg": -1.22,
     "cyb_chg": -2.68,
-    "etf_down_ratio": null,
-    "volume_mult": 0.8693289568934945,
-    "_data_date": "2026-09-24"
+    "etf_down_ratio": 0.1111111111111111,
+    "volume_mult": 0.8803956101632578,
+    "_data_date": "2026-09-25"
   }
 }
