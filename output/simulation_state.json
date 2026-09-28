@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 40.69,
-      "chg_pct": 0.22,
-      "day_pnl": 900.0,
-      "total_pnl": 105030.0,
-      "cum_ret": 10.87
+      "last_close": 40.64,
+      "chg_pct": -0.12,
+      "day_pnl": -500.0,
+      "total_pnl": 104530.0,
+      "cum_ret": 10.82
     },
     "603920": {
       "stop_loss": 40.5,
@@ -21,25 +21,11 @@
       "cost_raw": 42.064,
       "shares": 934,
       "buy_date": "2026-09-16",
-      "last_close": 45.5,
-      "chg_pct": -1.0,
-      "day_pnl": -429.64,
-      "total_pnl": 5248.15,
-      "cum_ret": 8.86
-    },
-    "688256": {
-      "stop_loss": 1073.0,
-      "name": "寒武纪",
-      "cost": 1108.294,
-      "cost_diluted": 1108.294,
-      "cost_raw": 1108.294,
-      "shares": 100,
-      "buy_date": "2026-09-24",
-      "last_close": 1091.48,
-      "chg_pct": -1.05,
-      "day_pnl": -1160.0,
-      "total_pnl": -1681.4,
-      "cum_ret": -1.54
+      "last_close": 43.05,
+      "chg_pct": -5.38,
+      "day_pnl": -2288.3,
+      "total_pnl": 2959.85,
+      "cum_ret": 4.97
     },
     "688082": {
       "stop_loss": 279.7,
@@ -49,28 +35,28 @@
       "cost_raw": 290.0,
       "shares": 200,
       "buy_date": "2026-09-24",
-      "last_close": 304.11,
-      "chg_pct": 4.39,
-      "day_pnl": 2556.0,
-      "total_pnl": 2822.0,
-      "cum_ret": 4.84
+      "last_close": 286.01,
+      "chg_pct": -5.95,
+      "day_pnl": -3620.0,
+      "total_pnl": -798.0,
+      "cum_ret": -1.4
     },
-    "300811": {
-      "stop_loss": 82.1,
-      "name": "铂科新材",
-      "cost": 85.2,
-      "cost_diluted": 85.2,
-      "cost_raw": 85.2,
-      "shares": 700,
-      "buy_date": "2026-09-24",
-      "last_close": 83.28,
-      "chg_pct": -4.08,
-      "day_pnl": -2478.0,
-      "total_pnl": -1344.0,
-      "cum_ret": -2.28
+    "600316": {
+      "stop_loss": 32.2,
+      "name": "洪都航空",
+      "cost": 33.35,
+      "cost_diluted": 33.35,
+      "cost_raw": 33.35,
+      "shares": 1700,
+      "buy_date": "2026-09-28",
+      "last_close": 33.05,
+      "chg_pct": 0.43,
+      "day_pnl": 238.0,
+      "total_pnl": -510.0,
+      "cum_ret": -0.92
     }
   },
-  "cash": 437247.2131849999,
+  "cash": 545184.4619349999,
   "log": [
     {
       "date": "2026-08-04",
@@ -332,7 +318,34 @@
       "price": 85.2,
       "shares": 700,
       "reason": "买点触发(最低83.14触及买点锚85.2·成交85.2)主力净流入-0.44亿"
+    },
+    {
+      "date": "2026-09-28",
+      "type": "SELL",
+      "code": "688256",
+      "name": "寒武纪",
+      "price": 1073.0,
+      "shares": 100,
+      "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-09-28",
+      "type": "SELL",
+      "code": "300811",
+      "name": "铂科新材",
+      "price": 82.1,
+      "shares": 700,
+      "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-09-28",
+      "type": "BUY",
+      "code": "600316",
+      "name": "洪都航空",
+      "price": 33.35,
+      "shares": 1700,
+      "reason": "买点触发(最低32.68触及买点锚33.35·成交33.35)主力净流入-0.07亿"
     }
   ],
-  "last_update": "2026-09-24"
+  "last_update": "2026-09-28"
 }
