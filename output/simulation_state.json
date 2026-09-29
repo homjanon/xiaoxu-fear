@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 40.64,
-      "chg_pct": -0.12,
-      "day_pnl": -500.0,
-      "total_pnl": 104530.0,
-      "cum_ret": 10.82
+      "last_close": 40.51,
+      "chg_pct": -0.32,
+      "day_pnl": -1300.0,
+      "total_pnl": 103230.0,
+      "cum_ret": 10.68
     },
     "603920": {
       "stop_loss": 40.5,
@@ -21,11 +21,11 @@
       "cost_raw": 42.064,
       "shares": 934,
       "buy_date": "2026-09-16",
-      "last_close": 43.05,
-      "chg_pct": -5.38,
-      "day_pnl": -2288.3,
-      "total_pnl": 2959.85,
-      "cum_ret": 4.97
+      "last_close": 46.13,
+      "chg_pct": 7.15,
+      "day_pnl": 2876.72,
+      "total_pnl": 5836.57,
+      "cum_ret": 9.86
     },
     "688082": {
       "stop_loss": 279.7,
@@ -35,11 +35,11 @@
       "cost_raw": 290.0,
       "shares": 200,
       "buy_date": "2026-09-24",
-      "last_close": 286.01,
-      "chg_pct": -5.95,
-      "day_pnl": -3620.0,
-      "total_pnl": -798.0,
-      "cum_ret": -1.4
+      "last_close": 303.44,
+      "chg_pct": 6.09,
+      "day_pnl": 3486.0,
+      "total_pnl": 2688.0,
+      "cum_ret": 4.61
     },
     "600316": {
       "stop_loss": 32.2,
@@ -49,14 +49,28 @@
       "cost_raw": 33.35,
       "shares": 1700,
       "buy_date": "2026-09-28",
-      "last_close": 33.05,
-      "chg_pct": 0.43,
-      "day_pnl": 238.0,
-      "total_pnl": -510.0,
-      "cum_ret": -0.92
+      "last_close": 32.84,
+      "chg_pct": -0.64,
+      "day_pnl": -357.0,
+      "total_pnl": -867.0,
+      "cum_ret": -1.55
+    },
+    "600301": {
+      "stop_loss": 46.3,
+      "name": "华锡有色",
+      "cost": 48.05,
+      "cost_diluted": 48.05,
+      "cost_raw": 48.05,
+      "shares": 1200,
+      "buy_date": "2026-09-29",
+      "last_close": 48.64,
+      "chg_pct": 0.93,
+      "day_pnl": 540.0,
+      "total_pnl": 708.0,
+      "cum_ret": 1.2
     }
   },
-  "cash": 545184.4619349999,
+  "cash": 487510.04693499993,
   "log": [
     {
       "date": "2026-08-04",
@@ -345,7 +359,16 @@
       "price": 33.35,
       "shares": 1700,
       "reason": "买点触发(最低32.68触及买点锚33.35·成交33.35)主力净流入-0.07亿"
+    },
+    {
+      "date": "2026-09-29",
+      "type": "BUY",
+      "code": "600301",
+      "name": "华锡有色",
+      "price": 48.05,
+      "shares": 1200,
+      "reason": "买点触发(最低48.0触及买点锚48.05·成交48.05)主力净流入-0.14亿"
     }
   ],
-  "last_update": "2026-09-28"
+  "last_update": "2026-09-29"
 }
