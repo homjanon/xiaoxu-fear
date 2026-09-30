@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 40.51,
-      "chg_pct": -0.32,
-      "day_pnl": -1300.0,
-      "total_pnl": 103230.0,
-      "cum_ret": 10.68
+      "last_close": 41.26,
+      "chg_pct": 1.85,
+      "day_pnl": 7500.0,
+      "total_pnl": 110730.0,
+      "cum_ret": 11.46
     },
     "603920": {
       "stop_loss": 40.5,
@@ -21,11 +21,11 @@
       "cost_raw": 42.064,
       "shares": 934,
       "buy_date": "2026-09-16",
-      "last_close": 46.13,
-      "chg_pct": 7.15,
-      "day_pnl": 2876.72,
-      "total_pnl": 5836.57,
-      "cum_ret": 9.86
+      "last_close": 44.4,
+      "chg_pct": -3.75,
+      "day_pnl": -1615.82,
+      "total_pnl": 4220.75,
+      "cum_ret": 7.11
     },
     "688082": {
       "stop_loss": 279.7,
@@ -35,11 +35,11 @@
       "cost_raw": 290.0,
       "shares": 200,
       "buy_date": "2026-09-24",
-      "last_close": 303.44,
-      "chg_pct": 6.09,
-      "day_pnl": 3486.0,
-      "total_pnl": 2688.0,
-      "cum_ret": 4.61
+      "last_close": 294.28,
+      "chg_pct": -3.02,
+      "day_pnl": -1832.0,
+      "total_pnl": 856.0,
+      "cum_ret": 1.45
     },
     "600316": {
       "stop_loss": 32.2,
@@ -49,11 +49,11 @@
       "cost_raw": 33.35,
       "shares": 1700,
       "buy_date": "2026-09-28",
-      "last_close": 32.84,
-      "chg_pct": -0.64,
-      "day_pnl": -357.0,
-      "total_pnl": -867.0,
-      "cum_ret": -1.55
+      "last_close": 33.41,
+      "chg_pct": 1.74,
+      "day_pnl": 969.0,
+      "total_pnl": 102.0,
+      "cum_ret": 0.15
     },
     "600301": {
       "stop_loss": 46.3,
@@ -63,11 +63,11 @@
       "cost_raw": 48.05,
       "shares": 1200,
       "buy_date": "2026-09-29",
-      "last_close": 48.64,
-      "chg_pct": 0.93,
-      "day_pnl": 540.0,
-      "total_pnl": 708.0,
-      "cum_ret": 1.2
+      "last_close": 49.83,
+      "chg_pct": 2.45,
+      "day_pnl": 1428.0,
+      "total_pnl": 2136.0,
+      "cum_ret": 3.68
     }
   },
   "cash": 487510.04693499993,
@@ -370,5 +370,5 @@
       "reason": "买点触发(最低48.0触及买点锚48.05·成交48.05)主力净流入-0.14亿"
     }
   ],
-  "last_update": "2026-09-29"
+  "last_update": "2026-09-30"
 }
