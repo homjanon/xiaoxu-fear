@@ -1,35 +1,35 @@
 {
-  "XXFI": 27.6,
-  "GreedIndex": 25.0,
+  "XXFI": 27.2,
+  "GreedIndex": 26.2,
   "extreme": "GREED",
   "contrarian_signal": "REDUCE",
   "level": "偏贪婪（情绪偏热，她倾向追高）",
-  "advice": "市场恐惧偏低、热度偏高。→ 逢高减仓，不追涨；小旭常在连续大涨后追高买在山顶。",
-  "divergence": null,
-  "divergence_state": "无数据（资金流降级）",
+  "advice": "市场恐惧偏低、热度偏高。→ 逢高减仓，不追涨；小旭常在连续大涨后追高买在山顶。　[背离确认·顶部出货（散户追高·主力派发）]",
+  "divergence": -0.0198,
+  "divergence_state": "顶部出货（散户追高·主力派发）",
   "components": {
     "fear": {
       "drawdown": 16.3,
       "breadth": 65.7,
       "limitdown": 10.7,
-      "vol": 16.7
+      "vol": 15.0
     },
     "greed": {
       "momentum": 0.0,
       "limitup": 100.0,
-      "retailin": 0.0,
+      "retailin": 2.1,
       "overbought": 0.0,
-      "divergence": 50.0
+      "divergence": 54.0
     }
   },
   "inputs": {
     "drawdown": -0.03251590029472731,
-    "ret20": -0.02516662920099688,
-    "above_ma20": -0.016243874034303593,
-    "vol_pct": 0.16666666666666666,
+    "ret20": -0.02534022578897288,
+    "above_ma20": -0.014993068909591904,
+    "vol_pct": 0.15,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
-    "_last_date": "2026-09-30",
+    "_last_date": "2026-10-01",
     "_last_close": 3842.1946,
     "_index_source": "sina+spot",
     "up": 2345,
@@ -38,19 +38,19 @@
     "limit_down": 12,
     "_breadth_source": "legu",
     "_breadth_date": "2026-09-30 15:00:00",
-    "main_net": null,
-    "retail_net": 0.0,
-    "_retail_net_source": "degraded",
-    "_main_net_source": "degraded",
+    "main_net": -0.009477044929619866,
+    "retail_net": 0.01032642729034389,
+    "_retail_net_source": "eastmoney",
+    "_main_net_source": "eastmoney",
     "_breadth_provided": true,
-    "_hs300_date": "2026-09-30",
+    "_hs300_date": "2026-10-01",
     "_hs300_close": 3842.1946
   },
-  "_data_date": "2026-09-30",
-  "_generated_at": "2026-09-30 16:21:49",
+  "_data_date": "2026-10-01",
+  "_generated_at": "2026-10-01 16:21:41",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
-  "_retail_net_source": "degraded",
-  "_main_net_source": "degraded"
+  "_retail_net_source": "eastmoney",
+  "_main_net_source": "eastmoney"
 }
