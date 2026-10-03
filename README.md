@@ -59,9 +59,21 @@
 | **③ 每日频次** | 单日单次，不产生无效执行 | 盘后单次运行；非交易日 / 数据未就绪由 `check` 步骤 `skip`，后续步骤 `if: steps.check.outputs.trade == '1'` 全部跳过 |
 
 - **三个指标同进同退**：XXFI 主表、冰点参考、底部区域判断没有各自独立的触发器，都是 `xxfi-daily.yml` 里的并列 step，`if` 条件逐字相同（`steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'`）——同一个 cron、同一个交易日闸门、同一次提交。
-- 也可在 Actions 页面 **手动触发**（`workflow_dispatch`，无参数）：任意时间强制重算「当日」XXFI——盘中出**盘中快照**、收盘后出**当日收盘值**（周末/非交易日仍取最近交易日），用于验证链路或补算。
-- 防污染：仅当 `_data_date` == 当天 且 已收盘（北京时间 ≥15:00）才写入历史趋势；`_data_date` ≠ 当天（周末/非交易日）或盘中快照（<15:00）均跳过写入，避免脏数据/盘中值污染趋势；同日已存在则跳过（防手动触发与 cron 重复追加）。
+- 也可在 Actions 页面 **手动触发**（`workflow_dispatch`）：**勾选 `force=true`** 才是「任意时间强制重算」——盘中出**盘中快照**、收盘后出**当日收盘值**（周末/非交易日仍取最近交易日），用于验证链路或补算；
+  **不勾则与自动调度同门控**（仅交易日 + 盘后执行）。⚠️ 自动调度（Worker 心跳）不得传 `force`。
+- 防污染：仅当 `_data_date` == 当天 且 **该日为交易日**（交易日历判定，排除法定假期） 且 已收盘（北京时间 ≥15:00）才写入历史趋势；`_data_date` ≠ 当天（周末/非交易日）或盘中快照（<15:00）均跳过写入，避免脏数据/盘中值污染趋势；同日已存在则跳过（防手动触发与 cron 重复追加）。
 - **桌面 tdx 实时播报仍保留 09:30**：那是 WorkBuddy 交互场景（用通达信连接器实时取数，小旭可在开盘看一眼），与 Actions 盘后跑（akshare 开盘数据不全）职责互补。
+
+### ⚠️ 门控语义与 `force`（2026-10-03 修复）
+
+**自动调度（Worker 心跳）与人工补算走的是同一个 `workflow_dispatch` 事件**，因此**无法用事件类型区分**两者。2026-09-02 把触发通道从 GitHub schedule 改为 Worker 每日 `workflow_dispatch` 后，step 条件里遗留的 `|| github.event_name == 'workflow_dispatch'` 让自动调度也命中了该分支 → **交易日门控被永久绕过**：中秋（09-25 周五）/ 国庆（10-01 周四、10-02 周五）三天照常运行，写入幽灵 `history.jsonl` 行与 `_turnover_cache.json` 缓存键。
+
+修复分两层：
+
+1. **门控条件改为显式输入**：`steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'`，并在 `on.workflow_dispatch.inputs.force`（boolean，默认 `false`）声明。Worker 不传 `force` → 自动调度严格走门控；人工在 Actions 页面勾选 `force` → 强制重算。
+2. **第二道防线（Python 层写入闸门）**：`trade_calendar.py` 提供全项目唯一的 `is_trade_day()`，被 `fetch_dibudian_akshare`（成交额缓存）、`fetch_bingdian_akshare`（D4 放量缓存）与 workflow 的 history 追加步骤共用。此前这些闸门各自用 `now.weekday() < 5` 近似"交易日"，**无法识别周中法定假期**，与门控判据不等价——正是幽灵数据能落盘的原因。
+
+> 教训：判据必须收敛到一处共用；**改了触发通道，必须沿传播链检查到最后一个消费点**（门控 → 取数 → 缓存/历史落盘 → 展示）。
 
 ## 数据源与降级顺序（多源容错）
 

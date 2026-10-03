@@ -31,6 +31,8 @@ import os
 
 import akshare as ak
 
+from trade_calendar import is_trade_day
+
 SH_CODE = "sh000001"   # 上证指数（全上海市场）
 SZ_CODE = "sz399001"   # 深证成指（全深圳市场代理）
 LOOKBACK = 90          # 近90个交易日
@@ -141,12 +143,15 @@ def fetch_em_total():
                 "max90_total": None, "hist30": [],
                 "_src": "暂未获取", "_data_date": date}
     cache = _load_turnover_cache()
-    # 防污染（根治）：仅「_data_date==当天(北京) 且 已收盘(≥15:00) 且 工作日 且 同日未写过」写入。
+    # 防污染（根治）：仅「_data_date==当天(北京) 且 已收盘(≥15:00) 且 **交易日** 且 同日未写过」写入。
     # 盘中快照(<15:00)/周末/非交易日(_data_date≠当天) 跳过；同日已存在跳过(防手动&cron重复)。
+    # ⚠️ 2026-10-03 修复：原判据用 now.weekday()<5（仅排除周末），无法识别「周中法定假期」
+    #    （中秋 09-25 周五 / 国庆 10-01 周四、10-02 周五）。休市日新浪 spot 会把日期标成「今天」、
+    #    值取上一交易日 → 缓存被写入 3 条幽灵键。改用统一交易日历。
     now = _bj_now()
     date_is_today = (date == now.strftime("%Y-%m-%d"))
     after_close = (now.hour >= 15)
-    if date_is_today and after_close and now.weekday() < 5 and date not in cache:
+    if date_is_today and after_close and is_trade_day(date) and date not in cache:
         cache[date] = total
     _save_turnover_cache(cache)
     max90 = _max90_from_cache(cache)

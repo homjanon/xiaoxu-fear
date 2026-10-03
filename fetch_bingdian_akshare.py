@@ -21,6 +21,8 @@ import sys, os, re, datetime, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import akshare as ak
 
+from trade_calendar import is_trade_day
+
 
 # ---------------- 东财 push2delay 连通补丁（与 fetch_market_akshare 同思路） ----------------
 def _patch_eastmoney_push2delay():
@@ -260,7 +262,11 @@ def fetch_volume_mult(sh_amount, cache_path=None, rebuild=False):
     cache_path = cache_path or CACHE_FILE
     today = _bj_today()
     cache = _load_amt_cache(cache_path)
-    cache[today] = sh_amount
+    # 防污染（2026-10-03 修复）：仅交易日才写当日键。
+    # 休市日东财 spot 可能返回上一交易日残值，按「今天」为键写入会污染近20日均额
+    # （实测 _sh_amt_cache.json 曾被写入 2026-09-25 / 2026-10-01 两条幽灵键）。
+    if is_trade_day(today):
+        cache[today] = sh_amount
     # 清理 30 天前旧值，避免缓存无限增长
     for d in [k for k in list(cache.keys()) if isinstance(k, str) and k < _shift_date(today, 30)]:
         cache.pop(d, None)

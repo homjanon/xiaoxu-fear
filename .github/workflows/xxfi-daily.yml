@@ -14,14 +14,23 @@ name: XXFI Daily
 #      实跑落在 16:00 前后，确保盘后数据（涨跌家数/涨停跌停/主力资金流向）定稿后再算。
 #   3) 每日频次：盘后单次。非交易日 / 数据未就绪 由 check 步骤 skip。
 #
-# 手动触发（workflow_dispatch，无参数）：
-#   任意时间（含周末/非交易日）强制重算「最近一个交易日」的 XXFI。
+# 手动触发（workflow_dispatch）：
+#   勾选 force=true → 任意时间（含周末/非交易日）强制重算「最近一个交易日」的 XXFI。
+#   不勾 force（默认）→ 与自动调度同门控（仅交易日+盘后执行）。
+#   ★ 2026-10-03 修复：原条件 `|| github.event_name == 'workflow_dispatch'` 在 2026-09-02
+#     触发通道改为 Worker 每日 workflow_dispatch 后，令自动调度也命中该分支 → 门控被永久绕过，
+#     中秋/国庆假期照跑并写入幽灵数据。改用显式 inputs.force，自动调度不再绕过门控。
 #   取数全部走纯 akshare（legu 广度 + 新浪指数 + push2delay 资金流），
 #   周末也能取到周五数据。历史趋势曲线由每日 cron 自动累积，无需手动回溯。
 # =====================================================================
 on:
   # 单通道（2026-09-02 起）：由 Cloudflare Worker qdii-dispatch 每天 16:20（北京时间）触发 workflow_dispatch（原 GitHub schedule 已移除，非交易日由下方 check 门控跳过）
   workflow_dispatch:
+    inputs:
+      force:
+        description: "强制重算：忽略『交易日+盘后』门控（仅供人工补算或盘中快照；自动调度不得传）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -71,25 +80,25 @@ jobs:
       # 纯 akshare 取数（legu 广度 + 新浪指数 + push2delay 资金流）→ 计算 → output/
       # 定时任务：仅交易日(trade=1)执行；手动触发：任意时间执行（取最近交易日）
       - name: Compute XXFI (akshare)
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: python run_xxfi.py --akshare --vol_window 60 --out output
 
       # 冰点参考（旁挂指标，不影响XXFI）：legu主→东财兜底→暂未获取
       # 与 XXFI 同一 check 闸门；独立产物 output/bingdian_report.json
       - name: Compute 冰点参考 (akshare)
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: python run_bingdian.py --akshare --out output
 
       # 底部区域判断（旁挂指标，不影响XXFI）：新浪实时 spot 当日全市场口径 + 本地通达信回填滚动缓存(近90日峰值)
       # 与 XXFI 同一 check 闸门；独立产物 output/dibudian_report.json + 跨日状态 output/dibudian_state.json
       - name: Compute 底部区域判断 (akshare)
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: python run_dibudian.py --akshare --out output
 
       # 写入历史趋势：仅当 data_date == 今天 且 已收盘(北京时间>=15:00)（避免盘中快照污染趋势）；
       # 同日已存在则跳过（防手动触发与 cron 重复追加）
       - name: Append to history (去重·仅收盘后)
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: |
           python - <<'PY'
           import json, datetime, os
@@ -98,6 +107,17 @@ jobs:
           BJ = datetime.timezone(datetime.timedelta(hours=8))
           now_bj = datetime.datetime.now(BJ)
           today = now_bj.strftime("%Y-%m-%d")
+          # 防假期污染（2026-10-03 修复）：非交易日一律不写。原判据只比 data_date==today，
+          # 而休市日 spot 会把日期标成「今天」→ 中秋/国庆假期被写入幽灵行。
+          try:
+              from trade_calendar import is_trade_day
+          except Exception:
+              def is_trade_day(_d):
+                  import datetime as _dt
+                  return _dt.date(*map(int, str(_d)[:10].split("-"))).weekday() < 5
+          if not is_trade_day(today):
+              print(f"{today} 非交易日（法定假期/周末），跳过写入历史（防假期污染）")
+              raise SystemExit(0)
           if data_date != today:
               print(f"数据为 {data_date}，非当日（{today}），跳过写入历史（避免周末/非交易日污染）")
               raise SystemExit(0)
@@ -129,11 +149,11 @@ jobs:
 
       # 渲染静态 HTML（XXFI + 冰点参考卡 → docs/index.html）
       - name: Render static HTML
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --dibudian output/dibudian_report.json --out docs/index.html
 
       - name: Commit outputs
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: daily XXFI update (${{ github.run_id }})"
