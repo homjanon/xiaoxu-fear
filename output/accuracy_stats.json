@@ -12,8 +12,8 @@
   "max_drawdown": -1.7,
   "days": 43,
   "total_pnl": 6235.86,
-  "hs300_return": -5.13,
-  "excess_hs300": 5.7,
-  "divlow_return": 0.75,
-  "excess_divlow": -0.18
+  "hs300_return": -4.97,
+  "excess_hs300": 5.54,
+  "divlow_return": 0.42,
+  "excess_divlow": 0.15
 }
