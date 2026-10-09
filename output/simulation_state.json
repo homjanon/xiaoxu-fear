@@ -7,39 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 41.71,
-      "chg_pct": 1.09,
-      "day_pnl": 4500.0,
-      "total_pnl": 115230.0,
-      "cum_ret": 11.93
-    },
-    "603920": {
-      "stop_loss": 40.5,
-      "name": "世运电路",
-      "cost": 42.064,
-      "cost_diluted": 39.881,
-      "cost_raw": 42.064,
-      "shares": 934,
-      "buy_date": "2026-09-16",
-      "last_close": 43.18,
-      "chg_pct": -2.75,
-      "day_pnl": -1139.48,
-      "total_pnl": 3081.27,
-      "cum_ret": 5.18
-    },
-    "600316": {
-      "stop_loss": 32.2,
-      "name": "洪都航空",
-      "cost": 33.35,
-      "cost_diluted": 33.35,
-      "cost_raw": 33.35,
-      "shares": 1700,
-      "buy_date": "2026-09-28",
-      "last_close": 32.42,
-      "chg_pct": -2.96,
-      "day_pnl": -1683.0,
-      "total_pnl": -1581.0,
-      "cum_ret": -2.81
+      "last_close": 41.42,
+      "chg_pct": -0.7,
+      "day_pnl": -2900.0,
+      "total_pnl": 112330.0,
+      "cum_ret": 11.63
     },
     "600301": {
       "stop_loss": 46.3,
@@ -49,14 +21,28 @@
       "cost_raw": 48.05,
       "shares": 1200,
       "buy_date": "2026-09-29",
-      "last_close": 48.71,
-      "chg_pct": -2.25,
-      "day_pnl": -1344.0,
-      "total_pnl": 792.0,
-      "cum_ret": 1.35
+      "last_close": 48.99,
+      "chg_pct": 0.57,
+      "day_pnl": 336.0,
+      "total_pnl": 1128.0,
+      "cum_ret": 1.93
+    },
+    "003006": {
+      "stop_loss": 20.42,
+      "name": "百亚股份",
+      "cost": 22.472,
+      "cost_diluted": 22.472,
+      "cost_raw": 22.472,
+      "shares": 2600,
+      "buy_date": "2026-10-09",
+      "last_close": 22.84,
+      "chg_pct": 2.88,
+      "day_pnl": 1664.0,
+      "total_pnl": 956.8,
+      "cum_ret": 1.61
     }
   },
-  "cash": 543408.0919349999,
+  "cash": 577463.8598849998,
   "log": [
     {
       "date": "2026-08-04",
@@ -363,7 +349,34 @@
       "price": 279.7,
       "shares": 200,
       "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-10-09",
+      "type": "SELL",
+      "code": "603920",
+      "name": "世运电路",
+      "price": 40.5,
+      "shares": 934,
+      "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-10-09",
+      "type": "SELL",
+      "code": "600316",
+      "name": "洪都航空",
+      "price": 32.2,
+      "shares": 1700,
+      "reason": "触发止损位离场"
+    },
+    {
+      "date": "2026-10-09",
+      "type": "BUY",
+      "code": "003006",
+      "name": "百亚股份",
+      "price": 22.47,
+      "shares": 2600,
+      "reason": "买点触发(最低22.27触及买点锚22.47·成交22.47)主力净流入2.29亿"
     }
   ],
-  "last_update": "2026-10-08"
+  "last_update": "2026-10-09"
 }
