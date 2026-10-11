@@ -147,6 +147,76 @@ jobs:
           print("appended:", row)
           PY
 
+      # 冰点/底部区域判定持久化：旁挂指标原本每日产物被覆盖写，历史无法回放。
+      # 这里按日追加 verdict 与关键实测值，供「冰点后第20/40个交易日」这类时间轴复算。
+      # 只读自己的 report 文件，不参与 XXFI 任何计算；闸门与上面 history 步骤同口径（收盘后·去重）。
+      - name: Append bingdian/dibudian verdict history
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
+        run: |
+          python - <<'PY'
+          import json, datetime, os
+
+          BJ = datetime.timezone(datetime.timedelta(hours=8))
+          now_bj = datetime.datetime.now(BJ)
+          today = now_bj.strftime("%Y-%m-%d")
+          try:
+              from trade_calendar import is_trade_day
+          except Exception:
+              def is_trade_day(_d):
+                  import datetime as _dt
+                  return _dt.date(*map(int, str(_d)[:10].split("-"))).weekday() < 5
+          if not is_trade_day(today):
+              print(f"{today} 非交易日，跳过冰点历史写入"); raise SystemExit(0)
+          if now_bj.hour < 15:
+              print("盘中快照，跳过冰点历史写入"); raise SystemExit(0)
+
+          def load(path):
+              try:
+                  return json.load(open(path, encoding="utf-8"))
+              except Exception:
+                  return {}
+
+          def append(path, row):
+              rows = []
+              if os.path.exists(path):
+                  with open(path, encoding="utf-8") as f:
+                      rows = [json.loads(x) for x in f if x.strip()]
+              if any(r.get("date") == row["date"] for r in rows):
+                  print(f"{row['date']} 已存在，跳过追加 {path}")
+                  return
+              rows.append(row)
+              rows.sort(key=lambda r: r["date"])
+              with open(path, "w", encoding="utf-8") as f:
+                  for r in rows:
+                      f.write(json.dumps(r, ensure_ascii=False) + "\n")
+              print("appended:", path, row["date"])
+
+          b = load("output/bingdian_report.json")
+          bd = str(b.get("_data_date", ""))[:10]
+          if bd == today and b.get("dimensions"):
+              ins = b.get("inputs") or {}
+              append("output/bingdian_history.jsonl", {
+                  "date": today,
+                  "verdict": bool(b.get("verdict")),
+                  "passed": [x["key"] for x in b["dimensions"] if x.get("pass") is True],
+                  "missing": [x["key"] for x in b["dimensions"] if x.get("pass") is None],
+                  "inputs": {k: ins.get(k) for k in ("down", "down_ratio", "limit_down",
+                                                     "limit_up", "sh_chg", "cyb_chg",
+                                                     "etf_down_ratio", "volume_mult")},
+              })
+
+          d = load("output/dibudian_report.json")
+          dd = str(d.get("_data_date", ""))[:10]
+          if dd == today and d:
+              append("output/dibudian_history.jsonl", {
+                  "date": today,
+                  "is_bottom": bool(d.get("is_bottom_today")),
+                  "ratio": d.get("ratio"),
+                  "today_total": d.get("today_total"),
+                  "max90_total": d.get("max90_total"),
+              })
+          PY
+
       # 渲染静态 HTML（XXFI + 冰点参考卡 → docs/index.html）
       - name: Render static HTML
         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
