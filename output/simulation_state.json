@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 42.76,
-      "chg_pct": 3.24,
-      "day_pnl": 13400.0,
-      "total_pnl": 125730.0,
-      "cum_ret": 13.02
+      "last_close": 42.8,
+      "chg_pct": 0.09,
+      "day_pnl": 400.0,
+      "total_pnl": 126130.0,
+      "cum_ret": 13.06
     },
     "600301": {
       "stop_loss": 46.3,
@@ -21,11 +21,11 @@
       "cost_raw": 48.05,
       "shares": 1200,
       "buy_date": "2026-09-29",
-      "last_close": 48.0,
-      "chg_pct": -2.02,
-      "day_pnl": -1188.0,
-      "total_pnl": -60.0,
-      "cum_ret": -0.13
+      "last_close": 47.71,
+      "chg_pct": -0.6,
+      "day_pnl": -348.0,
+      "total_pnl": -408.0,
+      "cum_ret": -0.73
     },
     "003006": {
       "stop_loss": 20.42,
@@ -35,14 +35,42 @@
       "cost_raw": 22.472,
       "shares": 2600,
       "buy_date": "2026-10-09",
-      "last_close": 22.92,
-      "chg_pct": 0.35,
-      "day_pnl": 208.0,
-      "total_pnl": 1164.8,
-      "cum_ret": 1.97
+      "last_close": 23.2,
+      "chg_pct": 1.22,
+      "day_pnl": 728.0,
+      "total_pnl": 1892.8,
+      "cum_ret": 3.21
+    },
+    "603067": {
+      "stop_loss": 37.96,
+      "name": "振华股份",
+      "cost": 40.75,
+      "cost_diluted": 40.75,
+      "cost_raw": 40.75,
+      "shares": 1400,
+      "buy_date": "2026-10-13",
+      "last_close": 44.13,
+      "chg_pct": 6.96,
+      "day_pnl": 4018.0,
+      "total_pnl": 4732.0,
+      "cum_ret": 8.27
+    },
+    "600026": {
+      "stop_loss": 20.95,
+      "name": "中远海能",
+      "cost": 21.94,
+      "cost_diluted": 21.94,
+      "cost_raw": 21.94,
+      "shares": 2700,
+      "buy_date": "2026-10-13",
+      "last_close": 22.7,
+      "chg_pct": 4.85,
+      "day_pnl": 2835.0,
+      "total_pnl": 2052.0,
+      "cum_ret": 3.44
     }
   },
-  "cash": 577463.8598849998,
+  "cash": 461146.78788499977,
   "log": [
     {
       "date": "2026-08-04",
@@ -376,7 +404,25 @@
       "price": 22.47,
       "shares": 2600,
       "reason": "买点触发(最低22.27触及买点锚22.47·成交22.47)主力净流入2.29亿"
+    },
+    {
+      "date": "2026-10-13",
+      "type": "BUY",
+      "code": "603067",
+      "name": "振华股份",
+      "price": 40.75,
+      "shares": 1400,
+      "reason": "买点触发(最低39.66触及买点锚40.75·成交40.75)主力净流入0.14亿"
+    },
+    {
+      "date": "2026-10-13",
+      "type": "BUY",
+      "code": "600026",
+      "name": "中远海能",
+      "price": 21.94,
+      "shares": 2700,
+      "reason": "买点触发(最低21.83触及买点锚21.94·成交21.94)主力净流入1.48亿"
     }
   ],
-  "last_update": "2026-10-12"
+  "last_update": "2026-10-13"
 }
