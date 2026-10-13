@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-12T23:36:57+08:00",
+  "generated_at": "2026-10-13T20:35:44+08:00",
   "price_asof": "2026-10-12",
   "source_report_date": "2026-10-12",
   "report_summary": "指数普跌、全市场主力 -338 亿；资金高低切换——picks 挂 振华股份/中远海能 等回踩（均🏆优质·近3主力居前），地产链首次成批进入观察（陆家嘴/中交发展/华发）。",
@@ -23,28 +23,35 @@
       "plan": "短线6万仓",
       "ref_price": 41.26,
       "quote": {
-        "price": 41.26,
-        "chg_pct": -2.48,
-        "prev_close": 42.31,
-        "open": 42.01,
-        "high": 43.57,
-        "low": 40.38,
-        "amount_wan": 183917.0,
-        "turnover_pct": 5.82,
-        "pe_ttm": 46.57,
-        "pb": 7.2,
-        "cap_yi": 311.73,
-        "float_cap_yi": 311.73
+        "price": 44.13,
+        "chg_pct": 6.96,
+        "prev_close": 41.26,
+        "open": 40.13,
+        "high": 45.38,
+        "low": 39.66,
+        "amount_wan": 199282.0,
+        "turnover_pct": 6.12,
+        "pe_ttm": 49.81,
+        "pb": 7.7,
+        "cap_yi": 333.41,
+        "float_cap_yi": 333.41
       },
       "fin": {
-        "period": "2026-06-30",
-        "revenue_yi": 28.06,
-        "revenue_yoy": 28.15,
-        "np_yi": 3.08,
-        "np_yoy": 3.45,
-        "gross_margin": 25.09,
-        "roe": 7.71,
-        "eps": 0.43
+        "period": "2025-12-31",
+        "revenue_yi": 45.36,
+        "revenue_yoy": 11.53,
+        "np_yi": 6.59,
+        "np_yoy": 39.37,
+        "gross_margin": 26.92,
+        "roe": 19.14,
+        "eps": 0.93,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 28.06,
+          "np_yi": 3.08,
+          "roe": 7.71,
+          "note": "半年累计，不可与年化值直接比较"
+        }
       },
       "history": [
         {
@@ -192,43 +199,40 @@
       "region": null,
       "profile": "铬盐系列产品的研发、制造与销售，并对铬盐副产品及其它固废资源化综合利用。",
       "board_industry": [
+        "无机盐",
+        "基础化工",
         "化学原料"
       ],
       "concepts": [
-        "无机盐",
-        "基础化工",
+        "军工",
         "转债标的",
         "锂电池概念",
         "钛白粉概念",
         "维生素",
         "固态电池",
-        "储能概念",
         "钒电池",
-        "东方财富热股",
         "最近多板",
         "电池技术",
-        "军工"
+        "储能概念"
       ],
       "board_other": [
         "湖北板块",
         "基金重仓",
         "融资融券",
         "沪股通",
-        "昨日涨停",
-        "昨日涨停_含一字",
-        "昨日首板",
         "昨日高振幅",
         "小盘股",
-        "小盘成长"
+        "小盘成长",
+        "近期新高"
       ],
-      "boards_basis": "em-list-unavailable",
+      "boards_basis": "em-list",
       "concept_ths": [
+        "军工",
         "锂电池概念",
         "钛白粉概念",
         "维生素",
         "固态电池",
-        "钒电池",
-        "军工"
+        "钒电池"
       ],
       "range_52w": null,
       "missing": []
@@ -244,28 +248,35 @@
       "plan": "短线6万仓",
       "ref_price": 21.65,
       "quote": {
-        "price": 21.65,
-        "chg_pct": -7.83,
-        "prev_close": 23.49,
-        "open": 23.2,
-        "high": 23.35,
-        "low": 21.4,
-        "amount_wan": 211968.0,
-        "turnover_pct": 2.53,
-        "pe_ttm": 17.64,
-        "pb": 2.46,
-        "cap_yi": 1184.53,
-        "float_cap_yi": 828.77
+        "price": 22.7,
+        "chg_pct": 4.85,
+        "prev_close": 21.65,
+        "open": 22.2,
+        "high": 23.27,
+        "low": 21.83,
+        "amount_wan": 221144.0,
+        "turnover_pct": 2.57,
+        "pe_ttm": 18.5,
+        "pb": 2.58,
+        "cap_yi": 1241.97,
+        "float_cap_yi": 868.96
       },
       "fin": {
-        "period": "2026-06-30",
-        "revenue_yi": 151.46,
-        "revenue_yoy": 30.03,
-        "np_yi": 45.45,
-        "np_yoy": 143.21,
-        "gross_margin": 41.39,
-        "roe": 9.26,
-        "eps": 0.83
+        "period": "2025-12-31",
+        "revenue_yi": 238.92,
+        "revenue_yoy": 2.68,
+        "np_yi": 40.37,
+        "np_yoy": -0.11,
+        "gross_margin": 26.13,
+        "roe": 10.42,
+        "eps": 0.83,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 151.46,
+          "np_yi": 45.45,
+          "roe": 9.26,
+          "note": "半年累计，不可与年化值直接比较"
+        }
       },
       "history": [
         {
@@ -418,17 +429,17 @@
       "industry": "水上运输业",
       "region": null,
       "profile": "海洋货物运输，主要运输货种是油品和以煤炭为主的干散货物，主要运输地区在中国沿海。",
-      "board_industry": [],
-      "concepts": [
+      "board_industry": [
         "航运港口",
         "航运",
-        "交通运输",
+        "交通运输"
+      ],
+      "concepts": [
         "中字头",
         "海洋经济",
         "央国企改革",
-        "最近多板",
-        "2026中报预增",
-        "一带一路"
+        "一带一路",
+        "2026中报预增"
       ],
       "board_other": [
         "上海板块",
@@ -436,18 +447,17 @@
         "HS300_",
         "融资融券",
         "上证180_",
-        "沪股通",
         "MSCI中国",
         "富时罗素",
         "标准普尔",
         "昨日高振幅",
         "大盘股",
-        "趋势股"
+        "沪股通"
       ],
-      "boards_basis": "em-list-unavailable",
+      "boards_basis": "em-list",
       "concept_ths": [
-        "2026中报预增",
-        "一带一路"
+        "一带一路",
+        "2026中报预增"
       ],
       "range_52w": null,
       "missing": []
@@ -463,28 +473,35 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 42.76,
-        "chg_pct": 3.24,
-        "prev_close": 41.42,
-        "open": 41.56,
-        "high": 42.76,
-        "low": 41.52,
-        "amount_wan": 436404.0,
-        "turnover_pct": 0.5,
-        "pe_ttm": 7.11,
+        "price": 42.8,
+        "chg_pct": 0.09,
+        "prev_close": 42.76,
+        "open": 42.66,
+        "high": 42.95,
+        "low": 42.5,
+        "amount_wan": 339386.0,
+        "turnover_pct": 0.38,
+        "pe_ttm": 7.12,
         "pb": 0.94,
-        "cap_yi": 10784.01,
-        "float_cap_yi": 8820.94
+        "cap_yi": 10794.09,
+        "float_cap_yi": 8829.19
       },
       "fin": {
-        "period": "2026-06-30",
-        "revenue_yi": 1781.81,
-        "revenue_yoy": 4.83,
-        "np_yi": 764.45,
-        "np_yoy": 2.02,
-        "gross_margin": 50.95,
-        "roe": 6.71,
-        "eps": 2.98
+        "period": "2025-12-31",
+        "revenue_yi": 3375.32,
+        "revenue_yoy": 0.01,
+        "np_yi": 1501.81,
+        "np_yoy": 1.21,
+        "gross_margin": 53.11,
+        "roe": 13.44,
+        "eps": 5.7,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 1781.81,
+          "np_yi": 764.45,
+          "roe": 6.71,
+          "note": "半年累计，不可与年化值直接比较"
+        }
       },
       "history": [
         {
@@ -615,7 +632,8 @@
       "concepts": [
         "互联网金融",
         "区块链",
-        "跨境支付"
+        "跨境支付",
+        "东方财富热股"
       ],
       "board_other": [
         "广东板块",
@@ -639,7 +657,7 @@
         "金融地产风格",
         "富时罗素"
       ],
-      "boards_basis": "em-list-unavailable",
+      "boards_basis": "em-list",
       "concept_ths": [
         "互联网金融",
         "区块链"
@@ -658,28 +676,35 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 48.0,
-        "chg_pct": -2.02,
-        "prev_close": 48.99,
-        "open": 48.9,
-        "high": 48.95,
-        "low": 47.64,
-        "amount_wan": 47927.0,
-        "turnover_pct": 3.61,
-        "pe_ttm": 31.87,
-        "pb": 5.96,
-        "cap_yi": 303.63,
-        "float_cap_yi": 132.16
+        "price": 47.71,
+        "chg_pct": -0.6,
+        "prev_close": 48.0,
+        "open": 47.66,
+        "high": 48.38,
+        "low": 47.58,
+        "amount_wan": 41792.0,
+        "turnover_pct": 3.17,
+        "pe_ttm": 31.68,
+        "pb": 5.93,
+        "cap_yi": 301.8,
+        "float_cap_yi": 131.36
       },
       "fin": {
-        "period": "2026-06-30",
-        "revenue_yi": 30.39,
-        "revenue_yoy": 9.03,
-        "np_yi": 5.34,
-        "np_yoy": 39.81,
-        "gross_margin": 42.94,
-        "roe": 10.53,
-        "eps": 0.84
+        "period": "2025-12-31",
+        "revenue_yi": 58.03,
+        "revenue_yoy": 25.31,
+        "np_yi": 8.01,
+        "np_yoy": 21.75,
+        "gross_margin": 36.57,
+        "roe": 18.19,
+        "eps": 1.27,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 30.39,
+          "np_yi": 5.34,
+          "roe": 10.53,
+          "note": "半年累计，不可与年化值直接比较"
+        }
       },
       "history": [
         {
@@ -833,24 +858,25 @@
       "region": null,
       "profile": "贸易业务，有色金属勘探、开采、选矿等相关业务资产。",
       "board_industry": [
-        "小金属"
+        "其他小金属",
+        "小金属",
+        "有色金属"
       ],
       "concepts": [
-        "其他小金属",
-        "有色金属",
         "小金属概念",
         "央国企改革",
         "西部大开发"
       ],
       "board_other": [
         "广西板块",
+        "券商金股",
         "高成长股",
         "中盘成长",
         "中盘股",
         "沪股通",
         "融资融券"
       ],
-      "boards_basis": "em-list-unavailable",
+      "boards_basis": "em-list",
       "concept_ths": [
         "小金属概念",
         "西部大开发"
@@ -869,28 +895,35 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 22.92,
-        "chg_pct": 0.35,
-        "prev_close": 22.84,
-        "open": 22.83,
-        "high": 23.08,
-        "low": 22.3,
-        "amount_wan": 98872.0,
-        "turnover_pct": 10.12,
-        "pe_ttm": 49.51,
-        "pb": 6.84,
-        "cap_yi": 98.48,
-        "float_cap_yi": 98.23
+        "price": 23.2,
+        "chg_pct": 1.22,
+        "prev_close": 22.92,
+        "open": 23.03,
+        "high": 23.37,
+        "low": 22.35,
+        "amount_wan": 88996.0,
+        "turnover_pct": 9.03,
+        "pe_ttm": 50.11,
+        "pb": 6.93,
+        "cap_yi": 99.68,
+        "float_cap_yi": 99.43
       },
       "fin": {
-        "period": "2026-06-30",
-        "revenue_yi": 18.7,
-        "revenue_yoy": 6.04,
-        "np_yi": 1.79,
-        "np_yoy": -4.82,
-        "gross_margin": 57.54,
-        "roe": 11.76,
-        "eps": 0.42
+        "period": "2025-12-31",
+        "revenue_yi": 34.92,
+        "revenue_yoy": 7.32,
+        "np_yi": 2.08,
+        "np_yoy": -27.7,
+        "gross_margin": 54.3,
+        "roe": 14.83,
+        "eps": 0.48,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 18.7,
+          "np_yi": 1.79,
+          "roe": 11.76,
+          "note": "半年累计，不可与年化值直接比较"
+        }
       },
       "history": [
         {
@@ -1014,11 +1047,11 @@
       "region": null,
       "profile": "一次性卫生用品的研发、生产和销售。",
       "board_industry": [
+        "生活用纸",
+        "个护用品",
         "美容护理"
       ],
       "concepts": [
-        "生活用纸",
-        "个护用品",
         "电商概念",
         "婴童概念",
         "西部大开发"
@@ -1029,7 +1062,7 @@
         "深股通",
         "基金重仓"
       ],
-      "boards_basis": "em-list-unavailable",
+      "boards_basis": "em-list",
       "concept_ths": [
         "西部大开发"
       ],
