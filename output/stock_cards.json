@@ -1,17 +1,235 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-13T22:56:23+08:00",
-  "price_asof": "2026-10-13",
-  "source_report_date": "2026-10-13",
-  "report_summary": "指数横盘、全市场主力 -110 亿；**两笔深V回踩成交**（振华股份@40.75、中远海能@21.94，三重闸门全过）——持仓 5/5 满额，资金转向持仓管理与候补池跟踪。",
+  "generated_at": "2026-10-14T18:41:34+08:00",
+  "price_asof": "2026-10-14",
+  "source_report_date": "2026-10-14",
+  "report_summary": "全市场主力 **-352.6 亿**、成长链重挫；**止损华锡有色**（连2日断流）+ **新选国泰海通**（券商·桶B低位·已回踩）；持仓 4/5，明日验证新开仓买点。",
   "index": {
     "name": "上证指数",
-    "close": 3800.86,
-    "change_pct": 0.1
+    "close": 3767.23,
+    "change_pct": -0.88
   },
   "data_note": "价格为日更快照（非实时）；财务为最新已披露报告期；不含卖方一致预期（数据源不可得）。",
   "degraded": [],
   "stocks": [
+    {
+      "code": "601211",
+      "secid": "601211.SH",
+      "name": "国泰海通",
+      "role": "pick",
+      "action": null,
+      "buy_zone": "回踩16.75-17.09",
+      "stop_loss": 16.91,
+      "plan": "短线6万仓",
+      "ref_price": 16.95,
+      "quote": {
+        "price": 16.95,
+        "chg_pct": -0.47,
+        "prev_close": 17.03,
+        "open": 16.97,
+        "high": 17.05,
+        "low": 16.82,
+        "amount_wan": 70890.0,
+        "turnover_pct": 0.31,
+        "pe_ttm": 9.22,
+        "pb": 0.9,
+        "cap_yi": 2979.99,
+        "float_cap_yi": 2279.63
+      },
+      "fin": {
+        "period": "2025-12-31",
+        "revenue_yi": 631.07,
+        "revenue_yoy": 87.4,
+        "np_yi": 278.09,
+        "np_yoy": 113.52,
+        "gross_margin": 47.06,
+        "roe": 9.78,
+        "eps": 1.74,
+        "interim": {
+          "period": "2026-06-30",
+          "revenue_yi": 471.63,
+          "np_yi": 202.6,
+          "roe": 6.12,
+          "note": "半年累计，不可与年化值直接比较"
+        }
+      },
+      "history": [
+        {
+          "y": "2021",
+          "rev_yi": 428.17,
+          "np_yi": 150.13
+        },
+        {
+          "y": "2022",
+          "rev_yi": 354.71,
+          "np_yi": 115.09
+        },
+        {
+          "y": "2023",
+          "rev_yi": 361.41,
+          "np_yi": 93.74
+        },
+        {
+          "y": "2024",
+          "rev_yi": 336.75,
+          "np_yi": 130.24
+        },
+        {
+          "y": "2025",
+          "rev_yi": 631.07,
+          "np_yi": 278.09
+        },
+        {
+          "y": "2026Q2",
+          "rev_yi": 471.63,
+          "np_yi": 202.6,
+          "interim": true
+        }
+      ],
+      "segments": [
+        {
+          "name": "财富管理",
+          "pct": 39.54,
+          "rev_yi": 249.5,
+          "gm": 54.01
+        },
+        {
+          "name": "机构及交易",
+          "pct": 31.05,
+          "rev_yi": 195.94,
+          "gm": 68.98
+        },
+        {
+          "name": "投资管理",
+          "pct": 12.07,
+          "rev_yi": 76.16,
+          "gm": 42.95
+        },
+        {
+          "name": "融资租赁",
+          "pct": 8.7,
+          "rev_yi": 54.91,
+          "gm": 33.62
+        },
+        {
+          "name": "投资银行",
+          "pct": 7.52,
+          "rev_yi": 47.47,
+          "gm": 26.14
+        },
+        {
+          "name": "其他",
+          "pct": 1.12,
+          "rev_yi": 7.1,
+          "gm": -514.47
+        }
+      ],
+      "segments_basis": "产品",
+      "segments_period": "2025-12-31",
+      "holders": [
+        {
+          "rank": 1,
+          "name": "上海国有资产经营有限公司",
+          "type": "流通A股",
+          "pct": 21.34
+        },
+        {
+          "rank": 2,
+          "name": "香港中央结算(代理人)有限公司",
+          "type": "流通H股",
+          "pct": 15.62
+        },
+        {
+          "rank": 3,
+          "name": "上海国际集团有限公司",
+          "type": "流通A股",
+          "pct": 7.66
+        },
+        {
+          "rank": 4,
+          "name": "深圳市投资控股有限公司",
+          "type": "流通A股",
+          "pct": 6.84
+        },
+        {
+          "rank": 5,
+          "name": "中国证券金融股份有限公司",
+          "type": "流通A股",
+          "pct": 2.92
+        },
+        {
+          "rank": 6,
+          "name": "上海城投(集团)有限公司",
+          "type": "流通A股",
+          "pct": 2.77
+        },
+        {
+          "rank": 7,
+          "name": "深圳能源集团股份有限公司",
+          "type": "流通A股",
+          "pct": 1.73
+        },
+        {
+          "rank": 8,
+          "name": "香港中央结算有限公司",
+          "type": "流通A股",
+          "pct": 1.55
+        },
+        {
+          "rank": 9,
+          "name": "中国建设银行股份有限公司-国泰中证全指证券公司交易型开放式指数证券投资基金",
+          "type": "流通A股",
+          "pct": 0.96
+        },
+        {
+          "rank": 10,
+          "name": "中国核工业集团有限公司",
+          "type": "流通A股",
+          "pct": 0.86
+        }
+      ],
+      "top10_pct": 62.25,
+      "industry": "资本市场服务",
+      "region": null,
+      "profile": "主要从事证券经纪、证券信用交易、投资银行、证券交易投资、证券研究、场外市场等业务，并通过全资子公司国泰君安资管公司、国泰君安期货公司、国泰君安创投公司以及控股子公司国联安基金公司，分别从事资产管理、期货、直接投资和基金管理等业务；通过全资子公司国泰君安金融控股公司所控股的国泰君安国际及其子公司主要在香港从事经有权机关核…",
+      "board_industry": [
+        "证券Ⅱ",
+        "证券Ⅲ",
+        "非银金融"
+      ],
+      "concepts": [
+        "股权激励",
+        "长江三角",
+        "互联网金融",
+        "并购重组概念",
+        "周期股",
+        "券商概念"
+      ],
+      "board_other": [
+        "上海板块",
+        "AH股",
+        "HS300_",
+        "机构重仓",
+        "融资融券",
+        "上证50_",
+        "上证180_",
+        "沪股通",
+        "MSCI中国",
+        "富时罗素",
+        "标准普尔",
+        "科创板做市商",
+        "破净股",
+        "权重股",
+        "大盘股",
+        "金融地产风格"
+      ],
+      "boards_basis": "em-list",
+      "concept_ths": [
+        "互联网金融"
+      ],
+      "range_52w": null,
+      "missing": []
+    },
     {
       "code": "600036",
       "secid": "600036.SH",
@@ -23,18 +241,18 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 42.8,
-        "chg_pct": 0.09,
-        "prev_close": 42.76,
-        "open": 42.66,
-        "high": 42.95,
-        "low": 42.5,
-        "amount_wan": 339386.0,
-        "turnover_pct": 0.38,
-        "pe_ttm": 7.12,
+        "price": 42.67,
+        "chg_pct": -0.3,
+        "prev_close": 42.8,
+        "open": 42.61,
+        "high": 42.94,
+        "low": 42.47,
+        "amount_wan": 252126.0,
+        "turnover_pct": 0.29,
+        "pe_ttm": 7.09,
         "pb": 0.94,
-        "cap_yi": 10794.09,
-        "float_cap_yi": 8829.19
+        "cap_yi": 10761.31,
+        "float_cap_yi": 8802.37
       },
       "fin": {
         "period": "2025-12-31",
@@ -182,8 +400,7 @@
       "concepts": [
         "互联网金融",
         "区块链",
-        "跨境支付",
-        "东方财富热股"
+        "跨境支付"
       ],
       "board_other": [
         "广东板块",
@@ -216,247 +433,28 @@
       "missing": []
     },
     {
-      "code": "600301",
-      "secid": "600301.SH",
-      "name": "华锡有色",
-      "role": "holding",
-      "action": "✅持有(09/29上车·浮动-0.7%)",
-      "buy_zone": null,
-      "stop_loss": null,
-      "plan": null,
-      "ref_price": null,
-      "quote": {
-        "price": 47.71,
-        "chg_pct": -0.6,
-        "prev_close": 48.0,
-        "open": 47.66,
-        "high": 48.38,
-        "low": 47.58,
-        "amount_wan": 41792.0,
-        "turnover_pct": 3.17,
-        "pe_ttm": 31.68,
-        "pb": 5.93,
-        "cap_yi": 301.8,
-        "float_cap_yi": 131.36
-      },
-      "fin": {
-        "period": "2025-12-31",
-        "revenue_yi": 58.03,
-        "revenue_yoy": 25.31,
-        "np_yi": 8.01,
-        "np_yoy": 21.75,
-        "gross_margin": 36.57,
-        "roe": 18.19,
-        "eps": 1.27,
-        "interim": {
-          "period": "2026-06-30",
-          "revenue_yi": 30.39,
-          "np_yi": 5.34,
-          "roe": 10.53,
-          "note": "半年累计，不可与年化值直接比较"
-        }
-      },
-      "history": [
-        {
-          "y": "2021",
-          "rev_yi": 3.94,
-          "np_yi": 0.54
-        },
-        {
-          "y": "2022",
-          "rev_yi": 27.67,
-          "np_yi": 2.19
-        },
-        {
-          "y": "2023",
-          "rev_yi": 32.01,
-          "np_yi": 3.5
-        },
-        {
-          "y": "2024",
-          "rev_yi": 46.31,
-          "np_yi": 6.58
-        },
-        {
-          "y": "2025",
-          "rev_yi": 58.03,
-          "np_yi": 8.01
-        },
-        {
-          "y": "2026Q2",
-          "rev_yi": 30.39,
-          "np_yi": 5.34,
-          "interim": true
-        }
-      ],
-      "segments": [
-        {
-          "name": "锡锭",
-          "pct": 45.5,
-          "rev_yi": 26.41,
-          "gm": 25.79
-        },
-        {
-          "name": "铅锑精矿",
-          "pct": 17.89,
-          "rev_yi": 10.38,
-          "gm": 80.0
-        },
-        {
-          "name": "锌锭",
-          "pct": 11.59,
-          "rev_yi": 6.73,
-          "gm": 18.72
-        },
-        {
-          "name": "其他矿产及相关产品",
-          "pct": 8.86,
-          "rev_yi": 5.14,
-          "gm": 41.65
-        },
-        {
-          "name": "锌精矿",
-          "pct": 6.41,
-          "rev_yi": 3.72,
-          "gm": 33.49
-        },
-        {
-          "name": "有色金属深加工产品",
-          "pct": 4.54,
-          "rev_yi": 2.63,
-          "gm": 20.51
-        },
-        {
-          "name": "监理及相关业务",
-          "pct": 2.63,
-          "rev_yi": 1.53,
-          "gm": 26.17
-        },
-        {
-          "name": "锑锭",
-          "pct": 1.5,
-          "rev_yi": 0.87,
-          "gm": 52.73
-        }
-      ],
-      "segments_basis": "产品",
-      "segments_period": "2025-12-31",
-      "holders": [
-        {
-          "rank": 1,
-          "name": "南宁化工集团有限公司",
-          "type": "流通A股",
-          "pct": 32.0
-        },
-        {
-          "rank": 2,
-          "name": "孙伟",
-          "type": "流通A股",
-          "pct": 2.6
-        },
-        {
-          "rank": 3,
-          "name": "广西国富融通股权投资基金管理有限公司",
-          "type": "流通A股",
-          "pct": 2.47
-        },
-        {
-          "rank": 4,
-          "name": "广西广投资产管理股份有限公司",
-          "type": "流通A股",
-          "pct": 2.45
-        },
-        {
-          "rank": 5,
-          "name": "南宁产业投资集团有限责任公司",
-          "type": "流通A股",
-          "pct": 1.9
-        },
-        {
-          "rank": 6,
-          "name": "柴徐华",
-          "type": "流通A股",
-          "pct": 1.33
-        },
-        {
-          "rank": 7,
-          "name": "许静波",
-          "type": "流通A股",
-          "pct": 1.04
-        },
-        {
-          "rank": 8,
-          "name": "陈林妹",
-          "type": "流通A股",
-          "pct": 0.91
-        },
-        {
-          "rank": 9,
-          "name": "蓝歆旻",
-          "type": "流通A股",
-          "pct": 0.86
-        },
-        {
-          "rank": 10,
-          "name": "陆明富",
-          "type": "流通A股",
-          "pct": 0.82
-        }
-      ],
-      "top10_pct": 46.38,
-      "industry": "有色金属矿采选业",
-      "region": null,
-      "profile": "贸易业务，有色金属勘探、开采、选矿等相关业务资产。",
-      "board_industry": [
-        "其他小金属",
-        "小金属",
-        "有色金属"
-      ],
-      "concepts": [
-        "小金属概念",
-        "央国企改革",
-        "西部大开发"
-      ],
-      "board_other": [
-        "广西板块",
-        "券商金股",
-        "高成长股",
-        "中盘成长",
-        "中盘股",
-        "沪股通",
-        "融资融券"
-      ],
-      "boards_basis": "em-list",
-      "concept_ths": [
-        "小金属概念",
-        "西部大开发"
-      ],
-      "range_52w": null,
-      "missing": []
-    },
-    {
       "code": "003006",
       "secid": "003006.SZ",
       "name": "百亚股份",
       "role": "holding",
-      "action": "✅持有(10/09上车·浮动+3.2%)",
+      "action": "✅持有(10/09上车·浮动+1.9%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 23.2,
-        "chg_pct": 1.22,
-        "prev_close": 22.92,
-        "open": 23.03,
-        "high": 23.37,
-        "low": 22.35,
-        "amount_wan": 88996.0,
-        "turnover_pct": 9.03,
-        "pe_ttm": 50.11,
-        "pb": 6.93,
-        "cap_yi": 99.68,
-        "float_cap_yi": 99.43
+        "price": 22.9,
+        "chg_pct": -1.29,
+        "prev_close": 23.2,
+        "open": 23.27,
+        "high": 23.63,
+        "low": 22.74,
+        "amount_wan": 96094.0,
+        "turnover_pct": 9.67,
+        "pe_ttm": 49.46,
+        "pb": 6.84,
+        "cap_yi": 98.39,
+        "float_cap_yi": 98.14
       },
       "fin": {
         "period": "2025-12-31",
@@ -624,24 +622,24 @@
       "secid": "600026.SH",
       "name": "中远海能",
       "role": "holding",
-      "action": "✅持有(10/13上车·浮动+3.5%)",
+      "action": "✅持有(10/13上车·浮动+6.0%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 22.7,
-        "chg_pct": 4.85,
-        "prev_close": 21.65,
-        "open": 22.2,
-        "high": 23.27,
-        "low": 21.83,
-        "amount_wan": 221144.0,
-        "turnover_pct": 2.57,
-        "pe_ttm": 18.5,
-        "pb": 2.58,
-        "cap_yi": 1241.97,
-        "float_cap_yi": 868.96
+        "price": 23.25,
+        "chg_pct": 2.42,
+        "prev_close": 22.7,
+        "open": 22.69,
+        "high": 23.62,
+        "low": 22.32,
+        "amount_wan": 205847.0,
+        "turnover_pct": 2.32,
+        "pe_ttm": 18.95,
+        "pb": 2.64,
+        "cap_yi": 1272.07,
+        "float_cap_yi": 890.02
       },
       "fin": {
         "period": "2025-12-31",
@@ -849,24 +847,24 @@
       "secid": "603067.SH",
       "name": "振华股份",
       "role": "holding",
-      "action": "✅持有(10/13上车·浮动+8.3%)",
+      "action": "✅持有(10/13上车·浮动+7.5%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 44.13,
-        "chg_pct": 6.96,
-        "prev_close": 41.26,
-        "open": 40.13,
-        "high": 45.38,
-        "low": 39.66,
-        "amount_wan": 199282.0,
-        "turnover_pct": 6.12,
-        "pe_ttm": 49.81,
-        "pb": 7.7,
-        "cap_yi": 333.41,
-        "float_cap_yi": 333.41
+        "price": 43.81,
+        "chg_pct": -0.73,
+        "prev_close": 44.13,
+        "open": 44.27,
+        "high": 44.7,
+        "low": 43.31,
+        "amount_wan": 118830.0,
+        "turnover_pct": 3.57,
+        "pe_ttm": 49.45,
+        "pb": 7.65,
+        "cap_yi": 331.0,
+        "float_cap_yi": 331.0
       },
       "fin": {
         "period": "2025-12-31",
@@ -1043,7 +1041,6 @@
         "维生素",
         "固态电池",
         "钒电池",
-        "最近多板",
         "电池技术",
         "储能概念"
       ],
