@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 42.67,
-      "chg_pct": -0.3,
-      "day_pnl": -1300.0,
-      "total_pnl": 124830.0,
-      "cum_ret": 12.93
+      "last_close": 42.66,
+      "chg_pct": -0.02,
+      "day_pnl": -100.0,
+      "total_pnl": 124730.0,
+      "cum_ret": 12.92
     },
     "003006": {
       "stop_loss": 20.42,
@@ -21,42 +21,14 @@
       "cost_raw": 22.472,
       "shares": 2600,
       "buy_date": "2026-10-09",
-      "last_close": 22.9,
-      "chg_pct": -1.29,
-      "day_pnl": -780.0,
-      "total_pnl": 1112.8,
-      "cum_ret": 1.88
-    },
-    "603067": {
-      "stop_loss": 37.96,
-      "name": "振华股份",
-      "cost": 40.75,
-      "cost_diluted": 40.75,
-      "cost_raw": 40.75,
-      "shares": 1400,
-      "buy_date": "2026-10-13",
-      "last_close": 43.81,
-      "chg_pct": -0.73,
-      "day_pnl": -448.0,
-      "total_pnl": 4284.0,
-      "cum_ret": 7.48
-    },
-    "600026": {
-      "stop_loss": 20.95,
-      "name": "中远海能",
-      "cost": 21.94,
-      "cost_diluted": 21.94,
-      "cost_raw": 21.94,
-      "shares": 2700,
-      "buy_date": "2026-10-13",
-      "last_close": 23.25,
-      "chg_pct": 2.42,
-      "day_pnl": 1485.0,
-      "total_pnl": 3537.0,
-      "cum_ret": 5.94
+      "last_close": 22.82,
+      "chg_pct": -0.35,
+      "day_pnl": -208.0,
+      "total_pnl": 904.8,
+      "cum_ret": 1.52
     }
   },
-  "cash": 518175.98388499976,
+  "cash": 632587.1111349998,
   "log": [
     {
       "date": "2026-08-04",
@@ -417,7 +389,25 @@
       "price": 47.56,
       "shares": 1200,
       "reason": "主力连2日流出清仓"
+    },
+    {
+      "date": "2026-10-15",
+      "type": "SELL",
+      "code": "603067",
+      "name": "振华股份",
+      "price": 41.38,
+      "shares": 1400,
+      "reason": "主力连2日流出清仓"
+    },
+    {
+      "date": "2026-10-15",
+      "type": "SELL",
+      "code": "600026",
+      "name": "中远海能",
+      "price": 20.95,
+      "shares": 2700,
+      "reason": "触发止损位离场"
     }
   ],
-  "last_update": "2026-10-14"
+  "last_update": "2026-10-15"
 }
