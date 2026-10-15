@@ -31,7 +31,7 @@
     "_index_name": "上证指数(sh000001)",
     "_last_date": "2026-10-15",
     "_last_close": 3707.476,
-    "_index_source": "sina+spot",
+    "_index_source": "sina",
     "up": 399,
     "down": 4790,
     "limit_up": 36,
@@ -47,7 +47,7 @@
     "_hs300_close": 3707.476
   },
   "_data_date": "2026-10-15",
-  "_generated_at": "2026-10-15 16:21:36",
+  "_generated_at": "2026-10-15 22:48:48",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
