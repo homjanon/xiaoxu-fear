@@ -242,7 +242,7 @@ SIM_JS = r"""
       +'<div class="th">基准同期 '+(baseRet!=null?fmtP(baseRet):"—")+'</div></div>';
   }
 
-  function render(state,stats,history,pnl){
+  function render(state,stats,history,pnlStats){
     var root=document.getElementById("qiuge-sim-body");
     if(!root)return;
     if(!state&&!stats){
@@ -266,11 +266,14 @@ SIM_JS = r"""
       //   数据 = 本地 pnl_stats.py 算好后经 push_cloud 推到本仓 output/pnl_stats.json。
       //   ⚠️ 该文件缺失或拉取失败（第一次上线前、代理挂）→ **回退显示原来的「命中率」格**，
       //      绝不开天窗（本仓是公开页，空白格子会被当成"板块坏了"）。
-      +(pnl && pnl.win_rate!=null
+      //   ⚠️🔴 2026-10-15 事故：参数**不得取名 `pnl`** —— 本函数上方已有
+      //      `var pnl = stats.total_pnl…`（总盈亏数字），会**遮蔽同名参数**导致判断恒 false
+      //      → 线上静默回退成旧「命中率」格（页面无任何报错）。故用 `pnlStats`。
+      +(pnlStats && pnlStats.win_rate!=null
         ? '<div class="dip-cell"><div class="k">短线仓胜率</div><div class="v">'
-          +Number(pnl.win_rate).toFixed(1)+'%</div><div class="th">盈亏比 '
-          +Number(pnl.payoff||0).toFixed(2)+' · '+((pnl.closed||{}).win||0)+' 胜 '
-          +((pnl.closed||{}).loss||0)+' 负 · 不含招行</div></div>'
+          +Number(pnlStats.win_rate).toFixed(1)+'%</div><div class="th">盈亏比 '
+          +Number(pnlStats.payoff||0).toFixed(2)+' · '+((pnlStats.closed||{}).win||0)+' 胜 '
+          +((pnlStats.closed||{}).loss||0)+' 负 · 不含招行</div></div>'
         : '<div class="dip-cell"><div class="k">当前持仓 '+openN+' 只</div><div class="v">'+winDisp+'</div>'
           +'<div class="th">命中率（≥5笔才统计）· 上限5只</div></div>');
     var html='<div class="sim-kpis">'+kpis+'</div>'
