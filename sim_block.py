@@ -96,9 +96,11 @@ SIM_JS = r"""
   var STATE_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/simulation_state.json";
   var STATS_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/accuracy_stats.json";
   var HIST_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/simulation_history.jsonl";
+  var PNL_RAW="https://raw.githubusercontent.com/homjanon/xiaoxu-fear/main/output/pnl_stats.json";
   var STATE_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/simulation_state.json";
   var STATS_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/accuracy_stats.json";
   var HIST_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/simulation_history.jsonl";
+  var PNL_API="https://api.github.com/repos/homjanon/xiaoxu-fear/contents/output/pnl_stats.json";
 
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
@@ -240,7 +242,7 @@ SIM_JS = r"""
       +'<div class="th">基准同期 '+(baseRet!=null?fmtP(baseRet):"—")+'</div></div>';
   }
 
-  function render(state,stats,history){
+  function render(state,stats,history,pnl){
     var root=document.getElementById("qiuge-sim-body");
     if(!root)return;
     if(!state&&!stats){
@@ -259,7 +261,18 @@ SIM_JS = r"""
       +'<div class="dip-cell"><div class="k">累计收益</div><div class="v sim-num" style="color:'+red(ret)+'">'+fmtP(ret)+'</div><div class="th">vs 起点（8/3）</div></div>'
       +excessCell("vs 沪深300",stats.excess_hs300,stats.hs300_return)
       +excessCell("vs 红利低波",stats.excess_divlow,stats.divlow_return)
-      +'<div class="dip-cell"><div class="k">当前持仓 '+openN+' 只</div><div class="v">'+winDisp+'</div><div class="th">命中率（≥5笔才统计）· 上限5只</div></div>';
+      // ★ 2026-10-15 用户确认：第 6 格由「当前持仓 N 只 + 命中率」→「**短线仓胜率**」
+      //   原则：**实盘模拟只展示短线仓胜率，全貌（盈亏比/明细/极值）留在 qg 盘中页**。
+      //   数据 = 本地 pnl_stats.py 算好后经 push_cloud 推到本仓 output/pnl_stats.json。
+      //   ⚠️ 该文件缺失或拉取失败（第一次上线前、代理挂）→ **回退显示原来的「命中率」格**，
+      //      绝不开天窗（本仓是公开页，空白格子会被当成"板块坏了"）。
+      +(pnl && pnl.win_rate!=null
+        ? '<div class="dip-cell"><div class="k">短线仓胜率</div><div class="v">'
+          +Number(pnl.win_rate).toFixed(1)+'%</div><div class="th">盈亏比 '
+          +Number(pnl.payoff||0).toFixed(2)+' · '+((pnl.closed||{}).win||0)+' 胜 '
+          +((pnl.closed||{}).loss||0)+' 负 · 不含招行</div></div>'
+        : '<div class="dip-cell"><div class="k">当前持仓 '+openN+' 只</div><div class="v">'+winDisp+'</div>'
+          +'<div class="th">命中率（≥5笔才统计）· 上限5只</div></div>');
     var html='<div class="sim-kpis">'+kpis+'</div>'
       +'<div class="dip-trend">'+buildSvg(history)+'<div class="dip-trend-note">模拟账户净值曲线（自 8/3 起逐日累积，最近 180 交易日）</div></div>'
       +'<div style="font-size:13px;font-weight:700;margin:14px 0 8px;">📌 当前持仓</div>'
@@ -272,8 +285,9 @@ SIM_JS = r"""
     root.innerHTML=html;
   }
 
-  Promise.all([loadJson(STATE_RAW,STATE_API),loadJson(STATS_RAW,STATS_API),loadHist(HIST_RAW,HIST_API)])
-    .then(function(r){render(r[0],r[1],r[2]);})
+  Promise.all([loadJson(STATE_RAW,STATE_API),loadJson(STATS_RAW,STATS_API),loadHist(HIST_RAW,HIST_API),
+               loadJson(PNL_RAW,PNL_API).catch(function(){return null;})])
+    .then(function(r){render(r[0],r[1],r[2],r[3]);})
     .catch(function(){
       var root=document.getElementById("qiuge-sim-body");
       if(root)root.innerHTML='<div class="sim-empty">（模拟数据暂不可得，请稍后刷新）</div>';
