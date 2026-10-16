@@ -2,7 +2,7 @@
  "ok": true,
  "scope_note": "短线仓（不含招商银行底仓）",
  "core_code": "600036",
- "as_of": "2026-10-15",
+ "as_of": "2026-10-16",
  "since": "2026-09-09",
  "closed": {
   "n": 14,
@@ -20,8 +20,8 @@
  "avg_win": 3296.76,
  "avg_loss": -1895.8,
  "realized": -5770.98,
- "open_pnl": 904.8,
- "total_pnl": -4866.18,
+ "open_pnl": 4206.8,
+ "total_pnl": -1564.18,
  "invested": 908998.0,
  "avg_hold_days": 6.4,
  "max_win": {
@@ -40,8 +40,8 @@
   {
    "code": "003006",
    "name": "百亚股份",
-   "pnl": 904.8,
-   "pct": 1.55
+   "pnl": 4206.8,
+   "pct": 7.2
   }
  ],
  "legs": [
