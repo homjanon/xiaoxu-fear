@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 42.66,
-      "chg_pct": -0.02,
-      "day_pnl": -100.0,
-      "total_pnl": 124730.0,
-      "cum_ret": 12.92
+      "last_close": 42.45,
+      "chg_pct": -0.49,
+      "day_pnl": -2100.0,
+      "total_pnl": 122630.0,
+      "cum_ret": 12.7
     },
     "003006": {
       "stop_loss": 20.42,
@@ -21,11 +21,11 @@
       "cost_raw": 22.472,
       "shares": 2600,
       "buy_date": "2026-10-09",
-      "last_close": 22.82,
-      "chg_pct": -0.35,
-      "day_pnl": -208.0,
-      "total_pnl": 904.8,
-      "cum_ret": 1.52
+      "last_close": 24.09,
+      "chg_pct": 5.57,
+      "day_pnl": 3302.0,
+      "total_pnl": 4206.8,
+      "cum_ret": 7.17
     }
   },
   "cash": 632587.1111349998,
@@ -409,5 +409,5 @@
       "reason": "触发止损位离场"
     }
   ],
-  "last_update": "2026-10-15"
+  "last_update": "2026-10-16"
 }
