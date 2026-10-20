@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 43.05,
-      "chg_pct": 1.41,
-      "day_pnl": 6000.0,
-      "total_pnl": 128630.0,
-      "cum_ret": 13.32
+      "last_close": 42.52,
+      "chg_pct": -1.23,
+      "day_pnl": -5300.0,
+      "total_pnl": 123330.0,
+      "cum_ret": 12.77
     },
     "003006": {
       "stop_loss": 20.42,
@@ -21,11 +21,11 @@
       "cost_raw": 22.472,
       "shares": 2600,
       "buy_date": "2026-10-09",
-      "last_close": 24.4,
-      "chg_pct": 1.29,
-      "day_pnl": 806.0,
-      "total_pnl": 5012.8,
-      "cum_ret": 8.55
+      "last_close": 23.16,
+      "chg_pct": -5.08,
+      "day_pnl": -3224.0,
+      "total_pnl": 1788.8,
+      "cum_ret": 3.04
     },
     "601988": {
       "stop_loss": 6.6,
@@ -35,11 +35,11 @@
       "cost_raw": 7.036,
       "shares": 8500,
       "buy_date": "2026-10-19",
-      "last_close": 7.11,
-      "chg_pct": 2.75,
-      "day_pnl": 1615.0,
-      "total_pnl": 629.0,
-      "cum_ret": 1.03
+      "last_close": 7.18,
+      "chg_pct": 0.98,
+      "day_pnl": 595.0,
+      "total_pnl": 1224.0,
+      "cum_ret": 2.02
     }
   },
   "cash": 572766.1596349998,
@@ -432,5 +432,5 @@
       "reason": "买点触发(最低6.84触及买点锚7.04·成交7.04)主力净流入3.06亿"
     }
   ],
-  "last_update": "2026-10-19"
+  "last_update": "2026-10-20"
 }
