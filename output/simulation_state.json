@@ -7,11 +7,11 @@
       "cost_raw": 39.106,
       "cost_diluted": 30.187,
       "buy_date": "2024-09-25",
-      "last_close": 42.28,
-      "chg_pct": -0.56,
-      "day_pnl": -2400.0,
-      "total_pnl": 120930.0,
-      "cum_ret": 12.52
+      "last_close": 41.82,
+      "chg_pct": -1.09,
+      "day_pnl": -4600.0,
+      "total_pnl": 116330.0,
+      "cum_ret": 12.04
     },
     "003006": {
       "stop_loss": 20.42,
@@ -21,11 +21,11 @@
       "cost_raw": 22.472,
       "shares": 2600,
       "buy_date": "2026-10-09",
-      "last_close": 22.86,
-      "chg_pct": -1.3,
-      "day_pnl": -780.0,
-      "total_pnl": 1008.8,
-      "cum_ret": 1.7
+      "last_close": 22.27,
+      "chg_pct": -2.58,
+      "day_pnl": -1534.0,
+      "total_pnl": -525.2,
+      "cum_ret": -0.92
     },
     "601988": {
       "stop_loss": 6.6,
@@ -35,14 +35,28 @@
       "cost_raw": 7.036,
       "shares": 8500,
       "buy_date": "2026-10-19",
-      "last_close": 7.24,
-      "chg_pct": 0.84,
-      "day_pnl": 510.0,
-      "total_pnl": 1734.0,
-      "cum_ret": 2.87
+      "last_close": 7.22,
+      "chg_pct": -0.28,
+      "day_pnl": -170.0,
+      "total_pnl": 1564.0,
+      "cum_ret": 2.59
+    },
+    "000400": {
+      "stop_loss": 20.8,
+      "name": "许继电气",
+      "cost": 22.444,
+      "cost_diluted": 22.444,
+      "cost_raw": 22.444,
+      "shares": 2600,
+      "buy_date": "2026-10-22",
+      "last_close": 22.8,
+      "chg_pct": 2.84,
+      "day_pnl": 1638.0,
+      "total_pnl": 925.6,
+      "cum_ret": 1.56
     }
   },
-  "cash": 572766.1596349998,
+  "cash": 514397.17103499983,
   "log": [
     {
       "date": "2026-08-04",
@@ -430,7 +444,16 @@
       "price": 7.04,
       "shares": 8500,
       "reason": "买点触发(最低6.84触及买点锚7.04·成交7.04)主力净流入3.06亿"
+    },
+    {
+      "date": "2026-10-22",
+      "type": "BUY",
+      "code": "000400",
+      "name": "许继电气",
+      "price": 22.44,
+      "shares": 2600,
+      "reason": "买点触发(最低22.08触及买点锚22.44·成交22.44)主力净流入0.71亿"
     }
   ],
-  "last_update": "2026-10-21"
+  "last_update": "2026-10-22"
 }
