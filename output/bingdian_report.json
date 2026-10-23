@@ -52,7 +52,7 @@
     "ld_lu_ratio": 0.10975609756097561,
     "sh_chg": null,
     "cyb_chg": null,
-    "etf_down_ratio": 0.0,
+    "etf_down_ratio": null,
     "volume_mult": null,
     "_data_date": "2026-10-23"
   }
