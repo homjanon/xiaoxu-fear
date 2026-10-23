@@ -13,13 +13,15 @@
 import argparse, json, os
 import datetime
 
-# 秋哥操作 · 实盘模拟 区块（动态拉取版，2026-08-26 根治 CI 覆盖）：CSS/容器/JS 三件套
-# 参考 cmb-tracker/scripts/xq_table_block.py 模式——render_html 每次固定内联，数据运行时从 output/ 拉取
-try:
-    from sim_block import SIM_CSS, SIM_HTML, SIM_JS
-except Exception as e:  # sim_block.py 缺失时降级为空（不阻塞主渲染）
-    print(f"[warn] sim_block 加载失败，模拟区块将不显示: {e}")
-    SIM_CSS = SIM_HTML = SIM_JS = ""
+# ===== 秋哥操作 · 实盘模拟 区块【2026-10-23 用户决定：撤出本页】=====
+# 历史：2026-08-26 起用 sim_block.py 的 CSS/容器/JS 三件套内联，数据运行时从 output/ 拉取。
+# 现在：净值 / 胜率 / 持仓属**个人资产数据**，不应在公开页面长期暴露 —— 已整体迁到
+#       qg 盘中检测页（Cloudflare Worker，需 INTRADAY_KEY 才能看），同页合并「实盘模拟」卡。
+# 因此这里恒置空：模板中的 {SIM_CSS} / {SIM_HTML} / {SIM_JS} 渲染成空串，页面不再出现该区块。
+# 回滚：把下面三行改为 `from sim_block import SIM_CSS, SIM_HTML, SIM_JS` 即可（sim_block.py 未删）。
+SIM_CSS = ""
+SIM_HTML = ""
+SIM_JS = ""
 
 CST = datetime.timezone(datetime.timedelta(hours=8))  # 北京时间 UTC+8
 
@@ -697,17 +699,17 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
-    # 2026-08-27 加固：生成后自检三大板块（冰点参考卡 / 底部区域判断卡 / 秋哥操作·实盘模拟）。
-    # 任一缺失即打印 warn，防止残缺页被静默提交（曾致 8/27 两张卡丢失事故）。
+    # 2026-08-27 加固：生成后自检板块，任一缺失即打印 warn，防止残缺页被静默提交。
+    # 2026-10-23：自检清单由「三大板块」改为「两大板块」——「秋哥操作·实盘模拟」已按用户决定
+    #   撤出本页（迁至 qg 盘中检测页），再自检它会永远报缺失。
     missing = [k for k, kw in [
         ("冰点参考卡", 'class="card ice-card"'),
         ("底部区域判断卡", 'class="card dip-card"'),
-        ("秋哥操作·实盘模拟", 'id="qiuge-sim"'),
     ] if kw not in html]
     if missing:
         print(f"[warn] 生成页面缺少板块: {', '.join(missing)}（请检查 --bingdian/--dibudian 参数与产物）")
     else:
-        print("[ok] 三大板块齐全：冰点参考卡 / 底部区域判断卡 / 秋哥操作·实盘模拟")
+        print("[ok] 两大板块齐全：冰点参考卡 / 底部区域判断卡（实盘模拟已迁 qg 盘中页）")
     # 一并输出 xxfi_report.json 到 Pages 源目录（docs/），供外部读取原始数据或调试。
     json_out = os.path.join(out_dir, "xxfi_report.json")
     with open(json_out, "w", encoding="utf-8") as f:
