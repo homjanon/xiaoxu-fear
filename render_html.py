@@ -128,41 +128,41 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .dip-trend svg{width:100%;height:auto;display:block;}
 .dip-trend-note{font-size:10.5px;color:#94a3b8;margin-top:6px;line-height:1.5;}
 /* —— 850天线抄底坐标卡（旁挂 XXFI，置于冰点参考与底部区域之间）—— */
-.ma850-card{background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);border:1px solid #fde68a;border-radius:16px;
+.ma850-card{background:linear-gradient(160deg,#f7f9ff 0%,#edf1fa 100%);border:1px solid #dbe3f2;border-radius:16px;
   padding:16px 18px;box-shadow:var(--shadow);}
-.ma850-head{font-size:13px;font-weight:800;color:#b45309;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
-.ma850-tag{font-size:10px;font-weight:600;color:#b45309;background:#fef3c7;border:1px solid #fde68a;
+.ma850-head{font-size:13px;font-weight:800;color:#3f5b8a;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
+.ma850-tag{font-size:10px;font-weight:600;color:#4c6b9a;background:#eef2fa;border:1px solid #dbe3f2;
   border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
 .ma850-main{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
 .ma850-status{font-size:clamp(21px,5.5vw,30px);font-weight:800;line-height:1.1;}
-.ma850-status.entered{color:#16a34a;}   /* 收盘进入 850 抄底区 */
-.ma850-status.touched{color:#d97706;}   /* 盘中击穿后收回 */
+.ma850-status.entered{color:#15803d;}   /* 收盘进入 850 抄底区 */
+.ma850-status.touched{color:#3f5b8a;}   /* 盘中跌破后收回（雾蓝，不用亮琥珀） */
 .ma850-status.idle{color:#64748b;}      /* 未到 */
 .ma850-status.na{color:#94a3b8;}
-.ma850-sub{font-size:11.5px;color:#475569;margin-top:2px;line-height:1.3;}
+.ma850-sub{font-size:11.5px;color:#5b6b82;margin-top:2px;line-height:1.3;}
 .ma850-right{text-align:right;min-width:170px;}
 .ma850-ref-label{font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:2px;}
-.ma850-ref-date{font-size:15px;font-weight:800;color:#b45309;font-variant-numeric:tabular-nums;}
-.ma850-ref-sub{font-size:10.5px;color:#92400e;font-weight:600;margin-top:1px;line-height:1.4;}
+.ma850-ref-date{font-size:15px;font-weight:800;color:#334e7a;font-variant-numeric:tabular-nums;}
+.ma850-ref-sub{font-size:10.5px;color:#4c6b9a;font-weight:600;margin-top:1px;line-height:1.4;}
 .ma850-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:13px;
-  border-top:1px dashed #fde68a;padding-top:12px;}
-.ma850-cell{background:rgba(255,255,255,.7);border:1px solid #fde68a;border-radius:10px;
+  border-top:1px dashed #dbe3f2;padding-top:12px;}
+.ma850-cell{background:rgba(255,255,255,.78);border:1px solid #e2e8f5;border-radius:10px;
   padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
-.ma850-cell.primary{border-color:#f59e0b;box-shadow:inset 0 0 0 1px #f59e0b;}
-.ma850-cell .k{font-size:11px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:4px;min-width:0;}
+.ma850-cell.primary{border-color:#8aa4d6;box-shadow:inset 0 0 0 1px #8aa4d6;}
+.ma850-cell .k{font-size:11px;font-weight:700;color:#3f5b8a;display:flex;align-items:center;gap:4px;min-width:0;}
 .ma850-cell .k .st{margin-left:auto;font-size:9.5px;font-weight:800;padding:0 4px;border-radius:4px;white-space:nowrap;flex:none;}
 .ma850-cell .k .st.below{color:#15803d;background:#dcfce7;}
-.ma850-cell .k .st.touched{color:#b45309;background:#fef3c7;}
+.ma850-cell .k .st.touched{color:#3f5b8a;background:#e6edf9;}
 .ma850-cell .k .st.above{color:#64748b;background:#f1f5f9;}
 .ma850-cell .k .st.na{color:#94a3b8;background:#f1f5f9;}
 .ma850-cell .v{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;}
 .ma850-cell .v.up{color:#dc2626;}      /* 线上（A股红涨） */
 .ma850-cell .v.down{color:#16a34a;}    /* 线下（A股绿跌） */
 .ma850-cell .v.flat{color:#64748b;}
-.ma850-cell .line{font-size:10.5px;color:#92400e;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere;}
+.ma850-cell .line{font-size:10.5px;color:#5f6b80;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere;}
 .ma850-cell .low{font-size:10px;color:#94a3b8;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere;}
-.ma850-note{font-size:10.5px;color:#78716c;margin-top:11px;line-height:1.6;}
-.ma850-note b{color:#92400e;}
+.ma850-note{font-size:10.5px;color:#6b7280;margin-top:11px;line-height:1.6;}
+.ma850-note b{color:#3f5b8a;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -563,7 +563,7 @@ def render_ma850_card(m):
     观点来源：plutus（2026-10）——各大指数跌至 850 天线为大资金抄底位。
     结构：标题栏 + 主区（左 综合状态/副标题 · 右 中证1000 最近触发）
           + 4 列指数坐标格（现价 / 850线 / 收盘偏离 / 当日最低偏离）。
-    状态：收盘跌破 > 盘中击穿 > 线上；盘中击穿单独成态，避免漏掉「深V收回」。
+    状态：收盘跌破 > 盘中跌破 > 线上；盘中跌破单独成态，避免漏掉「深V收回」。
     """
     if not m:
         return ""
@@ -581,10 +581,10 @@ def render_ma850_card(m):
         s_cls = "entered"
         sub = f"{below}/4 指数收盘在 850 线下"
         if touch:
-            sub += f" · 另有 {touch} 个盘中击穿"
+            sub += f" · 另有 {touch} 个盘中跌破"
     elif verdict == "touched":
         s_cls = "touched"
-        sub = f"{touch}/4 盘中击穿后收回 · 收盘未跌破"
+        sub = f"{touch}/4 盘中跌破后收回 · 收盘未跌破"
     elif verdict == "not_reached":
         s_cls = "idle"
         sub = f"最近：{closest_name} 距 850 线 {_pct2(closest_dev)}"
@@ -593,26 +593,22 @@ def render_ma850_card(m):
 
     # 右侧锚点：固定中证1000（plutus 原文举例）
     if primary.get("name"):
-        ref_label = f"{primary.get('name')} · 最近收盘跌破"
+        ref_label = f"{primary.get('name')} · 上次收盘跌破"
         ref_date = primary.get("last_close_below") or "—"
         d_since = primary.get("days_since_close_below")
         d_touch = primary.get("days_since_low_touch")
         if primary.get("state") == "below":
             db = primary.get("days_below") or 0
-            ref_sub = ("今日收盘跌破 850 线" if db <= 1
-                       else f"已连续 {db} 个交易日收盘在 850 线下")
+            ref_sub = ("今天收盘跌破 850 线" if db <= 1
+                       else f"今天收盘跌破 · 已连续 {db} 个交易日收在线下")
         else:
-            if d_touch == 0:
-                touch_txt = "今日盘中击穿"
-            elif primary.get("last_low_touch"):
-                touch_txt = f"最近盘中击穿 {primary.get('last_low_touch')}"
-            else:
-                touch_txt = "近期无盘中击穿"
-            ref_sub = touch_txt + (f" · 收盘已在线 {d_since} 个交易日" if d_since is not None else "")
+            ref_sub = ("今天盘中跌破后收回" if d_touch == 0 else "今天没有跌破")
+            if d_since is not None:
+                ref_sub += f" · 距上次收盘跌破已 {d_since} 个交易日"
     else:
-        ref_label, ref_date, ref_sub = "中证1000 · 最近收盘跌破", "—", "暂未获取"
+        ref_label, ref_date, ref_sub = "中证1000 · 上次收盘跌破", "—", "暂未获取"
 
-    chip = {"below": "跌破", "touched": "击穿", "above": "线上", "na": "—"}
+    chip = {"below": "收盘跌破", "touched": "盘中跌破", "above": "线上", "na": "—"}
     cells = ""
     for x in indices:
         state = x.get("state") if x.get("state") in chip else "na"

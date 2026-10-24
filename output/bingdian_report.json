@@ -41,7 +41,7 @@
     "D2",
     "D4"
   ],
-  "_data_date": "2026-10-24",
+  "_data_date": "2026-10-23",
   "_note": "参考指标，不纳入XXFI计算口径，不影响小旭恐惧指数",
   "inputs": {
     "down": 887,
@@ -54,6 +54,6 @@
     "cyb_chg": null,
     "etf_down_ratio": null,
     "volume_mult": null,
-    "_data_date": "2026-10-24"
+    "_data_date": "2026-10-23"
   }
 }

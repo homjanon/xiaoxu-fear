@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
 from retry_utils import retry_on_network, jitter
+from trade_calendar import is_trade_day
 
 
 def _patch_eastmoney_push2delay():
@@ -124,6 +125,7 @@ def fetch_index(symbol="sh000001", vol_window=260):
     import datetime
     BJ = datetime.timezone(datetime.timedelta(hours=8))
     today = datetime.datetime.now(BJ).strftime("%Y-%m-%d")
+    trade_today = is_trade_day(today)
     sources = [
         ("sina", lambda: ak.stock_zh_index_daily(symbol=symbol)),
         ("tx",    lambda: ak.stock_zh_index_daily_tx(symbol=symbol)),
@@ -134,9 +136,11 @@ def fetch_index(symbol="sh000001", vol_window=260):
             closes = [float(x) for x in df["close"].tolist()]
             _last_date = str(df["date"].iloc[-1])
             _last_close = closes[-1]
-            # 当日补点：用 spot 最新价补当日一根，纠正日K滞后导致的 data_date 慢一天
+            # 当日补点：用 spot 最新价补当日一根，纠正日K滞后导致的 data_date 慢一天。
+            # 仅交易日补：非交易日 spot 仍返回上一交易日收盘，补点会把 _data_date 误标成周末/假期
+            # （2026-10-24 周末 force 验证实测事故），与 README 的 force 语义不符。
             spot_close = fetch_index_spot(symbol)
-            if spot_close is not None and today > _last_date:
+            if spot_close is not None and today > _last_date and trade_today:
                 closes.append(spot_close)
                 _last_date = today
                 _last_close = spot_close

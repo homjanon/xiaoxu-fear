@@ -10,7 +10,7 @@
 
 用法：
   python run_ma850.py --akshare --out output       # 联网取数（盘后跑，当日 spot 补点）
-  python run_ma850.py --demo-touched --out output  # 样例：2 个指数盘中击穿后收回
+  python run_ma850.py --demo-touched --out output  # 样例：2 个指数盘中跌破后收回
   python run_ma850.py --demo-entered --out output  # 样例：3 个指数收盘跌破
   python run_ma850.py --demo-none --out output     # 样例：全部在线 850 上方
   python run_ma850.py --json '{"indices":[...]}' --out output
@@ -41,8 +41,8 @@ def format_report(res):
     lines = ["# 850天线抄底坐标 · plutus 观点\n"]
     lines.append("> 参考指标，不构成投资建议，不影响 XXFI 任何计算口径。")
     lines.append(f"> 数据日期：{res.get('_data_date','')}　|　判定：**{res.get('verdict_text','')}**"
-                 f"（收盘跌破 {res.get('below_count',0)}/4 · 盘中击穿 {res.get('touch_count',0)}/4）\n")
-    lines.append("| 指数 | 现价 | 850线 | 收盘偏离 | 当日最低 | 最低偏离 | 状态 | 最近收盘跌破 | 最近盘中击穿 |")
+                 f"（收盘跌破 {res.get('below_count',0)}/4 · 盘中跌破 {res.get('touch_count',0)}/4）\n")
+    lines.append("| 指数 | 现价 | 850线 | 收盘偏离 | 当日最低 | 最低偏离 | 状态 | 最近收盘跌破 | 最近盘中跌破 |")
     lines.append("|---|---|---|---|---|---|---|---|---|")
     for x in res.get("indices", []):
         lines.append(
@@ -74,7 +74,7 @@ def write(res, out_dir):
 def main():
     ap = argparse.ArgumentParser(description="850天线抄底坐标 编排入口")
     ap.add_argument("--akshare", action="store_true", help="联网取数（新浪日K → 腾讯兜底 + spot 补当日）")
-    ap.add_argument("--demo-touched", action="store_true", help="样例：2 个指数盘中击穿后收回")
+    ap.add_argument("--demo-touched", action="store_true", help="样例：2 个指数盘中跌破后收回")
     ap.add_argument("--demo-entered", action="store_true", help="样例：3 个指数收盘跌破")
     ap.add_argument("--demo-none", action="store_true", help="样例：全部在 850 线上方")
     ap.add_argument("--json", default=None, help="直接传入输入 JSON 字符串")

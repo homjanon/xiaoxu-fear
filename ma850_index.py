@@ -14,13 +14,13 @@
 判定口径（每个指数独立，收盘优先于盘中）：
   ma850_i  = 最近 850 个交易日收盘均价（含当日）
   收盘跌破 ⇔ close < ma850
-  盘中击穿 ⇔ low ≤ ma850 且 close > ma850（击穿后收回）
+  盘中跌破 ⇔ low ≤ ma850 且 close > ma850（跌破后收回）
   综合状态 ⇔ 任一收盘跌破 → 按跌破家数分「局部 / 多数 / 全面进入」
-             否则任一盘中击穿 → 盘中触及
+             否则任一盘中跌破 → 盘中跌破后收回
              否则 → 未到
   可取指数 < 2 个 → 暂未获取（单个指数失败只标该格，不拖累整体）
 
-「最近一次收盘跌破 / 盘中击穿」同样由日K序列直接回溯（历史 MA 逐日滚动计算），
+「最近一次收盘跌破 / 盘中跌破」同样由日K序列直接回溯（历史 MA 逐日滚动计算），
 不引入任何跨日状态文件，避免状态污染。
 
 输入字段（由 fetch_ma850_akshare.build_ma850_inputs() 产出）：
@@ -45,7 +45,7 @@ PRIMARY_CODE = "sh000852"
 
 STATE_TEXT = {
     "below": "收盘跌破",
-    "touched": "盘中击穿",
+    "touched": "盘中跌破",
     "above": "线上",
     "na": "暂未获取",
 }
@@ -54,7 +54,7 @@ VERDICTS = {
     "entered_full": ("全面进入 850 抄底区", "🟢"),
     "entered_major": ("多数进入 850 抄底区", "🟢"),
     "entered_partial": ("局部进入 850 抄底区", "🟢"),
-    "touched": ("盘中触及 850 线", "🟠"),
+    "touched": ("盘中跌破后收回", "🟠"),
     "not_reached": ("未到 850 抄底区", "⚪"),
     "na": ("暂未获取", "—"),
 }
@@ -234,7 +234,7 @@ def _demo(entered=0, touched=0):
 def main():
     ap = __import__("argparse").ArgumentParser(description="850天线抄底坐标 纯计算（演示）")
     ap.add_argument("--json", default=None, help="直接传入输入 JSON 字符串")
-    ap.add_argument("--demo-touched", action="store_true", help="2 个指数盘中击穿后收回")
+    ap.add_argument("--demo-touched", action="store_true", help="2 个指数盘中跌破后收回")
     ap.add_argument("--demo-entered", action="store_true", help="3 个指数收盘跌破")
     ap.add_argument("--demo-none", action="store_true", help="全部在 850 线上方")
     args = ap.parse_args()
