@@ -127,6 +127,42 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.3px;}
 .dip-trend{margin-top:14px;}
 .dip-trend svg{width:100%;height:auto;display:block;}
 .dip-trend-note{font-size:10.5px;color:#94a3b8;margin-top:6px;line-height:1.5;}
+/* —— 850天线抄底坐标卡（旁挂 XXFI，置于冰点参考与底部区域之间）—— */
+.ma850-card{background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);border:1px solid #fde68a;border-radius:16px;
+  padding:16px 18px;box-shadow:var(--shadow);}
+.ma850-head{font-size:13px;font-weight:800;color:#b45309;display:flex;align-items:center;gap:5px;margin-bottom:11px;}
+.ma850-tag{font-size:10px;font-weight:600;color:#b45309;background:#fef3c7;border:1px solid #fde68a;
+  border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
+.ma850-main{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.ma850-status{font-size:clamp(21px,5.5vw,30px);font-weight:800;line-height:1.1;}
+.ma850-status.entered{color:#16a34a;}   /* 收盘进入 850 抄底区 */
+.ma850-status.touched{color:#d97706;}   /* 盘中击穿后收回 */
+.ma850-status.idle{color:#64748b;}      /* 未到 */
+.ma850-status.na{color:#94a3b8;}
+.ma850-sub{font-size:11.5px;color:#475569;margin-top:2px;line-height:1.3;}
+.ma850-right{text-align:right;min-width:170px;}
+.ma850-ref-label{font-size:10px;color:#94a3b8;font-weight:600;margin-bottom:2px;}
+.ma850-ref-date{font-size:15px;font-weight:800;color:#b45309;font-variant-numeric:tabular-nums;}
+.ma850-ref-sub{font-size:10.5px;color:#92400e;font-weight:600;margin-top:1px;line-height:1.4;}
+.ma850-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:13px;
+  border-top:1px dashed #fde68a;padding-top:12px;}
+.ma850-cell{background:rgba(255,255,255,.7);border:1px solid #fde68a;border-radius:10px;
+  padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.ma850-cell.primary{border-color:#f59e0b;box-shadow:inset 0 0 0 1px #f59e0b;}
+.ma850-cell .k{font-size:11px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:4px;min-width:0;}
+.ma850-cell .k .st{margin-left:auto;font-size:9.5px;font-weight:800;padding:0 4px;border-radius:4px;white-space:nowrap;flex:none;}
+.ma850-cell .k .st.below{color:#15803d;background:#dcfce7;}
+.ma850-cell .k .st.touched{color:#b45309;background:#fef3c7;}
+.ma850-cell .k .st.above{color:#64748b;background:#f1f5f9;}
+.ma850-cell .k .st.na{color:#94a3b8;background:#f1f5f9;}
+.ma850-cell .v{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;}
+.ma850-cell .v.up{color:#dc2626;}      /* 线上（A股红涨） */
+.ma850-cell .v.down{color:#16a34a;}    /* 线下（A股绿跌） */
+.ma850-cell .v.flat{color:#64748b;}
+.ma850-cell .line{font-size:10.5px;color:#92400e;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere;}
+.ma850-cell .low{font-size:10px;color:#94a3b8;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere;}
+.ma850-note{font-size:10.5px;color:#78716c;margin-top:11px;line-height:1.6;}
+.ma850-note b{color:#92400e;}
 .big{font-size:clamp(46px,13vw,60px);font-weight:800;line-height:1;letter-spacing:-1.5px;}
 .big.sub2{font-size:clamp(36px,11vw,46px);}
 .label{font-size:13px;color:var(--sub);margin-top:8px;}
@@ -175,6 +211,8 @@ code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px;}
   .ice-meter{margin-left:0;}
   .dip-grid{grid-template-columns:repeat(2,1fr);}
   .dip-right{text-align:left;min-width:0;}
+  .ma850-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .ma850-right{text-align:left;min-width:0;}
 }
 """
 
@@ -497,7 +535,127 @@ def render_dibudian_card(d):
     </div>'''
 
 
-def render(r, hist, bingdian=None, dibudian=None):
+def _pct2(v):
+    """小数 → 带符号百分比（None 返回 —）"""
+    try:
+        fv = float(v)
+        if fv != fv:
+            return "—"
+        return f"{fv*100:+.2f}%"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def _px2(v):
+    """指数点位 → 两位小数（None 返回 —）"""
+    try:
+        fv = float(v)
+        if fv != fv:
+            return "—"
+        return f"{fv:.2f}"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def render_ma850_card(m):
+    """850天线抄底坐标卡（旁挂 XXFI，独立、不影响原指标）。无数据返回空串。
+
+    观点来源：plutus（2026-10）——各大指数跌至 850 天线为大资金抄底位。
+    结构：标题栏 + 主区（左 综合状态/副标题 · 右 中证1000 最近触发）
+          + 4 列指数坐标格（现价 / 850线 / 收盘偏离 / 当日最低偏离）。
+    状态：收盘跌破 > 盘中击穿 > 线上；盘中击穿单独成态，避免漏掉「深V收回」。
+    """
+    if not m:
+        return ""
+    verdict = m.get("verdict") or "na"
+    indices = m.get("indices") or []
+    below = m.get("below_count", 0)
+    touch = m.get("touch_count", 0)
+    closest_name = m.get("closest_name") or "—"
+    closest_dev = m.get("closest_dev")
+    primary = m.get("primary") or {}
+    data_date = m.get("_data_date") or "—"
+    src = m.get("_src") or "—"
+
+    if verdict.startswith("entered"):
+        s_cls = "entered"
+        sub = f"{below}/4 指数收盘在 850 线下"
+        if touch:
+            sub += f" · 另有 {touch} 个盘中击穿"
+    elif verdict == "touched":
+        s_cls = "touched"
+        sub = f"{touch}/4 盘中击穿后收回 · 收盘未跌破"
+    elif verdict == "not_reached":
+        s_cls = "idle"
+        sub = f"最近：{closest_name} 距 850 线 {_pct2(closest_dev)}"
+    else:
+        s_cls, sub = "na", "数据源暂不可用"
+
+    # 右侧锚点：固定中证1000（plutus 原文举例）
+    if primary.get("name"):
+        ref_label = f"{primary.get('name')} · 最近收盘跌破"
+        ref_date = primary.get("last_close_below") or "—"
+        d_since = primary.get("days_since_close_below")
+        d_touch = primary.get("days_since_low_touch")
+        if primary.get("state") == "below":
+            db = primary.get("days_below") or 0
+            ref_sub = ("今日收盘跌破 850 线" if db <= 1
+                       else f"已连续 {db} 个交易日收盘在 850 线下")
+        else:
+            if d_touch == 0:
+                touch_txt = "今日盘中击穿"
+            elif primary.get("last_low_touch"):
+                touch_txt = f"最近盘中击穿 {primary.get('last_low_touch')}"
+            else:
+                touch_txt = "近期无盘中击穿"
+            ref_sub = touch_txt + (f" · 收盘已在线 {d_since} 个交易日" if d_since is not None else "")
+    else:
+        ref_label, ref_date, ref_sub = "中证1000 · 最近收盘跌破", "—", "暂未获取"
+
+    chip = {"below": "跌破", "touched": "击穿", "above": "线上", "na": "—"}
+    cells = ""
+    for x in indices:
+        state = x.get("state") if x.get("state") in chip else "na"
+        dev = x.get("dev")
+        dev_cls = "up" if (dev is not None and dev > 0) else ("down" if dev is not None and dev < 0 else "flat")
+        low_txt = "当日最低 —"
+        if x.get("low") is not None:
+            low_txt = f"最低 {_px2(x.get('low'))}（{_pct2(x.get('low_dev'))}）"
+        cells += (
+            f'<div class="ma850-cell{" primary" if x.get("is_primary") else ""}">'
+            f'<div class="k">{x.get("name","—")}'
+            f'<span class="st {state}">{chip[state]}</span></div>'
+            f'<div class="v {dev_cls}">{_pct2(dev)}</div>'
+            f'<div class="line">850线 {_px2(x.get("ma850"))}</div>'
+            f'<div class="line">收盘 {_px2(x.get("close"))}</div>'
+            f'<div class="low">{low_txt}</div>'
+            f'</div>'
+        )
+
+    return f'''
+    <div class="card ma850-card">
+      <div class="ma850-head">📐 850天线抄底坐标（plutus） <span class="ma850-tag">短线参考·不影响XXFI</span></div>
+      <div class="ma850-main">
+        <div>
+          <div class="ma850-status {s_cls}">{m.get("verdict_emoji","—")} {m.get("verdict_text","暂未获取")}</div>
+          <div class="ma850-sub">{sub}</div>
+        </div>
+        <div class="ma850-right">
+          <div class="ma850-ref-label">{ref_label}</div>
+          <div class="ma850-ref-date">{ref_date}</div>
+          <div class="ma850-ref-sub">{ref_sub}</div>
+        </div>
+      </div>
+      <div class="ma850-grid">{cells}</div>
+      <div class="ma850-note">
+        <b>850线</b> = 最近 850 个交易日收盘均价（移动靶/滞后指标）；收盘跌破 ≠ 立刻见底。
+        数据：{src}｜截至 {data_date}。<br>
+        历史小注：中证1000 深度跌破（低于5%）8 次，抄底后 1 年 7/8 为正，但信号后平均仍先跌 10.3%（2010以来周K近似，样本少）。观点来源：plutus（2026-10）。本卡为坐标提示，非投资建议。
+      </div>
+    </div>'''
+
+
+def render(r, hist, bingdian=None, dibudian=None, ma850=None):
     xxfi = float(r.get("XXFI", 0))
     greed = float(r.get("GreedIndex", 0))
     signal = r.get("contrarian_signal") or signal_of(xxfi)
@@ -563,6 +721,7 @@ def render(r, hist, bingdian=None, dibudian=None):
     fear_html = rows_html(fear_rows, "fear", "var(--fear)")
     greed_html = rows_html(greed_rows, "greed", "var(--greed)")
     ice_html = render_ice_card(bingdian)
+    ma_html = render_ma850_card(ma850)
     dip_html = render_dibudian_card(dibudian)
 
     # 对照表行
@@ -609,6 +768,7 @@ def render(r, hist, bingdian=None, dibudian=None):
 </div>
 
 {ice_html}
+{ma_html}
 {dip_html}
 {SIM_HTML}
 
@@ -668,6 +828,7 @@ def main():
     ap.add_argument("--history", default="output/history.jsonl", help="history.jsonl 路径")
     ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
+    ap.add_argument("--ma850", default=None, help="850天线抄底坐标 ma850_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--out", required=True, help="输出 HTML 路径，如 docs/index.html")
     args = ap.parse_args()
 
@@ -677,6 +838,8 @@ def main():
         args.bingdian = "output/bingdian_report.json"
     if not args.dibudian and os.path.exists("output/dibudian_report.json"):
         args.dibudian = "output/dibudian_report.json"
+    if not args.ma850 and os.path.exists("output/ma850_report.json"):
+        args.ma850 = "output/ma850_report.json"
 
     r = load_json(args.json)
     hist = load_history(args.history)
@@ -694,7 +857,14 @@ def main():
             dibudian = load_json(args.dibudian)
         except Exception as e:
             print(f"[warn] 底部区域报告读取失败，跳过该卡: {e}")
-    html = render(r, hist, bingdian, dibudian)
+    # 850天线抄底坐标卡：独立产物，存在才加载；缺失则页面不显示该卡（XXFI 不受影响）
+    ma850 = None
+    if args.ma850 and os.path.exists(args.ma850):
+        try:
+            ma850 = load_json(args.ma850)
+        except Exception as e:
+            print(f"[warn] 850天线报告读取失败，跳过该卡: {e}")
+    html = render(r, hist, bingdian, dibudian, ma850)
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
@@ -704,12 +874,13 @@ def main():
     #   撤出本页（迁至 qg 盘中检测页），再自检它会永远报缺失。
     missing = [k for k, kw in [
         ("冰点参考卡", 'class="card ice-card"'),
+        ("850天线抄底卡", 'class="card ma850-card"'),
         ("底部区域判断卡", 'class="card dip-card"'),
     ] if kw not in html]
     if missing:
-        print(f"[warn] 生成页面缺少板块: {', '.join(missing)}（请检查 --bingdian/--dibudian 参数与产物）")
+        print(f"[warn] 生成页面缺少板块: {', '.join(missing)}（请检查 --bingdian/--ma850/--dibudian 参数与产物）")
     else:
-        print("[ok] 两大板块齐全：冰点参考卡 / 底部区域判断卡（实盘模拟已迁 qg 盘中页）")
+        print("[ok] 三大板块齐全：冰点参考卡 / 850天线抄底卡 / 底部区域判断卡")
     # 一并输出 xxfi_report.json 到 Pages 源目录（docs/），供外部读取原始数据或调试。
     json_out = os.path.join(out_dir, "xxfi_report.json")
     with open(json_out, "w", encoding="utf-8") as f:
