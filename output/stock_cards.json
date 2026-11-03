@@ -1,18 +1,17 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-02T19:03:33+08:00",
-  "price_asof": "2026-11-02",
-  "source_report_date": "2026-11-02",
-  "report_summary": "上证 **3638.03（+1.08%）**，创业板 **+1.87%**、中证500 **+2.46%**，而中证红利 **−0.09%** —— 与 10-30 那根阴线正好掉了个方向：**上次是白酒消费接钱、科技崩，今天是电子半导体接钱、银行被卖**。涨停 **213** 家（跌停仅 13），上涨 4360 家，两市 **17,836.9 亿**放量 6.5%，全市场主力 **+117.1 亿**转正。模拟盘买入 **菱电电控 500 股 @102.65**，收盘 104.17（+2.10%），浮盈 +1.48%；净值 **1,119,856（−0.40%）→ 累计 +1.47%**。",
+  "generated_at": "2026-11-03T18:34:05+08:00",
+  "price_asof": "2026-11-03",
+  "source_report_date": "2026-11-03",
+  "report_summary": "昨日反弹一日游，科技全线崩；模拟盘零成交，两只昨日picks被收盘确认拦下；百亚资金价格背离、菱电P3/P7双倒计时。",
   "index": {
     "name": "上证指数",
-    "close": 3638.03,
-    "change_pct": 1.08
+    "close": 3608.1,
+    "change_pct": -0.82
   },
   "data_note": "价格为日更快照（非实时）；财务为最新已披露报告期；不含卖方一致预期（数据源不可得）。",
   "degraded": [
-    "002966:profile,industry",
-    "600501:profile,industry"
+    "301510:补数 holders←xingyao"
   ],
   "stocks": [
     {
@@ -21,23 +20,23 @@
       "name": "苏州银行",
       "role": "pick",
       "action": null,
-      "buy_zone": "回踩9.5-9.7",
-      "stop_loss": 9.16,
+      "buy_zone": "回踩9.52-9.72",
+      "stop_loss": 9.18,
       "plan": "短线6万仓",
-      "ref_price": 9.59,
+      "ref_price": 9.58,
       "quote": {
-        "price": 9.59,
-        "chg_pct": -3.52,
-        "prev_close": 9.94,
-        "open": 9.88,
-        "high": 9.96,
-        "low": 9.52,
-        "amount_wan": 66943.0,
-        "turnover_pct": 1.56,
-        "pe_ttm": 7.51,
+        "price": 9.58,
+        "chg_pct": -0.1,
+        "prev_close": 9.59,
+        "open": 9.63,
+        "high": 9.75,
+        "low": 9.37,
+        "amount_wan": 59852.0,
+        "turnover_pct": 1.43,
+        "pe_ttm": 7.5,
         "pb": 0.79,
-        "cap_yi": 428.74,
-        "float_cap_yi": 421.62
+        "cap_yi": 428.29,
+        "float_cap_yi": 421.18
       },
       "fin": {
         "period": "2025-12-31",
@@ -186,9 +185,9 @@
         }
       ],
       "top10_pct": 37.55,
-      "industry": null,
+      "industry": "货币金融服务",
       "region": null,
-      "profile": null,
+      "profile": "公司业务、个人业务、资金业务及其他。",
       "board_industry": [
         "银行Ⅱ",
         "城商行Ⅲ",
@@ -199,7 +198,7 @@
         "长江三角",
         "互联网金融",
         "央国企改革",
-        "基金增仓",
+        "基金减仓",
         "低市盈率"
       ],
       "board_other": [
@@ -222,121 +221,112 @@
         "互联网金融"
       ],
       "range_52w": null,
-      "missing": [
-        "profile",
-        "industry"
-      ]
+      "missing": []
     },
     {
-      "code": "600501",
-      "secid": "600501.SH",
-      "name": "航天晨光",
+      "code": "301510",
+      "secid": "301510.SZ",
+      "name": "固高科技",
       "role": "pick",
       "action": null,
-      "buy_zone": "回踩15.89-16.21",
-      "stop_loss": 15.22,
+      "buy_zone": "回踩26.36-26.9",
+      "stop_loss": 25.44,
       "plan": "短线6万仓",
-      "ref_price": 16.54,
+      "ref_price": 26.72,
       "quote": {
-        "price": 16.54,
-        "chg_pct": 1.47,
-        "prev_close": 16.3,
-        "open": 16.2,
-        "high": 16.68,
-        "low": 15.6,
-        "amount_wan": 67247.0,
-        "turnover_pct": 9.73,
-        "pe_ttm": -63.53,
-        "pb": 4.56,
-        "cap_yi": 70.76,
-        "float_cap_yi": 70.76
+        "price": 26.72,
+        "chg_pct": -0.41,
+        "prev_close": 26.83,
+        "open": 26.56,
+        "high": 27.38,
+        "low": 26.1,
+        "amount_wan": 42890.0,
+        "turnover_pct": 5.75,
+        "pe_ttm": 64.02,
+        "pb": 6.87,
+        "cap_yi": 108.06,
+        "float_cap_yi": 74.59
       },
       "fin": {
         "period": "2025-12-31",
-        "revenue_yi": 21.51,
-        "revenue_yoy": -11.14,
-        "np_yi": -2.16,
-        "np_yoy": -43.1,
-        "gross_margin": 7.15,
-        "roe": -12.86,
-        "eps": -0.5,
+        "revenue_yi": 5.5,
+        "revenue_yoy": 31.55,
+        "np_yi": 0.63,
+        "np_yoy": 25.32,
+        "gross_margin": 48.69,
+        "roe": 4.49,
+        "eps": 0.16,
         "interim": {
           "period": "2026-09-30",
-          "revenue_yi": 15.29,
-          "np_yi": -0.09,
-          "roe": -0.58,
+          "revenue_yi": 6.45,
+          "np_yi": 1.5,
+          "roe": 9.93,
           "note": "半年累计，不可与年化值直接比较"
         }
       },
       "history": [
         {
           "y": "2021",
-          "rev_yi": 40.79,
-          "np_yi": 0.66
+          "rev_yi": 3.38,
+          "np_yi": 0.65
         },
         {
           "y": "2022",
-          "rev_yi": 41.45,
-          "np_yi": 0.76
+          "rev_yi": 3.48,
+          "np_yi": 0.53
         },
         {
           "y": "2023",
-          "rev_yi": 38.18,
-          "np_yi": 0.72
+          "rev_yi": 4.04,
+          "np_yi": 0.51
         },
         {
           "y": "2024",
-          "rev_yi": 24.2,
-          "np_yi": -3.79
+          "rev_yi": 4.18,
+          "np_yi": 0.5
         },
         {
           "y": "2025",
-          "rev_yi": 21.51,
-          "np_yi": -2.16
+          "rev_yi": 5.5,
+          "np_yi": 0.63
         },
         {
           "y": "2026Q3",
-          "rev_yi": 15.29,
-          "np_yi": -0.09,
+          "rev_yi": 6.45,
+          "np_yi": 1.5,
           "interim": true
         }
       ],
       "segments": [
         {
-          "name": "柔性管件",
-          "pct": 37.27,
-          "rev_yi": 8.02,
-          "gm": 24.25
+          "name": "运动控制核心部件类",
+          "pct": 69.27,
+          "rev_yi": 3.81,
+          "gm": 52.3
         },
         {
-          "name": "压力容器",
-          "pct": 28.55,
-          "rev_yi": 6.14,
-          "gm": 1.12
+          "name": "运动控制系统类",
+          "pct": 16.82,
+          "rev_yi": 0.92,
+          "gm": 46.42
         },
         {
-          "name": "专用车改装",
-          "pct": 23.17,
-          "rev_yi": 4.98,
-          "gm": 8.95
+          "name": "运动控制整机类",
+          "pct": 11.61,
+          "rev_yi": 0.64,
+          "gm": 28.52
         },
         {
-          "name": "特种装备",
-          "pct": 7.98,
-          "rev_yi": 1.72,
-          "gm": -51.22
-        },
-        {
-          "name": "艺术工程",
-          "pct": 1.83,
-          "rev_yi": 0.39,
-          "gm": -10.15
+          "name": "其他",
+          "pct": 1.66,
+          "rev_yi": 0.09,
+          "gm": 91.62
         },
         {
           "name": "其他(补充)",
-          "pct": 1.19,
-          "rev_yi": 0.26,
-          "gm": -0.9
+          "pct": 0.63,
+          "rev_yi": 0.03,
+          "gm": 5.7
         }
       ],
       "segments_basis": "产品",
@@ -344,110 +334,105 @@
       "holders": [
         {
           "rank": 1,
-          "name": "中国航天科工集团有限公司",
-          "type": "流通A股",
-          "pct": 25.2
+          "name": "固高科技(香港)有限公司",
+          "type": "A股流通股",
+          "pct": 22.58
         },
         {
           "rank": 2,
-          "name": "南京晨光集团有限责任公司",
-          "type": "流通A股",
-          "pct": 21.28
+          "name": "吴宏",
+          "type": "限售流通A股,A股流通股",
+          "pct": 6.27
         },
         {
           "rank": 3,
-          "name": "申万菱信基金-工商银行-华融信托-正弘2号权益投资集合资金信托计划",
-          "type": "流通A股",
-          "pct": 1.57
+          "name": "北京股权投资发展管理中心(有限合伙)",
+          "type": "A股流通股",
+          "pct": 5.91
         },
         {
           "rank": 4,
-          "name": "天治基金-工商银行-华融信托-华融·海西晟乾7号权益投资集合资金信托计划",
-          "type": "流通A股",
-          "pct": 1.57
+          "name": "澳门明杰机械自动化有限公司",
+          "type": "A股流通股",
+          "pct": 3.55
         },
         {
           "rank": 5,
-          "name": "航天科工资产管理有限公司",
-          "type": "流通A股",
-          "pct": 0.38
+          "name": "易方达国证机器人产业交易型开放式指数证券投资基金",
+          "type": "A股流通股",
+          "pct": 2.71
         },
         {
           "rank": 6,
-          "name": "郎富才",
-          "type": "流通A股",
-          "pct": 0.28
+          "name": "深圳固赢管理咨询合伙企业(有限合伙)",
+          "type": "A股流通股",
+          "pct": 1.57
         },
         {
           "rank": 7,
-          "name": "宗旭辉",
-          "type": "流通A股",
-          "pct": 0.23
+          "name": "深圳固盛管理咨询合伙企业(有限合伙)",
+          "type": "A股流通股",
+          "pct": 1.57
         },
         {
           "rank": 8,
-          "name": "文腊梅",
-          "type": "流通A股",
-          "pct": 0.22
+          "name": "香港科大研究开发有限公司",
+          "type": "A股流通股",
+          "pct": 1.44
         },
         {
           "rank": 9,
-          "name": "许福建",
-          "type": "流通A股",
-          "pct": 0.21
+          "name": "成都合创润丰企业管理咨询合伙企业(有限合伙)",
+          "type": "A股流通股",
+          "pct": 1.34
         },
         {
           "rank": 10,
-          "name": "刘建初",
-          "type": "流通A股",
-          "pct": 0.21
+          "name": "深圳固瀚管理咨询合伙企业(有限合伙)",
+          "type": "A股流通股",
+          "pct": 1.31
         }
       ],
-      "top10_pct": 51.15,
-      "industry": null,
+      "top10_pct": 48.25,
+      "industry": "仪器仪表制造业",
       "region": null,
-      "profile": null,
+      "profile": "运动控制及智能制造的核心技术研发。",
       "board_industry": [
-        "其他专用设备",
-        "机械设备",
-        "专用设备"
+        "工控设备",
+        "自动化设备",
+        "机械设备"
       ],
       "concepts": [
-        "节能环保",
-        "核能核电",
-        "长江三角",
-        "安防概念",
-        "央国企改革",
-        "氢能源",
-        "UWB概念",
-        "商业航天",
-        "可控核聚变",
-        "最近多板",
-        "破增发价股",
-        "连续亏损",
+        "3D打印",
+        "半导体概念",
+        "专精特新",
+        "新型工业化",
+        "基金减仓",
         "高端装备",
-        "军工"
+        "机器人概念"
       ],
       "board_other": [
-        "江苏板块",
+        "广东板块",
+        "深圳特区",
         "融资融券",
-        "沪股通",
-        "昨日高振幅",
-        "QFII新进"
+        "创业板综",
+        "深股通",
+        "小盘股",
+        "小盘成长"
       ],
       "boards_basis": "em-list",
       "concept_ths": [
-        "氢能源",
-        "商业航天",
-        "可控核聚变",
+        "3D打印",
+        "专精特新",
+        "新型工业化",
         "高端装备",
-        "军工"
+        "机器人概念"
       ],
       "range_52w": null,
-      "missing": [
-        "profile",
-        "industry"
-      ]
+      "fallback": {
+        "holders": "xingyao"
+      },
+      "missing": []
     },
     {
       "code": "600036",
@@ -460,18 +445,18 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 43.18,
-        "chg_pct": -0.85,
-        "prev_close": 43.55,
-        "open": 43.66,
-        "high": 44.01,
-        "low": 42.72,
-        "amount_wan": 556464.0,
-        "turnover_pct": 0.62,
-        "pe_ttm": 7.12,
-        "pb": 0.92,
-        "cap_yi": 10889.93,
-        "float_cap_yi": 8907.58
+        "price": 42.69,
+        "chg_pct": -1.13,
+        "prev_close": 43.18,
+        "open": 43.16,
+        "high": 43.28,
+        "low": 41.73,
+        "amount_wan": 709570.0,
+        "turnover_pct": 0.81,
+        "pe_ttm": 7.04,
+        "pb": 0.91,
+        "cap_yi": 10766.35,
+        "float_cap_yi": 8806.5
       },
       "fin": {
         "period": "2025-12-31",
@@ -613,8 +598,8 @@
       "profile": "经营吸收公众存款；发放短期、中期和长期贷款；办理国内外结算；办理票据贴现；发行金融债券等。",
       "board_industry": [
         "银行Ⅱ",
-        "股份制银行Ⅲ",
-        "银行"
+        "银行",
+        "股份制银行Ⅲ"
       ],
       "concepts": [
         "互联网金融",
@@ -625,14 +610,14 @@
       ],
       "board_other": [
         "广东板块",
-        "AH股",
-        "HS300_",
         "深圳特区",
         "机构重仓",
         "融资融券",
         "央视50_",
         "上证50_",
         "上证180_",
+        "HS300_",
+        "AH股",
         "沪股通",
         "MSCI中国",
         "富时罗素",
@@ -645,6 +630,7 @@
         "百日新高",
         "保险重仓",
         "金融地产风格",
+        "趋势股",
         "标准普尔"
       ],
       "boards_basis": "em-list",
@@ -660,24 +646,24 @@
       "secid": "003006.SZ",
       "name": "百亚股份",
       "role": "holding",
-      "action": "✅持有(10/09上车·浮动-0.3%)",
+      "action": "✅持有(10/09上车·浮动-6.4%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 22.4,
-        "chg_pct": -2.52,
-        "prev_close": 22.98,
-        "open": 23.17,
-        "high": 23.52,
-        "low": 21.67,
-        "amount_wan": 108561.0,
-        "turnover_pct": 11.35,
-        "pe_ttm": 95.7,
-        "pb": 7.01,
-        "cap_yi": 96.24,
-        "float_cap_yi": 96.0
+        "price": 21.03,
+        "chg_pct": -6.12,
+        "prev_close": 22.4,
+        "open": 22.4,
+        "high": 22.54,
+        "low": 21.0,
+        "amount_wan": 108291.0,
+        "turnover_pct": 11.59,
+        "pe_ttm": 89.85,
+        "pb": 6.58,
+        "cap_yi": 90.35,
+        "float_cap_yi": 90.13
       },
       "fin": {
         "period": "2025-12-31",
@@ -823,7 +809,6 @@
         "美容护理"
       ],
       "concepts": [
-        "基金增仓",
         "保险新进",
         "电商概念",
         "婴童概念",
@@ -834,8 +819,7 @@
         "QFII新进",
         "昨日高振幅",
         "深股通",
-        "机构重仓",
-        "基金重仓"
+        "机构重仓"
       ],
       "boards_basis": "em-list",
       "concept_ths": [
@@ -849,24 +833,24 @@
       "secid": "688667.SH",
       "name": "菱电电控",
       "role": "holding",
-      "action": "✅持有(11/02上车·浮动+1.5%)",
+      "action": "✅持有(11/02上车·浮动-3.4%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 104.17,
-        "chg_pct": 2.1,
-        "prev_close": 102.03,
-        "open": 102.03,
-        "high": 104.77,
-        "low": 95.81,
-        "amount_wan": 8167.0,
-        "turnover_pct": 1.54,
-        "pe_ttm": 35.9,
-        "pb": 2.97,
-        "cap_yi": 54.89,
-        "float_cap_yi": 54.89
+        "price": 99.2,
+        "chg_pct": -4.77,
+        "prev_close": 104.17,
+        "open": 102.87,
+        "high": 103.84,
+        "low": 99.0,
+        "amount_wan": 4682.0,
+        "turnover_pct": 0.88,
+        "pe_ttm": 34.19,
+        "pb": 2.83,
+        "cap_yi": 52.27,
+        "float_cap_yi": 52.27
       },
       "fin": {
         "period": "2025-12-31",
