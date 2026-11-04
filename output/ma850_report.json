@@ -23,7 +23,7 @@
     "days_since_close_below": 0,
     "days_since_low_touch": 0,
     "days_below": 4,
-    "src": "sina+spot",
+    "src": "sina",
     "error": null,
     "is_primary": true
   },
@@ -43,7 +43,7 @@
       "days_since_close_below": 0,
       "days_since_low_touch": 0,
       "days_below": 4,
-      "src": "sina+spot",
+      "src": "sina",
       "error": null,
       "is_primary": true
     },
@@ -52,7 +52,7 @@
       "name": "沪深300",
       "state": "below",
       "state_text": "收盘跌破",
-      "close": 4008.87,
+      "close": 4008.88,
       "low": 3969.55,
       "ma850": 4024.05,
       "dev": -0.0038,
@@ -62,7 +62,7 @@
       "days_since_close_below": 0,
       "days_since_low_touch": 0,
       "days_below": 3,
-      "src": "sina+spot",
+      "src": "sina",
       "error": null,
       "is_primary": false
     },
@@ -81,7 +81,7 @@
       "days_since_close_below": 380,
       "days_since_low_touch": 380,
       "days_below": 0,
-      "src": "sina+spot",
+      "src": "sina",
       "error": null,
       "is_primary": false
     },
@@ -100,14 +100,14 @@
       "days_since_close_below": 0,
       "days_since_low_touch": 0,
       "days_below": 3,
-      "src": "sina+spot",
+      "src": "sina",
       "error": null,
       "is_primary": false
     }
   ],
   "_data_date": "2026-11-03",
-  "_src": "sina+spot×4",
+  "_src": "sina×4",
   "_source_view": "财经博主 plutus（2026-10）：各大指数跌至 850 天线为大资金抄底位",
-  "_generated_at": "2026-11-03 16:22:08",
+  "_generated_at": "2026-11-04 16:28:01",
   "_note": "参考指标，不构成投资建议；不纳入 XXFI 计算口径"
 }
