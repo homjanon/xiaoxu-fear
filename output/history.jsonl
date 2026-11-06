@@ -73,3 +73,4 @@
 {"date": "2026-11-03", "xxfi": 53.7, "greed": 25.0, "signal": "HOLD", "level": "中性"}
 {"date": "2026-11-04", "xxfi": 24.4, "greed": 23.8, "signal": "SELL", "level": "极度贪婪（小旭式追涨山顶区）"}
 {"date": "2026-11-05", "xxfi": 30.5, "greed": 25.2, "signal": "REDUCE", "level": "偏贪婪（情绪偏热，她倾向追高）"}
+{"date": "2026-11-06", "xxfi": 60.0, "greed": 28.6, "signal": "ACCUMULATE", "level": "恐惧（偏谨慎，她倾向割肉）"}
