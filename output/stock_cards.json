@@ -1,117 +1,121 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-06T20:33:28+08:00",
-  "price_asof": "2026-11-06",
-  "source_report_date": "2026-11-06",
-  "report_summary": "普跌日：创业板−3.96%、主力−519亿、上涨仅712家；昨天接棒的半导体设备与光伏今天又被砸，资金彻底退到公用事业/电力/银行；模拟盘买入盐田港。",
+  "generated_at": "2026-11-09T17:26:43+08:00",
+  "price_asof": "2026-11-09",
+  "source_report_date": "2026-11-09",
+  "report_summary": "缩量到14826亿（近期最低）指数微涨0.32%，但深成指/创业板/中证500都收在日内最低；科技小规模回潮（电子+93亿），上周五接棒的电力设备/光伏被砸；宝钢因差0.002元被拦。",
   "index": {
     "name": "上证指数",
-    "close": 3649.18,
-    "change_pct": -1.1
+    "close": 3660.79,
+    "change_pct": 0.32
   },
   "data_note": "价格为日更快照（非实时）；财务为最新已披露报告期；不含卖方一致预期（数据源不可得）。",
-  "degraded": [
-    "603119:补数 holders←xingyao"
-  ],
+  "degraded": [],
   "stocks": [
     {
-      "code": "603119",
-      "secid": "603119.SH",
-      "name": "浙江荣泰",
+      "code": "300432",
+      "secid": "300432.SZ",
+      "name": "富临精工",
       "role": "pick",
       "action": null,
-      "buy_zone": "回踩58.61-59.79",
-      "stop_loss": 56.72,
+      "buy_zone": "回踩14.58-14.88",
+      "stop_loss": 13.63,
       "plan": "短线6万仓",
-      "ref_price": 61.65,
+      "ref_price": 14.82,
       "quote": {
-        "price": 61.65,
-        "chg_pct": -1.04,
-        "prev_close": 62.3,
-        "open": 59.47,
-        "high": 66.27,
-        "low": 59.33,
-        "amount_wan": 109809.0,
-        "turnover_pct": 3.72,
-        "pe_ttm": 91.06,
-        "pb": 13.29,
-        "cap_yi": 291.52,
-        "float_cap_yi": 291.52
+        "price": 14.82,
+        "chg_pct": -1.2,
+        "prev_close": 15.0,
+        "open": 15.3,
+        "high": 15.56,
+        "low": 14.8,
+        "amount_wan": 72771.0,
+        "turnover_pct": 2.84,
+        "pe_ttm": 33.91,
+        "pb": 4.89,
+        "cap_yi": 253.39,
+        "float_cap_yi": 250.82
       },
       "fin": {
         "period": "2025-12-31",
-        "revenue_yi": 13.76,
-        "revenue_yoy": 21.24,
-        "np_yi": 2.78,
-        "np_yoy": 20.9,
-        "gross_margin": 34.86,
-        "roe": 14.41,
-        "eps": 0.77,
+        "revenue_yi": 134.82,
+        "revenue_yoy": 59.17,
+        "np_yi": 4.28,
+        "np_yoy": 7.76,
+        "gross_margin": 11.05,
+        "roe": 9.53,
+        "eps": 0.25,
         "interim": {
           "period": "2026-09-30",
-          "revenue_yi": 14.61,
-          "np_yi": 2.45,
-          "roe": 11.55,
+          "revenue_yi": 183.23,
+          "np_yi": 6.45,
+          "roe": 13.0,
           "note": "半年累计，不可与年化值直接比较"
         }
       },
       "history": [
         {
           "y": "2021",
-          "rev_yi": 5.22,
-          "np_yi": 1.04
+          "rev_yi": 26.56,
+          "np_yi": 3.99
         },
         {
           "y": "2022",
-          "rev_yi": 6.67,
-          "np_yi": 1.34
+          "rev_yi": 73.47,
+          "np_yi": 6.45
         },
         {
           "y": "2023",
-          "rev_yi": 8.0,
-          "np_yi": 1.72
+          "rev_yi": 57.61,
+          "np_yi": -5.43
         },
         {
           "y": "2024",
-          "rev_yi": 11.35,
-          "np_yi": 2.3
+          "rev_yi": 84.7,
+          "np_yi": 3.97
         },
         {
           "y": "2025",
-          "rev_yi": 13.76,
-          "np_yi": 2.78
+          "rev_yi": 134.82,
+          "np_yi": 4.28
         },
         {
           "y": "2026Q3",
-          "rev_yi": 14.61,
-          "np_yi": 2.45,
+          "rev_yi": 183.23,
+          "np_yi": 6.45,
           "interim": true
         }
       ],
       "segments": [
         {
-          "name": "云母复合材料及相关产品",
-          "pct": 92.63,
-          "rev_yi": 12.74,
-          "gm": 34.15
+          "name": "锂电池正极材料",
+          "pct": 69.05,
+          "rev_yi": 93.09,
+          "gm": 5.82
         },
         {
-          "name": "精密结构件及相关产品",
-          "pct": 6.52,
-          "rev_yi": 0.9,
-          "gm": 46.73
+          "name": "发动机零部件",
+          "pct": 13.21,
+          "rev_yi": 17.82,
+          "gm": 30.71
         },
         {
-          "name": "其他",
-          "pct": 0.77,
-          "rev_yi": 0.11,
-          "gm": 13.09
+          "name": "新能源及混合动力零部件",
+          "pct": 10.63,
+          "rev_yi": 14.33,
+          "gm": 17.48
         },
         {
-          "name": "其他(补充)",
-          "pct": 0.08,
-          "rev_yi": 0.01,
-          "gm": null
+          "name": "热管理系统及部件",
+          "pct": 6.79,
+          "rev_yi": 9.16,
+          "gm": 15.03
+        },
+        {
+          "name": "其它产品及技术服务",
+          "pct": 0.32,
+          "rev_yi": 0.43,
+          "gm": 28.55
         }
       ],
       "segments_basis": "产品",
@@ -119,204 +123,218 @@
       "holders": [
         {
           "rank": 1,
-          "name": "葛泰荣",
-          "type": "A股流通股",
-          "pct": 31.12
+          "name": "四川富临实业集团有限公司",
+          "type": "流通A股",
+          "pct": 32.59
         },
         {
           "rank": 2,
-          "name": "葛太亮",
-          "type": "A股流通股",
-          "pct": 5.39
+          "name": "安治富",
+          "type": "流通A股",
+          "pct": 12.01
         },
         {
           "rank": 3,
-          "name": "曹梅盛",
-          "type": "A股流通股",
-          "pct": 4.48
+          "name": "丛菱令",
+          "type": "流通A股",
+          "pct": 2.66
         },
         {
           "rank": 4,
-          "name": "易方达国证机器人产业交易型开放式指数证券投资基金",
-          "type": "A股流通股",
-          "pct": 2.44
+          "name": "苏州厚扬启航投资中心(有限合伙)",
+          "type": "流通A股",
+          "pct": 1.37
         },
         {
           "rank": 5,
-          "name": "陈幼兮",
-          "type": "A股流通股",
-          "pct": 1.87
+          "name": "上海迎水投资管理有限公司-迎水飞龙12号私募证券投资基金",
+          "type": "流通A股",
+          "pct": 1.24
         },
         {
           "rank": 6,
-          "name": "陈驾兴",
-          "type": "A股流通股",
-          "pct": 1.72
+          "name": "聂丹",
+          "type": "限售流通A股",
+          "pct": 0.93
         },
         {
           "rank": 7,
-          "name": "全国社保基金103组合",
-          "type": "A股流通股",
-          "pct": 1.61
+          "name": "中国农业银行股份有限公司-富国创业板两年定期开放混合型证券投资基金",
+          "type": "流通A股",
+          "pct": 0.78
         },
         {
           "rank": 8,
-          "name": "郑敏敏",
-          "type": "A股流通股",
-          "pct": 1.56
+          "name": "曹勇",
+          "type": "流通A股",
+          "pct": 0.77
         },
         {
           "rank": 9,
-          "name": "永赢先进制造智选混合型发起式证券投资基金",
-          "type": "A股流通股",
-          "pct": 1.45
+          "name": "潘玉梅",
+          "type": "流通A股",
+          "pct": 0.76
         },
         {
           "rank": 10,
-          "name": "戴冬雅",
-          "type": "A股流通股",
-          "pct": 1.43
+          "name": "中国建设银行股份有限公司-信达澳银新能源产业股票型证券投资基金",
+          "type": "流通A股",
+          "pct": 0.63
         }
       ],
-      "top10_pct": 53.07,
-      "industry": "非金属矿物制品业",
+      "top10_pct": 53.74,
+      "industry": "汽车制造业",
       "region": null,
-      "profile": "各类耐高温绝缘云母制品的研发、生产和销售。",
+      "profile": "汽车发动机精密零部件的研发、生产和销售。",
       "board_industry": [
-        "汽车零部件",
-        "其他汽车零部件",
-        "汽车"
+        "电池化学品",
+        "电力设备",
+        "电池"
       ],
       "concepts": [
+        "锂电池概念",
+        "西部大开发",
+        "创业成份",
+        "华为概念",
         "新能源车",
+        "华为汽车",
+        "汽车热管理",
         "机器人概念",
+        "麒麟电池",
+        "减速器",
+        "小米汽车",
         "人形机器人",
+        "电池技术",
         "基金减仓",
-        "高市净率",
-        "专精特新"
+        "深成500"
       ],
       "board_other": [
-        "浙江板块",
-        "基金重仓",
+        "四川板块",
         "融资融券",
         "中证500",
-        "上证380",
-        "沪股通",
-        "MSCI中国",
-        "昨日高振幅",
-        "中盘股",
-        "中盘成长"
+        "创业板综",
+        "深股通",
+        "中盘股"
       ],
       "boards_basis": "em-list",
       "concept_ths": [
+        "锂电池概念",
+        "西部大开发",
+        "华为概念",
+        "华为汽车",
+        "汽车热管理",
         "机器人概念",
-        "人形机器人",
-        "专精特新"
+        "减速器",
+        "小米汽车",
+        "人形机器人"
       ],
       "range_52w": null,
-      "fallback": {
-        "holders": "xingyao"
-      },
       "missing": []
     },
     {
-      "code": "600019",
-      "secid": "600019.SH",
-      "name": "宝钢股份",
+      "code": "600569",
+      "secid": "600569.SH",
+      "name": "安阳钢铁",
       "role": "pick",
       "action": null,
-      "buy_zone": "回踩6.09-6.21",
-      "stop_loss": 5.91,
+      "buy_zone": "回踩1.84-1.88",
+      "stop_loss": 1.73,
       "plan": "短线6万仓",
-      "ref_price": 6.11,
+      "ref_price": 1.88,
       "quote": {
-        "price": 6.11,
-        "chg_pct": 0.49,
-        "prev_close": 6.08,
-        "open": 6.04,
-        "high": 6.15,
-        "low": 6.0,
-        "amount_wan": 46701.0,
-        "turnover_pct": 0.36,
-        "pe_ttm": 14.59,
-        "pb": 0.65,
-        "cap_yi": 1330.89,
-        "float_cap_yi": 1308.4
+        "price": 1.88,
+        "chg_pct": 0.0,
+        "prev_close": 1.88,
+        "open": 1.85,
+        "high": 1.94,
+        "low": 1.85,
+        "amount_wan": 16537.0,
+        "turnover_pct": 3.05,
+        "pe_ttm": -2.13,
+        "pb": 31.43,
+        "cap_yi": 54.0,
+        "float_cap_yi": 54.0
       },
       "fin": {
         "period": "2025-12-31",
-        "revenue_yi": 3175.08,
-        "revenue_yoy": -1.43,
-        "np_yi": 103.46,
-        "np_yoy": 40.53,
-        "gross_margin": 7.24,
-        "roe": 5.07,
-        "eps": 0.48,
+        "revenue_yi": 299.94,
+        "revenue_yoy": 1.19,
+        "np_yi": -4.97,
+        "np_yoy": -84.81,
+        "gross_margin": 5.94,
+        "roe": -20.85,
+        "eps": -0.17,
         "interim": {
           "period": "2026-09-30",
-          "revenue_yi": 2456.48,
-          "np_yi": 67.39,
-          "roe": 3.24,
+          "revenue_yi": 221.92,
+          "np_yi": -19.79,
+          "roe": -170.4,
           "note": "半年累计，不可与年化值直接比较"
         }
       },
       "history": [
         {
           "y": "2021",
-          "rev_yi": 3653.42,
-          "np_yi": 236.32
+          "rev_yi": 525.67,
+          "np_yi": 9.64
         },
         {
           "y": "2022",
-          "rev_yi": 3690.58,
-          "np_yi": 121.87
+          "rev_yi": 392.35,
+          "np_yi": -30.01
         },
         {
           "y": "2023",
-          "rev_yi": 3448.68,
-          "np_yi": 119.44
+          "rev_yi": 421.51,
+          "np_yi": -15.54
         },
         {
           "y": "2024",
-          "rev_yi": 3221.16,
-          "np_yi": 73.62
+          "rev_yi": 296.4,
+          "np_yi": -32.71
         },
         {
           "y": "2025",
-          "rev_yi": 3175.08,
-          "np_yi": 103.46
+          "rev_yi": 299.94,
+          "np_yi": -4.97
         },
         {
           "y": "2026Q3",
-          "rev_yi": 2456.48,
-          "np_yi": 67.39,
+          "rev_yi": 221.92,
+          "np_yi": -19.79,
           "interim": true
         }
       ],
       "segments": [
         {
-          "name": "销售商品",
-          "pct": 96.87,
-          "rev_yi": 3075.66,
-          "gm": null
+          "name": "板带材",
+          "pct": 75.59,
+          "rev_yi": 226.73,
+          "gm": 5.52
         },
         {
-          "name": "提供劳务",
-          "pct": 1.78,
-          "rev_yi": 56.66,
-          "gm": null
+          "name": "铸管等产品",
+          "pct": 14.47,
+          "rev_yi": 43.39,
+          "gm": 6.53
         },
         {
-          "name": "其他",
-          "pct": 1.27,
-          "rev_yi": 40.34,
-          "gm": null
+          "name": "高线",
+          "pct": 4.47,
+          "rev_yi": 13.42,
+          "gm": 6.75
         },
         {
-          "name": "租赁收入",
-          "pct": 0.08,
-          "rev_yi": 2.43,
-          "gm": null
+          "name": "建材",
+          "pct": 3.41,
+          "rev_yi": 10.22,
+          "gm": -3.77
+        },
+        {
+          "name": "其他(补充)",
+          "pct": 2.06,
+          "rev_yi": 6.18,
+          "gm": 31.33
         }
       ],
       "segments_basis": "产品",
@@ -324,114 +342,97 @@
       "holders": [
         {
           "rank": 1,
-          "name": "中国宝武钢铁集团有限公司",
-          "type": "流通A股",
-          "pct": 48.56
+          "name": "安阳钢铁集团有限责任公司",
+          "type": "流通A股,限售流通A股",
+          "pct": 66.78
         },
         {
           "rank": 2,
-          "name": "武钢集团有限公司",
+          "name": "华泰证券股份有限公司",
           "type": "流通A股",
-          "pct": 13.39
+          "pct": 0.33
         },
         {
           "rank": 3,
-          "name": "香港中央结算有限公司",
+          "name": "樊昌文",
           "type": "流通A股",
-          "pct": 7.03
+          "pct": 0.24
         },
         {
           "rank": 4,
-          "name": "中国石油天然气集团有限公司",
+          "name": "陈联科",
           "type": "流通A股",
-          "pct": 3.19
+          "pct": 0.19
         },
         {
           "rank": 5,
-          "name": "中国证券金融股份有限公司",
+          "name": "林月勇",
           "type": "流通A股",
-          "pct": 2.99
+          "pct": 0.16
         },
         {
           "rank": 6,
-          "name": "北京首熙投资管理有限公司",
+          "name": "朱玉芬",
           "type": "流通A股",
-          "pct": 1.84
+          "pct": 0.13
         },
         {
           "rank": 7,
-          "name": "中央汇金资产管理有限责任公司",
+          "name": "田国英",
           "type": "流通A股",
-          "pct": 0.87
+          "pct": 0.13
         },
         {
           "rank": 8,
-          "name": "GIC PRIVATE LIMITED",
+          "name": "招商银行股份有限公司-鹏华国证钢铁行业指数证券投资基金(LOF)",
           "type": "流通A股",
-          "pct": 0.43
+          "pct": 0.12
         },
         {
           "rank": 9,
-          "name": "汪莹莹",
+          "name": "赵源",
           "type": "流通A股",
-          "pct": 0.38
+          "pct": 0.11
         },
         {
           "rank": 10,
-          "name": "全国社保基金一一一组合",
+          "name": "武自安",
           "type": "流通A股",
-          "pct": 0.37
+          "pct": 0.11
         }
       ],
-      "top10_pct": 79.05,
+      "top10_pct": 68.3,
       "industry": "黑色金属冶炼和压延加工业",
       "region": null,
-      "profile": "钢铁冶炼、加工，电力、煤炭、工业气体生产等。",
+      "profile": "炼焦、烧结、冶炼、轧材及科研开发",
       "board_industry": [
         "钢铁",
-        "普钢",
-        "板材"
+        "板材",
+        "普钢"
       ],
       "concepts": [
-        "长江三角",
-        "特斯拉概念",
+        "2026中报首亏",
+        "煤化工概念",
         "央国企改革",
-        "参股银行",
-        "一带一路",
-        "航母概念",
-        "区块链",
-        "低碳冶金",
-        "中特估",
-        "反内卷概念",
-        "周期股",
-        "红利股",
-        "行业龙头",
-        "保险新进",
-        "低市净率"
+        "高市净率",
+        "最近多板",
+        "破发股",
+        "连续亏损",
+        "反内卷概念"
       ],
       "board_other": [
-        "上海板块",
+        "河南板块",
         "机构重仓",
         "融资融券",
-        "上证180_",
         "沪股通",
-        "HS300_",
-        "MSCI中国",
-        "富时罗素",
-        "破净股",
-        "长期破净",
-        "红利破净股",
-        "价值股",
-        "大盘股",
-        "大盘价值",
-        "标准普尔"
+        "低价股",
+        "昨日高振幅",
+        "百日新高",
+        "QFII新进"
       ],
       "boards_basis": "em-list",
       "concept_ths": [
-        "特斯拉概念",
-        "参股银行",
-        "一带一路",
-        "区块链"
+        "煤化工概念"
       ],
       "range_52w": null,
       "missing": []
@@ -447,18 +448,18 @@
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 42.88,
-        "chg_pct": 0.8,
-        "prev_close": 42.54,
-        "open": 42.88,
-        "high": 42.92,
+        "price": 43.01,
+        "chg_pct": 0.3,
+        "prev_close": 42.88,
+        "open": 42.55,
+        "high": 43.05,
         "low": 42.46,
-        "amount_wan": 396951.0,
-        "turnover_pct": 0.45,
-        "pe_ttm": 7.07,
-        "pb": 0.91,
-        "cap_yi": 10814.27,
-        "float_cap_yi": 8845.69
+        "amount_wan": 293164.0,
+        "turnover_pct": 0.33,
+        "pe_ttm": 7.09,
+        "pb": 0.92,
+        "cap_yi": 10847.06,
+        "float_cap_yi": 8872.51
       },
       "fin": {
         "period": "2025-12-31",
@@ -645,24 +646,24 @@
       "secid": "003006.SZ",
       "name": "百亚股份",
       "role": "holding",
-      "action": "✅持有(10/09上车·浮动+2.8%)",
+      "action": "✅持有(10/09上车·浮动+3.0%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 23.09,
-        "chg_pct": -1.07,
-        "prev_close": 23.34,
-        "open": 23.11,
-        "high": 23.89,
-        "low": 22.65,
-        "amount_wan": 109371.0,
-        "turnover_pct": 10.95,
-        "pe_ttm": 98.65,
-        "pb": 7.22,
-        "cap_yi": 99.21,
-        "float_cap_yi": 98.96
+        "price": 23.15,
+        "chg_pct": 0.26,
+        "prev_close": 23.09,
+        "open": 23.1,
+        "high": 23.6,
+        "low": 22.38,
+        "amount_wan": 100067.0,
+        "turnover_pct": 10.08,
+        "pe_ttm": 98.9,
+        "pb": 7.24,
+        "cap_yi": 99.46,
+        "float_cap_yi": 99.21
       },
       "fin": {
         "period": "2025-12-31",
@@ -831,24 +832,24 @@
       "secid": "000088.SZ",
       "name": "盐 田 港",
       "role": "holding",
-      "action": "✅持有(11/06上车·浮动+0.3%)",
+      "action": "✅持有(11/06上车·浮动+1.3%)",
       "buy_zone": null,
       "stop_loss": null,
       "plan": null,
       "ref_price": null,
       "quote": {
-        "price": 4.62,
-        "chg_pct": 0.0,
+        "price": 4.67,
+        "chg_pct": 1.08,
         "prev_close": 4.62,
-        "open": 4.55,
-        "high": 4.63,
-        "low": 4.51,
-        "amount_wan": 14504.0,
-        "turnover_pct": 1.0,
-        "pe_ttm": 15.72,
-        "pb": 1.29,
-        "cap_yi": 240.22,
-        "float_cap_yi": 146.13
+        "open": 4.65,
+        "high": 4.7,
+        "low": 4.6,
+        "amount_wan": 12412.0,
+        "turnover_pct": 0.84,
+        "pe_ttm": 15.89,
+        "pb": 1.31,
+        "cap_yi": 242.82,
+        "float_cap_yi": 147.71
       },
       "fin": {
         "period": "2025-12-31",
