@@ -1,36 +1,36 @@
 {
-  "XXFI": 54.2,
-  "GreedIndex": 27.8,
+  "XXFI": 54.6,
+  "GreedIndex": 28.8,
   "extreme": "NEUTRAL",
   "contrarian_signal": "HOLD",
   "level": "中性",
   "advice": "恐惧与贪婪均衡，无明显反向极值。→ 按自身策略持有，不依赖本指标。　[背离提示·顶部出货（散户追高·主力派发）]",
-  "divergence": -0.049,
+  "divergence": -0.0655,
   "divergence_state": "顶部出货（散户追高·主力派发）",
   "components": {
     "fear": {
       "drawdown": 18.3,
       "breadth": 100.0,
       "limitdown": 8.1,
-      "vol": 88.3
+      "vol": 90.0
     },
     "greed": {
       "momentum": 0.0,
       "limitup": 100.0,
-      "retailin": 4.4,
+      "retailin": 5.9,
       "overbought": 0.0,
-      "divergence": 59.8
+      "divergence": 63.1
     }
   },
   "inputs": {
     "drawdown": -0.03650321119460725,
-    "ret20": -0.01626745964517251,
-    "above_ma20": -0.004596502263705927,
-    "vol_pct": 0.8833333333333333,
+    "ret20": -0.025882892155286052,
+    "above_ma20": -0.00933911128195388,
+    "vol_pct": 0.9,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
-    "_last_date": "2026-11-12",
-    "_last_close": 3655.8295,
+    "_last_date": "2026-11-13",
+    "_last_close": 3634.353,
     "_index_source": "sina+spot",
     "up": 838,
     "down": 4320,
@@ -38,16 +38,16 @@
     "limit_down": 6,
     "_breadth_source": "legu",
     "_breadth_date": "2026-11-12 15:00:00",
-    "main_net": -0.027126853395832023,
-    "retail_net": 0.021911005013800687,
+    "main_net": -0.03625205741296264,
+    "retail_net": 0.02928280361829002,
     "_retail_net_source": "eastmoney",
     "_main_net_source": "eastmoney",
     "_breadth_provided": true,
-    "_hs300_date": "2026-11-12",
-    "_hs300_close": 3655.8295
+    "_hs300_date": "2026-11-13",
+    "_hs300_close": 3634.353
   },
-  "_data_date": "2026-11-12",
-  "_generated_at": "2026-11-12 16:20:51",
+  "_data_date": "2026-11-13",
+  "_generated_at": "2026-11-13 16:20:51",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
