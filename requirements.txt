@@ -1,2 +1,4 @@
+# 固定 1.18.64：1.20.44+ 批量更名接口（旧名已移除），代码经 ak_compat.py 新名优先/旧名兜底。
+# 升级前先跑 python ak_compat.py --check，并在新版本下跑一遍全链路。
 akshare==1.18.64
 tenacity

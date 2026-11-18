@@ -58,7 +58,7 @@
 
 | 约束 | 方案 | 实现 |
 |---|---|---|
-| **① 交易日筛选** | 仅在交易日执行，非交易日（含节假日/休市）完全不触发 | cron 仅覆盖周一至五；`check` 步骤用 `tool_trade_date_hist_sina()` **精确排除法定节假日/休市日（含调休）**，不靠"周一到五"硬猜 |
+| **① 交易日筛选** | 仅在交易日执行，非交易日（含节假日/休市）完全不触发 | cron 仅覆盖周一至五；`check` 步骤用 `calendar_trade_date_hist_sina()`（经 `ak_compat` 兼容旧名）**精确排除法定节假日/休市日（含调休）**，不靠"周一到五"硬猜 |
 | **② 执行时机** | 避开开盘数据空窗，待资金流向定稿后执行 | Cloudflare qdii-dispatch 每天 **16:20**（北京时间）触发 workflow_dispatch；`check` 步骤改判「交易日历 + 北京时间≥15:00 收盘后」，不再依赖滞后的指数日K末根（当日指数值由实时 spot 补充，见 `fetch_market_akshare.fetch_index_spot`） |
 | **③ 每日频次** | 单日单次，不产生无效执行 | 盘后单次运行；非交易日 / 数据未就绪由 `check` 步骤 `skip`，后续步骤 `if: steps.check.outputs.trade == '1'` 全部跳过 |
 
@@ -82,6 +82,8 @@
 ## 数据源与降级顺序（多源容错）
 
 > **关键事实**：akshare 单个函数只绑定一个数据源，**函数本身不会自动换源**。本取数器自行实现「源链」——任一源失败自动切下一个，全部失败才降级，**绝不静默丢数据**。当前实际命中源记录在产品 `_breadth_source` / `_retail_net_source` 字段中。
+>
+> 📌 下表函数名为 **akshare 1.18.64**（requirements 固定版）的旧名；1.20.44+ 已批量更名，代码统一经 `ak_compat.py` 新名优先/旧名兜底，新名映射见下方「akshare 接口兼容层」。
 
 | 计算分量 | 主源 | 兜底 1 | 兜底 2 | 兜底 3 | 全失败 |
 |---|---|---|---|---|---|
@@ -91,6 +93,26 @@
 | **850天线**（四大指数日K + 当日 spot） | 新浪 `stock_zh_index_daily`（中证1000/沪深300/上证/创业板，各 850+ 根，0.2~0.5s/指数） | 腾讯 `stock_zh_index_daily_tx`（仅单指数新浪失败时启用，9~24s/指数） | 新浪实时 spot `stock_zh_index_spot_sina`（一次取齐四指数，补当日收盘/最低） | — | 单指数标「暂未获取」，其余照常；<2 个可取则整卡「暂未获取」 |
 
 > 主力与散户净流入统一用东方财富大盘资金流的「净占比」（`Σ主力净额÷Σ成交额`、`Σ小单净额÷Σ成交额`，小数），**两者同口径可直接相减得 v2「主力—散户背离」**。该值复刻东财 zjlx 大盘页（dpzjlx.html / dapan.js）`loadchart2` 的口径：以 `secids=1.000001,0.399001`（上证+深证成指=“沪深两市”）请求 `ulist.np/get`，将两行求和，单请求无分页截断、与网站显示完全一致。东财 host 已从 `push2his` 迁移至 `push2delay`，且 `push2` 在境外 IP 亦被重置；本取数器在模块加载时注入 `push2his/push2→push2delay` URL 改写补丁（含 15s 超时防挂起，正则幂等），使两端均可直连取真值；仅当皆不可达才降级。
+
+### akshare 接口兼容层（2026-11-18）
+
+> **背景**：akshare **1.20.44~1.20.46 批量更名接口**，旧名在 1.20.65 已从包内移除（访问旧名直接 `AttributeError`）。本项目 `requirements.txt` 固定 1.18.64，当前 CI 不受影响；但一旦升级，7 个接口会连环失效，且各 fetch 的 `try/except` 会静默降级（日历→周几判定、成交额→暂未获取）。
+
+**策略**：新增 `ak_compat.py`，所有调用点只依赖命名包装；解析顺序 **新名优先、旧名兜底**，新旧两版 akshare 均可跑。
+
+| 包装（代码调用） | 新名（1.20.44+） | 旧名（1.18.64） |
+|---|---|---|
+| `calendar_trade_date_hist()` | `calendar_trade_date_hist_sina` | `tool_trade_date_hist_sina` |
+| `index_daily(symbol)` | `index_zh_daily_sina` | `stock_zh_index_daily` |
+| `index_daily_tx(symbol)` | `index_zh_daily_tx` | `stock_zh_index_daily_tx` |
+| `index_spot_sina()` | `index_zh_spot_sina` | `stock_zh_index_spot_sina` |
+| `index_spot_em(symbol)` | `index_zh_spot_em` | `stock_zh_index_spot_em` |
+| `stock_a_spot()` | `stock_zh_a_spot_sina` | `stock_zh_a_spot` |
+| `fund_flow_individual(symbol)` | `stock_fund_flow_individual_ths` | `stock_fund_flow_individual` |
+
+- 覆盖范围：`trade_calendar.py`、4 个 fetch 文件、workflow 的 `check` 步骤，共 14 处调用。
+- **零网络自检**：`python ak_compat.py --check` 打印每个包装命中的新/旧名；Actions 在 `pip install` 后、交易日门控前**每次运行都跑**（含非交易日）。
+- **升级清单**：① 先看 akshare 包内 `akshare/data/renames.json`（`removed` / `renamed` 两张表）扫一遍本项目用到的接口；② 在新版本下跑 `ak_compat.py --check`；③ 跑 `run_xxfi` / `run_bingdian` / `run_dibudian` / `run_ma850` 全链路对比数值；④ 再提 `requirements.txt` 的版本。
 
 ### v2 新增：主力—散户背离维度
 
@@ -295,6 +317,7 @@ python render_html.py --json output/xxfi_report.json \
 ### 4) 自检
 
 ```bash
+python ak_compat.py --check                # akshare 接口兼容自检（新名/旧名均可）
 python xiaoxu_fear_index.py --demo         # 内置恐慌/贪婪样例，应分别输出 BUY / SELL
 python run_dibudian.py --demo-bottom --out output   # 地量样例：比率 0.375 ≤ 0.5 → 底部区域日
 python run_dibudian.py --demo-normal --out output   # 正常量样例：比率 1.125 > 0.5 → 非底部区域日
@@ -373,10 +396,12 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` + `ma850_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 850天线抄底卡 + 底部区域判断卡与30日趋势图，GitHub Pages）；2026-08-27 加固：`--bingdian/--dibudian/--ma850` 缺省自动探测 `output/` 产物，生成后自检三卡齐全（缺失 warn）；2026-10-23：**撤出「实盘模拟」区块**（`SIM_*` 恒为空串，已迁 qg 盘中页） |
 | `sim_block.py` | ⚠️ **已弃用（2026-10-23）**：「秋哥操作·实盘模拟」区块的样式与渲染脚本（CSS + 容器 + JS），`render_html.py` 不再引用（区块已迁 qg 盘中检测页）。文件保留仅为回滚便利，**勿在新页面引用** |
 | `retry_utils.py` | 网络调用通用工具：指数退避 + 随机间隔 + UA 轮换 |
+| `ak_compat.py` | akshare 接口兼容层：新名优先/旧名兜底（1.20.44+ 更名），`python ak_compat.py --check` 零网络自检 |
+| `trade_calendar.py` | 全项目唯一交易日判据 `is_trade_day()`（门控、缓存与历史写入共用） |
 | `calibration.json` | 实证统计、关键案例、权重、解读区间 |
 | `references/` | 港股核验 K 线（akshare 新浪源） |
 | `SKILL.md` | WorkBuddy 技能文档 |
-| `.github/workflows/xxfi-daily.yml` | 每日自动播报（Cloudflare qdii-dispatch 每天 16:20 触发 · 仅交易日 · 数据就绪校验）。XXFI / 冰点 / 底部区域 / 850天线四个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
+| `.github/workflows/xxfi-daily.yml` | 每日自动播报（Cloudflare qdii-dispatch 每天 16:20 触发 · 仅交易日 · 数据就绪校验）。先跑 `ak_compat.py --check`（akshare 接口兼容自检），XXFI / 冰点 / 底部区域 / 850天线四个计算步骤**共用同一闸门**，产物由 `git-auto-commit`（`file_pattern: "output/* docs/*"`）持久化 |
 | `output/_turnover_cache.json` | 全市场成交额滚动缓存（底部区域近90日峰值来源），每交易日由 CI 自动追加并提交 |
 | `output/ma850_history.jsonl` | 850 信号每日一行历史（verdict / 四指数偏离 / 850线 / 收盘），供信号反复性复盘 |
 

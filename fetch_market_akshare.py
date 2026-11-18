@@ -39,6 +39,8 @@ from xiaoxu_fear_index import compute
 from run_xxfi import max_drawdown, roll_vol   # 复用纯计算辅助函数，避免重复实现
 from retry_utils import retry_on_network, jitter
 from trade_calendar import is_trade_day
+from ak_compat import (index_daily, index_daily_tx, index_spot_sina,
+                       stock_a_spot, fund_flow_individual)
 
 
 def _patch_eastmoney_push2delay():
@@ -99,9 +101,8 @@ def fetch_index_spot(symbol="sh000001"):
     故用新浪实时 spot 补「当日」一根，使 data_date 与指数派生分量反映当日。
     新浪实时接口本地/CI 均通；失败返回 None，由 fetch_index 优雅降级为纯日K。
     """
-    import akshare as ak
     try:
-        sp = ak.stock_zh_index_spot_sina()
+        sp = index_spot_sina()
         row = sp[sp["代码"] == symbol]
         if len(row) == 0:
             print(f"[warn] spot 未找到指数 {symbol}，降级为日K")
@@ -121,14 +122,13 @@ def fetch_index(symbol="sh000001", vol_window=260):
     最新价追加为最新一根（仅当 当日 > 日K末根），使 _last_date/_data_date 落到当日。
     spot 失败则保留日K原行为（_last_date = T-1），不破坏历史逻辑。
     """
-    import akshare as ak
     import datetime
     BJ = datetime.timezone(datetime.timedelta(hours=8))
     today = datetime.datetime.now(BJ).strftime("%Y-%m-%d")
     trade_today = is_trade_day(today)
     sources = [
-        ("sina", lambda: ak.stock_zh_index_daily(symbol=symbol)),
-        ("tx",    lambda: ak.stock_zh_index_daily_tx(symbol=symbol)),
+        ("sina", lambda: index_daily(symbol)),
+        ("tx",    lambda: index_daily_tx(symbol)),
     ]
     for label, fetch_fn in sources:
         try:
@@ -178,9 +178,9 @@ def fetch_breadth():
         }
     except Exception as e:
         print(f"[warn] legu 失败，尝试新浪 spot: {e}")
-    # 兜底源1：新浪 stock_zh_a_spot（Sina host）
+    # 兜底源1：新浪 spot（ak_compat：1.20.46 起 stock_zh_a_spot→stock_zh_a_spot_sina）
     try:
-        s = ak.stock_zh_a_spot()
+        s = stock_a_spot()
         up = int((s["涨跌幅"] > 0).sum())
         down = int((s["涨跌幅"] < 0).sum())
         limit_up = int((s["涨跌幅"] >= 9.8).sum())
@@ -222,9 +222,8 @@ def _fetch_retail_tonghuashun():
     得到整体资金净流入比率，作为 retail_net 的近似（标签 tonghuashun_proxy）。
     本地东财被拦截时启用；GitHub 走东财真值不经过此分支。
     """
-    import akshare as ak
     try:
-        df = ak.stock_fund_flow_individual(symbol="即时")
+        df = fund_flow_individual(symbol="即时")
         net = df["净额"].apply(_cn_num).sum()
         amt = df["成交额"].apply(_cn_num).sum()
         if amt <= 0:

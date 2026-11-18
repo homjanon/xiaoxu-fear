@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import akshare as ak
 
 from trade_calendar import is_trade_day
+from ak_compat import index_daily_tx, index_spot_em, stock_a_spot
 
 
 # ---------------- 东财 push2delay 连通补丁（与 fetch_market_akshare 同思路） ----------------
@@ -137,7 +138,7 @@ def fetch_spot_sina():
     """新浪全量A股实时 spot → D1/D3 第二源（板块差异化·剔除ST 精确值）。
     仅当 legu 不可达时调用，比东财逐股 spot 轻量；失败返回 (None, False)。"""
     try:
-        s = ak.stock_zh_a_spot()
+        s = stock_a_spot()
         chg = s['涨跌幅']
         n = len(s)
         down = int((chg < 0).sum())
@@ -161,7 +162,7 @@ def fetch_spot_sina():
 def fetch_index_em():
     """上证综指 / 创业板指 涨跌幅 + 上证成交额（D2/D4 用）。失败降级 None。"""
     try:
-        idx = ak.stock_zh_index_spot_em(symbol="沪深重要指数")
+        idx = index_spot_em(symbol="沪深重要指数")
         sh = idx[idx['名称'] == '上证指数']
         cyb = idx[idx['名称'] == '创业板指']
         sh_chg = float(sh['涨跌幅'].values[0]) if len(sh) else None
@@ -278,7 +279,7 @@ def fetch_volume_mult(sh_amount, cache_path=None, rebuild=False):
         return {"volume_mult": sh_amount / mean_amt, "_src": "eastmoney_spot+cache"}
     # 样本不足：腾讯日K 补建基准（一次性，仅首次/缓存丢失触发）
     try:
-        h = ak.stock_zh_index_daily_tx(symbol="sh000001").copy()
+        h = index_daily_tx(symbol="sh000001").copy()
         date_col = "date" if "date" in h.columns else h.columns[0]
         h["_d"] = h[date_col].astype(str).str[:10]
         h = h[h["amount"] > 0].tail(20)

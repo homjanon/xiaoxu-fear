@@ -31,8 +31,8 @@ def _load_calendar():
     _CAL["loaded"] = True
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import akshare as ak
-        df = ak.tool_trade_date_hist_sina()
+        from ak_compat import calendar_trade_date_hist
+        df = calendar_trade_date_hist()
         _CAL["days"] = {str(x)[:10] for x in df["trade_date"].tolist()}
     except Exception as e:  # noqa: BLE001
         print(f"[warn] 交易日历加载失败，降级为「周一~周五」判定（注意：周中法定假期会被误判为交易日）: {e}")

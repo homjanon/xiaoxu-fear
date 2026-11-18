@@ -29,9 +29,8 @@ import datetime
 import json
 import os
 
-import akshare as ak
-
 from trade_calendar import is_trade_day
+from ak_compat import index_spot_sina
 
 SH_CODE = "sh000001"   # 上证指数（全上海市场）
 SZ_CODE = "sz399001"   # 深证成指（全深圳市场代理）
@@ -69,7 +68,7 @@ def _fetch_sina_spot_today():
     """
     date = _bj_today()
     try:
-        spot = ak.stock_zh_index_spot_sina()
+        spot = index_spot_sina()
     except Exception as e:
         print(f"[warn] 新浪 spot 失败（当日取数降级）: {e}")
         return None, None, None, date

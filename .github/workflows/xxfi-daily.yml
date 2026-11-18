@@ -50,8 +50,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # akshare 1.20.44+ 批量更名接口（旧名已移除）；兼容层做零网络自检，
+      # 每次运行（含非交易日）都先确认 7 个包装能解析到新名或旧名。
+      - name: Check akshare interface compatibility
+        run: python ak_compat.py --check
+
       # 交易日 & 盘后窗口判断：非交易日(节假日/周末) 或 盘中(<15:00北京时间) → trade=0
-      # 注意：不再以「指数日K末根==今天」作为就绪信号——日K(stock_zh_index_daily)滞后约1天，
+      # 注意：不再以「指数日K末根==今天」作为就绪信号——日K(index_daily，旧名 stock_zh_index_daily)滞后约1天，
       # 收盘后许久不补当日 bar，会导致 check 永久失败。当日指数值改由 fetch_index 用
       # 新浪实时 spot 补充（见 fetch_market_akshare.fetch_index_spot），故此处只需判交易日+盘后。
       # 手动触发(workflow_dispatch) 不受 trade=0 限制，盘中也可出当日快照（用户已知并接受）。
@@ -59,11 +64,12 @@ jobs:
         id: check
         run: |
           python - <<'PY'
-          import akshare as ak, datetime, os
+          import datetime, os
+          from ak_compat import calendar_trade_date_hist
           BJ = datetime.timezone(datetime.timedelta(hours=8))
           now_bj = datetime.datetime.now(BJ)
           today = now_bj.strftime("%Y-%m-%d")
-          cal = ak.tool_trade_date_hist_sina()
+          cal = calendar_trade_date_hist()
           is_trade = today in {str(x)[:10] for x in cal["trade_date"].tolist()}
           if not is_trade:
               print(f"{today} 非交易日（节假日/周末），跳过（手动触发仍可取最近交易日数据）")

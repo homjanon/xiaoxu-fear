@@ -25,11 +25,10 @@ import datetime
 import os
 import sys
 
-import akshare as ak
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ma850_index import INDEXES, LOOKBACK
 from trade_calendar import is_trade_day
+from ak_compat import index_daily, index_daily_tx, index_spot_sina
 
 CST = datetime.timezone(datetime.timedelta(hours=8))
 
@@ -49,7 +48,7 @@ def _last_date(dates):
 def _fetch_spot_map():
     """新浪实时 spot：{code: (close, low)}。失败返回 {}（不阻塞日K）。"""
     try:
-        sp = ak.stock_zh_index_spot_sina()
+        sp = index_spot_sina()
         out = {}
         for code, _name in INDEXES:
             row = sp[sp["代码"] == code]
@@ -71,8 +70,8 @@ def _fetch_spot_map():
 def _fetch_daily(code):
     """单指数日K：新浪 → 腾讯。返回 (row, src_label) 或 (None, last_error)。"""
     sources = [
-        ("sina", lambda: ak.stock_zh_index_daily(symbol=code)),
-        ("tx", lambda: ak.stock_zh_index_daily_tx(symbol=code)),
+        ("sina", lambda: index_daily(code)),
+        ("tx", lambda: index_daily_tx(code)),
     ]
     last_err = None
     for label, fn in sources:
