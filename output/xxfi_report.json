@@ -1,25 +1,25 @@
 {
-  "XXFI": 62.9,
-  "GreedIndex": 17.8,
+  "XXFI": 71.7,
+  "GreedIndex": 15.6,
   "extreme": "FEAR",
   "contrarian_signal": "ACCUMULATE",
   "level": "恐惧（偏谨慎，她倾向割肉）",
   "advice": "市场情绪偏弱，但接近她‘卖飞’区。→ 逢低吸纳，避免跟风杀跌。　[背离提示·顶部出货（散户追高·主力派发）]",
-  "divergence": -0.0164,
+  "divergence": -0.0502,
   "divergence_state": "顶部出货（散户追高·主力派发）",
   "components": {
     "fear": {
       "drawdown": 15.3,
       "breadth": 100.0,
-      "limitdown": 56.0,
+      "limitdown": 100.0,
       "vol": 88.3
     },
     "greed": {
       "momentum": 0.0,
-      "limitup": 44.7,
-      "retailin": 2.0,
+      "limitup": 16.9,
+      "retailin": 5.3,
       "overbought": 0.0,
-      "divergence": 53.3
+      "divergence": 60.0
     }
   },
   "inputs": {
@@ -32,14 +32,14 @@
     "_last_date": "2026-11-18",
     "_last_close": 3587.832,
     "_index_source": "sina",
-    "up": 1277,
-    "down": 3823,
-    "limit_up": 42,
-    "limit_down": 47,
+    "up": 638,
+    "down": 4532,
+    "limit_up": 28,
+    "limit_down": 83,
     "_breadth_source": "legu",
-    "_breadth_date": "2026-11-18 15:00:00",
-    "main_net": -0.006208613988010957,
-    "retail_net": 0.010207890071648943,
+    "_breadth_date": "2026-11-19 15:00:00",
+    "main_net": -0.023838818557759843,
+    "retail_net": 0.026371073903067477,
     "_retail_net_source": "eastmoney",
     "_main_net_source": "eastmoney",
     "_breadth_provided": true,
@@ -47,7 +47,7 @@
     "_hs300_close": 3587.832
   },
   "_data_date": "2026-11-18",
-  "_generated_at": "2026-11-18 23:06:34",
+  "_generated_at": "2026-11-19 16:21:08",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
