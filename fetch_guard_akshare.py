@@ -10,10 +10,12 @@
   1) ETF 分时（11 只）：新浪 5 分钟 1023 根（一次带 21 个交易日，同时得到
      「全天成交额 / 三段分布 / 收盘价 / 放量倍数」）；失败退腾讯 1 分钟（仅当日，
      放量倍数记 None）。
-  2) 沪市份额：`fund_etf_scale_sse(date=)`，一次返回全市场 900+ 只；
-     当日份额 T+1 才发布，取「最近已发布日」与其前一交易日算净申购。
-  3) 深市份额：`fund_etf_scale_szse()` **无 date 参数**，只能取当前快照；
+  2) 沪市份额：上交所 commonQuery.do 直接取 JSON（TOT_VOL 单位「万份」），
+     一次返回全市场 900+ 只；当日份额 T+1 才发布，取「最近已发布日」比前一交易日。
+  3) 深市份额：深交所 ShowReport 取 xlsx（一次 1088 条；JSON 分页 20 条/页太慢）；
      数据日用「净值 ≈ 收盘价」反推（份额 T+1 发布，直接标今天会错一天）。
+  交易所取数统一走 fetch_exchange()：直连优先，连接层失败立即改用 GUARD_PROXY
+  （CI 必须设，见下），403 退避重试。
   4) 份额历史：output/guard_share_history.jsonl，每日追加一行（幂等）；
      首次运行（不足 20 行）自动回补最近 25 个交易日。
 
@@ -24,6 +26,8 @@ import json
 import os
 import sys
 import time
+import urllib.error
+import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -57,9 +61,58 @@ SZ_CODES = [c for c, _n, _g, m in PANEL if m == "SZSE"]
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 # 交易所（上交所/深交所）在 GitHub Actions 美国 IP 被 ConnectionReset（2026-11-20 实测），
-# 把跑批时间从 10s 拖到 9min。CI 侧一律跳过取数，只读本地推送的份额历史。
-# 本地跑（能连通）时不要设这个变量，即可正常取数 + 回补。
+# 唯一可行路径 = 经自建 Cloudflare 代理（cors-proxy，2026-11-20 已为交易所域名补 Referer）。
+#   CI    ：设 GUARD_PROXY=https://proxy.hellohopo.dpdns.org
+#   本地  ：不设，直连（更快，且不占代理配额）
+# GUARD_SKIP_EXCHANGE 保留为「强制跳过」总闸：代理也挂时用它，只读本地推送历史。
+GUARD_PROXY = os.environ.get("GUARD_PROXY", "").strip()
 SKIP_EXCHANGE = os.environ.get("GUARD_SKIP_EXCHANGE", "").strip() in ("1", "true", "yes")
+
+# Cloudflare 入口对「无 UA / Python-urllib / python-requests」一律 403 code 1010
+# （浏览器完整性检查，Worker 代码执行不到）→ 请求代理时必须带浏览器 UA。
+PROXY_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36")
+
+_EX_MODE = None        # None=未探测 / "direct" / "proxy"，探测成功后本进程内固定
+EXCHANGE_MODE = "unset"   # 供 _src 展示
+
+
+def fetch_exchange(url, referer=None, tries=5):
+    """取交易所数据：直连优先，连接层失败立即改用代理；HTTP 403/5xx 退避重试。
+
+    - 直连成功一次后，本进程后续请求都直连（本地跑省一次探测）
+    - CI 上第一个直连会 ConnectionReset，1~2 秒内切到代理，不会像逐日重试那样拖死
+    - 上交所站点自身在 Cloudflare 后面，对 Worker subrequest 有风控（实测 6/8 成功），
+      故 403 必须重试；5 次退避后残存失败率约 0.1%
+    """
+    global _EX_MODE, EXCHANGE_MODE
+    modes = [_EX_MODE] if _EX_MODE else (["direct", "proxy"] if GUARD_PROXY else ["direct"])
+    last = None
+    for mode in modes:
+        target = url
+        if mode == "proxy":
+            target = GUARD_PROXY.rstrip("/") + "/?url=" + urllib.parse.quote(url, safe="")
+        for i in range(tries):
+            try:
+                headers = {"User-Agent": PROXY_UA, "Accept": "*/*"}
+                if referer and mode == "direct":
+                    headers["Referer"] = referer   # 走代理时由 Worker 补，客户端传了也会被丢弃
+                req = urllib.request.Request(target, headers=headers)
+                with _OPENER.open(req, timeout=45) as r:
+                    data = r.read()
+                _EX_MODE = mode
+                EXCHANGE_MODE = mode
+                return data
+            except urllib.error.HTTPError as e:
+                last = e
+                if e.code in (403, 429, 500, 502, 503, 504) and i < tries - 1:
+                    time.sleep(1.0 * (i + 1))
+                    continue
+                break
+            except Exception as e:
+                last = e
+                break          # 连接类错误（ConnectionReset / DNS / 超时）→ 直接换模式
+    raise last if last else RuntimeError("交易所取数失败")
 
 
 def _bj_now():
@@ -159,44 +212,75 @@ def summarize_day(bars, day):
 def read_sse(date_str):
     """取「不晚于 date_str 的最近已发布日」的沪市份额：返回 (asof, {code: shares})
 
-    CI 跑在境外，上交所域名可能不可达；最多回退 4 天，避免把 job 拖死。
+    直接请求上交所 commonQuery.do（不依赖 akshare，才能套代理前缀）。
+    TOT_VOL 单位是「万份」，×10000 换成份（510050 @2026-11-20 = 2413416.68 万份）。
+    目标日未发布时向前回退，最多 4 天。
     """
-    import akshare as ak
     for off in range(0, 4):
         d = datetime.datetime.strptime(date_str, "%Y-%m-%d") - datetime.timedelta(days=off)
+        key = d.strftime("%Y%m%d")
+        url = ("https://query.sse.com.cn/commonQuery.do?isPagination=true"
+               "&pageHelp.pageSize=10000&pageHelp.pageNo=1&pageHelp.beginPage=1"
+               "&pageHelp.cacheSize=1&pageHelp.endPage=1"
+               "&sqlId=COMMON_SSE_ZQPZ_ETFZL_XXPL_ETFGM_SEARCH_L&STAT_DATE=" + key)
         try:
-            df = ak.fund_etf_scale_sse(date=d.strftime("%Y%m%d"))
-            df["基金代码"] = df["基金代码"].astype(str)
-            m = dict(zip(df["基金代码"], df["基金份额"]))
-            # 面板里是 sh510050 这类带前缀代码，交易所接口返回 "510050"
-            hit = {c: float(m[c[2:]]) for c in SSE_CODES
-                   if c[2:] in m and m[c[2:]] == m[c[2:]]}
-            if len(hit) >= 4:
-                return str(df["统计日期"].iloc[0])[:10], hit
-        except Exception:
+            j = json.loads(fetch_exchange(url, "https://www.sse.com.cn/"))
+        except Exception as e:
+            print("[warn] 沪市份额取数失败 %s: %s" % (key, e))
             continue
+        if str(j.get("success")).lower() == "false":
+            continue                     # 该日无数据（未发布 / 非交易日）
+        rows = j.get("result") or []
+        m = {}
+        for x in rows:
+            try:
+                m[str(x.get("SEC_CODE") or "").strip()] = float(x.get("TOT_VOL")) * 10000
+            except (TypeError, ValueError):
+                continue
+        # 面板里是 sh510050 这类带前缀代码，交易所接口返回 "510050"
+        hit = {c: m[c[2:]] for c in SSE_CODES if c[2:] in m}
+        if len(hit) >= 4:
+            asof = str(rows[0].get("STAT_DATE") or "")[:10]
+            return (asof or date_str), hit
     return None, {}
 
 
 def read_szse():
-    import akshare as ak
+    """深市份额：深交所 ShowReport 取 xlsx，一次拿全 1088 条。
+
+    不用 JSON 接口是因为它每页固定 20 条（PAGESIZE 参数无效），55 页太慢且容易触发风控。
+    xlsx 列名：「当前规模(份)」带千分位逗号、「净值」为小数。
+    """
+    url = ("https://fund.szse.cn/api/report/ShowReport?SHOWTYPE=xlsx"
+           "&CATALOGID=1000_lf&TABKEY=tab1&random=0.07610353191740105")
     try:
-        df = ak.fund_etf_scale_szse()
-        df["基金代码"] = df["基金代码"].astype(str)
-        shares, navs = {}, {}
-        for c in SZ_CODES:
-            r = df[df["基金代码"] == c[2:]]   # 交易所返回 "159919"，面板里是 "sz159919"
-            if len(r) == 0:
-                continue
-            shares[c] = float(r.iloc[0]["基金份额"])
-            try:
-                navs[c] = float(r.iloc[0]["净值"])
-            except Exception:
-                pass
-        return shares, navs
+        raw = fetch_exchange(url, "https://fund.szse.cn/marketdata/fundslist/index.html",
+                             tries=3)
+        import io
+        import warnings
+        import pandas as pd
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")     # xlsx 无默认样式，openpyxl 会告警
+            df = pd.read_excel(io.BytesIO(raw), engine="openpyxl",
+                               dtype={"基金代码": str})
     except Exception as e:
         print(f"[warn] 深市份额取数失败: {e}")
         return {}, {}
+    df["基金代码"] = df["基金代码"].astype(str).str.strip()
+    shares, navs = {}, {}
+    for c in SZ_CODES:
+        r = df[df["基金代码"] == c[2:]]      # 交易所返回 "159919"，面板里是 "sz159919"
+        if len(r) == 0:
+            continue
+        try:
+            shares[c] = float(str(r.iloc[0]["当前规模(份)"]).replace(",", ""))
+        except (TypeError, ValueError):
+            continue
+        try:
+            navs[c] = float(r.iloc[0]["净值"])
+        except (TypeError, ValueError):
+            pass
+    return shares, navs
 
 
 def szse_asof(navs, closes_by_code, fallback):
@@ -404,7 +488,9 @@ def build_guard_inputs(out_dir="output"):
         },
         "szse": {"asof": sz_asof, "asof_inferred": inferred,
                  "n_codes": len(sz_shares), "n_hist_days": len(hist)},
-        "_src": " / ".join(sorted(srcs)) + (" / sse" if share_src == "live" else " / sse(history)") + (" / szse" if sz_shares else ""),
+        "_src": (" / ".join(sorted(srcs))
+                 + (" / sse(%s)" % EXCHANGE_MODE if share_src == "live" else " / sse(history)")
+                 + (" / szse(%s)" % EXCHANGE_MODE if sz_shares else "")),
         "_generated_at": _bj_now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 

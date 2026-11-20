@@ -218,14 +218,32 @@ XXFI 原为「散户情绪反向器」，v2 引入**聪明钱确认**——把�
 | 链 | 源 | 说明 |
 |---|---|---|
 | ETF 分时（11 只） | 新浪 5 分钟 1023 根 | 一次请求同时得到「全天成交额 / 上午·午后·尾盘三段 / 收盘价 / 放量倍数」；失败退腾讯 1 分钟（仅当日，放量倍数记 None） |
-| 沪市份额 | `fund_etf_scale_sse(date=)` | 1.18.64 已有此接口；一次返回全市场 900+ 只；当日份额 **T+1 才发布**，故卡片取「最近已发布日」 |
-| 深市份额 | `fund_etf_scale_szse()` | **无 date 参数**，只能当前快照 → 数据日用「净值 ≈ 收盘价」反推，靠 `output/guard_szse_snapshot.json` 逐日累积 |
+| 沪市份额 | 上交所 `commonQuery.do`（**自实现**，非 akshare） | `sqlId=COMMON_SSE_ZQPZ_ETFZL_XXPL_ETFGM_SEARCH_L`，一次返回全市场 900+ 只；返回的 `TOT_VOL` 单位是**万份**；当日份额 T+1 才发布，故取「最近已发布日」 |
+| 深市份额 | 深交所 `ShowReport` **xlsx**（**自实现**） | `CATALOGID=1000_lf` 一次拿全 1088 条；列名「当前规模(份)」带千分位逗号。**不用 JSON 接口**：它每页固定 20 条（`PAGESIZE` 参数无效），55 页太慢且易触发风控。数据日用「净值 ≈ 收盘价」反推 |
+
+**为什么不用 akshare**：akshare 的 `fund_etf_scale_sse/szse` 把域名写死在内部，无法套代理前缀；而 CI 侧必须走代理（见下）。自实现后两者都只有 `urllib` + `pandas`，行为与 akshare 逐字段对齐（`TOT_VOL × 10000`、`当前规模(份)` 去逗号）。
+
+**CI 取数路径（三层降级）**：
+
+```
+直连 query.sse.com.cn / fund.szse.cn
+  ↓ ConnectionReset（GitHub Actions 美国 IP，2026-11-20 实测）
+经 GUARD_PROXY（Cloudflare cors-proxy）转发
+  ↓ 仍失败（代理故障 / 交易所侧风控持续）
+回落 output/guard_share_history.jsonl 最后一行（并标注「最近一次本地推送」）
+```
+
+- 切换是**连接层错误立即切**（1~2 秒），不是逐次重试——2026-11-20 曾因逐日重试把 10 秒的步骤拖成 **9 分 24 秒**。
+- 走代理时会遇到两类拦截，已分别处理：
+  - **Cloudflare 入口 1010**：对「无 UA / `Python-urllib` / `python-requests`」一律 403（浏览器完整性检查，Worker 代码执行不到）→ 请求代理时固定带 Chrome UA。
+  - **上交所站点自身在 Cloudflare 后面**，对「其他 Worker 的 subrequest」有风控，实测成功率 6/8 → `fetch_exchange()` 对 403/429/5xx 做退避重试（5 次后残存失败率约 0.1%）。
+- 代理侧配套改动：`cors-proxy` Worker 对 `sse.com.cn` / `szse.cn` 域名**固定补齐 `Referer` + `User-Agent`**（上交所缺 Referer 直接返回 `{"success":"false","error":"System Error"}`），其余目标域名行为不变。
 
 **产物**：`output/guard_report.json`（卡片消费）+ `output/guard_share_history.jsonl`（每交易日一行，按日去重）+ `output/guard_szse_snapshot.json`（深市快照，按数据日去重）。
 
 **写入闸门**：与冰点/底部区域一致——`trade_calendar.is_trade_day()` + 北京时间 ≥15:00 + 按日去重；非交易日/盘中只读不写。首次运行（历史不足 20 行）自动回补最近 22 个交易日。
 
-**风险口径**：深市无历史份额接口，159919 / 159949 / 159915 的份额从部署日起累积，此前不可回补；沪市分时只回溯 21 个交易日，因此回补窗口取 22 天。
+**风险口径**：深市无历史份额接口，159919 / 159949 / 159915 的份额从部署日起累积，此前不可回补；沪市分时只回溯 21 个交易日，因此回补窗口取 22 天。深市 xlsx 的「当前规模」官方注明「T 日晚间更新的 T 日规模仅供参考，以 T+1 日早间更新的为准」——故深市份额一律按「净值 ≈ 收盘价」反推数据日，不直接标今天。
 
 ### 850天线抄底坐标（旁挂指标 · plutus 观点）
 
@@ -429,7 +447,7 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `ma850_index.py` | 850天线纯计算（仅标准库，零依赖）：四大指数日K → MA850 / 收盘偏离 / 盘中跌破 / 最近触发日 / 综合状态（局部·多数·全面进入） |
 | `fetch_ma850_akshare.py` | 850天线取数器：四指数新浪日K（850+根）→ 腾讯单指数兜底；新浪 spot 一次取齐四指数补当日收盘/最低；单指数失败只标该格 |
 | `guard_index.py` | 护盘纯计算（仅标准库，零依赖）：11 只 ETF 尾盘三段分布 → 三档判定（疑似买入/单只异动/未发现）+ 份额净申购汇总 |
-| `fetch_guard_akshare.py` | 护盘取数器：11 只 ETF 新浪 5 分钟（→ 腾讯 1 分钟兜底）+ 沪市 `fund_etf_scale_sse` 份额 + 深市 `fund_etf_scale_szse` 快照（净值反推数据日） |
+| `fetch_guard_akshare.py` | 护盘取数器：11 只 ETF 新浪 5 分钟（→ 腾讯 1 分钟兜底）+ 沪市 commonQuery.do JSON + 深市 ShowReport xlsx；`fetch_exchange()` 直连→代理→历史 三层降级 |
 | `run_guard.py` | 护盘编排入口（`--akshare` / `--demo-buy/weak/none/degraded` / `--json`），产出 `output/guard_report.json` + 份额历史 |
 | `run_ma850.py` | 850天线编排入口（`--akshare` / `--demo-touched` / `--demo-entered` / `--demo-none` / `--json`），产出 `output/ma850_report.json` + `.md` |
 | `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |

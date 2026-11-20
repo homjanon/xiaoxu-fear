@@ -109,13 +109,14 @@ jobs:
 
       # 国家队护盘追踪（旁挂·不影响XXFI）：11 只宽基 ETF 的尾盘三段分布 +
       # 昨日沪市份额净申购（T+1 发布）；深市份额无历史接口，靠每日快照累积
-      # 交易所份额接口（sse.com.cn / szse.cn）在 Actions 美国 IP 被 ConnectionReset
-      # （2026-11-20 实测：逐日重试把 10s 拖成 9min24s）→ CI 侧只算形态，
-      # 份额段回落到本地推送的 output/guard_share_history.jsonl。
+      # 交易所份额接口（sse.com.cn / szse.cn）在 Actions 美国 IP 被 ConnectionReset，
+      # 只能经自建 Cloudflare 代理转发（cors-proxy 2026-11-20 已为交易所域名补 Referer）。
+      # fetch_guard_akshare 内部：直连优先，连接层失败 1~2s 内自动切代理；
+      # 代理也失败则回落本地推送的 output/guard_share_history.jsonl（三层降级）。
       - name: Compute 国家队护盘追踪 (akshare)
         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         env:
-          GUARD_SKIP_EXCHANGE: '1'
+          GUARD_PROXY: https://proxy.hellohopo.dpdns.org
         run: python run_guard.py --akshare --out output
 
       # 写入历史趋势：仅当 data_date == 今天 且 已收盘(北京时间>=15:00)（避免盘中快照污染趋势）；

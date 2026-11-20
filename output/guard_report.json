@@ -1,7 +1,7 @@
 {
   "_data_date": "2026-11-20",
-  "_generated_at": "2026-11-20 21:58:18",
-  "_src": "sina5m / sse(history)",
+  "_generated_at": "2026-11-20 22:26:11",
+  "_src": "sina5m / sse(direct) / szse(direct)",
   "_note": "旁挂参考卡，不参与 XXFI 计算；形态推断，非身份认定",
   "verdict": "buy",
   "verdict_text": "疑似买入 · 尾盘扫货",
@@ -248,17 +248,13 @@
   "n_etf": 11,
   "hit_n": 2,
   "share": {
-    "date": "2026-11-19",
-    "net_yi": 360.7,
-    "pos_cnt": 6,
+    "date": "2026-11-20",
+    "net_yi": 551.33,
+    "pos_cnt": 7,
     "basket_cnt": 7,
-    "days_pos": 4,
-    "d5_yi": 668.3,
+    "days_pos": 5,
+    "d5_yi": 1269.5,
     "series": [
-      {
-        "date": "2026-10-23",
-        "net_yi": 320.47
-      },
       {
         "date": "2026-10-26",
         "net_yi": 217.08
@@ -334,9 +330,13 @@
       {
         "date": "2026-11-19",
         "net_yi": 360.7
+      },
+      {
+        "date": "2026-11-20",
+        "net_yi": 551.33
       }
     ],
-    "src": "history"
+    "src": "live"
   },
   "missing": []
 }
