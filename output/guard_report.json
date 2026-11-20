@@ -1,0 +1,163 @@
+{
+  "_data_date": "2026-11-20",
+  "_generated_at": "2026-11-20 20:40:21",
+  "_src": "sina5m / sse / szse",
+  "_note": "旁挂参考卡，不参与 XXFI 计算；形态推断，非身份认定",
+  "verdict": "buy",
+  "verdict_text": "疑似买入 · 尾盘扫货",
+  "verdict_sub": "2 只宽基 ETF 尾盘放巨量，300ETF·嘉实、上证50ETF 尾盘被拉起 +0.53%",
+  "window": "14:45–15:00",
+  "peak_window": "14:50–14:55",
+  "peak_amt_yi": 238.0,
+  "peak_scope": "tail",
+  "rows": [
+    {
+      "code": "sz159919",
+      "label": "300ETF·嘉实",
+      "group": "沪深300",
+      "tail_yi": 220.9,
+      "tail_pct": 94.1,
+      "am_pct": 1.58,
+      "md_pct": 4.34,
+      "all_yi": 234.8,
+      "tail_ret": 0.22,
+      "mult": 16.73,
+      "hit": true
+    },
+    {
+      "code": "sh510050",
+      "label": "上证50ETF",
+      "group": "上证50",
+      "tail_yi": 165.9,
+      "tail_pct": 68.2,
+      "am_pct": 3.64,
+      "md_pct": 28.19,
+      "all_yi": 243.4,
+      "tail_ret": 0.83,
+      "mult": 12.32,
+      "hit": true
+    },
+    {
+      "code": "sh510300",
+      "label": "300ETF·华泰",
+      "group": "沪深300",
+      "tail_yi": 30.7,
+      "tail_pct": 16.9,
+      "am_pct": 38.11,
+      "md_pct": 44.99,
+      "all_yi": 181.8,
+      "tail_ret": 0.17,
+      "mult": 3.49,
+      "hit": false
+    },
+    {
+      "code": "sh510500",
+      "label": "中证500ETF",
+      "group": "中证500",
+      "tail_yi": 28.9,
+      "tail_pct": 24.9,
+      "am_pct": 11.1,
+      "md_pct": 63.96,
+      "all_yi": 115.8,
+      "tail_ret": -0.62,
+      "mult": 3.21,
+      "hit": false
+    }
+  ],
+  "rest_n": 7,
+  "rest_tail_yi": 48.4,
+  "total_tail_yi": 495.0,
+  "n_etf": 11,
+  "hit_n": 2,
+  "share": {
+    "date": "2026-11-19",
+    "net_yi": 360.7,
+    "pos_cnt": 6,
+    "basket_cnt": 7,
+    "days_pos": 4,
+    "d5_yi": 668.3,
+    "series": [
+      {
+        "date": "2026-10-23",
+        "net_yi": 320.47
+      },
+      {
+        "date": "2026-10-26",
+        "net_yi": 217.08
+      },
+      {
+        "date": "2026-10-27",
+        "net_yi": 69.66
+      },
+      {
+        "date": "2026-10-28",
+        "net_yi": 2.58
+      },
+      {
+        "date": "2026-10-29",
+        "net_yi": 67.37
+      },
+      {
+        "date": "2026-10-30",
+        "net_yi": 110.05
+      },
+      {
+        "date": "2026-11-02",
+        "net_yi": 276.52
+      },
+      {
+        "date": "2026-11-03",
+        "net_yi": 542.52
+      },
+      {
+        "date": "2026-11-04",
+        "net_yi": 232.52
+      },
+      {
+        "date": "2026-11-05",
+        "net_yi": 35.12
+      },
+      {
+        "date": "2026-11-06",
+        "net_yi": 17.23
+      },
+      {
+        "date": "2026-11-09",
+        "net_yi": 3.22
+      },
+      {
+        "date": "2026-11-10",
+        "net_yi": -14.6
+      },
+      {
+        "date": "2026-11-11",
+        "net_yi": -14.82
+      },
+      {
+        "date": "2026-11-12",
+        "net_yi": -108.79
+      },
+      {
+        "date": "2026-11-13",
+        "net_yi": -49.91
+      },
+      {
+        "date": "2026-11-16",
+        "net_yi": 139.63
+      },
+      {
+        "date": "2026-11-17",
+        "net_yi": 123.91
+      },
+      {
+        "date": "2026-11-18",
+        "net_yi": 93.94
+      },
+      {
+        "date": "2026-11-19",
+        "net_yi": 360.7
+      }
+    ]
+  },
+  "missing": []
+}

@@ -194,6 +194,39 @@ XXFI 原为「散户情绪反向器」，v2 引入**聪明钱确认**——把�
 - **铁律**：战术桶 ≠ 战略桶（红利/债券不动）· 单信号 ≤ 1/3 · 获利转回红利/债券。
 - **修订依据（2026-08-19，7-17 冰点实战 20 交易日回测）**：原计划含行业 ETF（半导体/券商/新能源），组合收益仅 +2.02%；改为纯宽基后组合 +3.02%（首批由 +2.85% 提至 +6.03%）。单标的中 **159552 中证2000增强 +12.22%** 最优（vs 563300 纯指数 +7.23%，增强超额逐日扩大、回撤更小）；第三批「右侧站上 5/10 日线」过晚（8-04 实测 -1.63%），改为「5–8 日不破低点即补」。
 
+### 国家队护盘追踪（旁挂指标 · 宽基 ETF）
+
+> 与冰点/850 平行的**第四个旁挂指标**（页面顺序：冰点 → **护盘** → 850 → 底部区域），独立于 XXFI，不修改其任何计算与展示。
+> 回答三个问题：**今天有没有疑似买入 / 买了哪只 / 什么时间**。
+
+**判定逻辑**（`guard_index.py`，纯标准库、零依赖）：
+
+```
+行为（当日）：11 只宽基 ETF 的尾盘(14:45–15:00)成交占比与金额
+  ≥2 只「占比 ≥50% 且 尾盘 ≥20 亿」 → 疑似买入·尾盘扫货
+  ＝1 只                            → 疑似买入·单只异动
+  其余                              → 未发现护盘
+事实（T-1）：份额日变化 × 当日收盘价 = 净申购（沪市 7 只）
+```
+
+- 阈值来自 2026-11 九个普跌日实测：非护盘日尾盘占比 4%~17%，护盘日 50%~95%，中间是空白带。
+- **不做 0–100 综合分**：权重没有样本外验证，硬给分会让结论看起来比实际更确定。
+- 卡片用 `① 今天买了什么`（当日分时三段分布）与 `② 昨日份额确认`（T-1 份额）两条独立时间线，**不混**——成交量含双边，只能说明「有大资金在某些时段承接」；份额才是唯一能确认净买入的口径。
+
+**数据源**：
+
+| 链 | 源 | 说明 |
+|---|---|---|
+| ETF 分时（11 只） | 新浪 5 分钟 1023 根 | 一次请求同时得到「全天成交额 / 上午·午后·尾盘三段 / 收盘价 / 放量倍数」；失败退腾讯 1 分钟（仅当日，放量倍数记 None） |
+| 沪市份额 | `fund_etf_scale_sse(date=)` | 1.18.64 已有此接口；一次返回全市场 900+ 只；当日份额 **T+1 才发布**，故卡片取「最近已发布日」 |
+| 深市份额 | `fund_etf_scale_szse()` | **无 date 参数**，只能当前快照 → 数据日用「净值 ≈ 收盘价」反推，靠 `output/guard_szse_snapshot.json` 逐日累积 |
+
+**产物**：`output/guard_report.json`（卡片消费）+ `output/guard_share_history.jsonl`（每交易日一行，按日去重）+ `output/guard_szse_snapshot.json`（深市快照，按数据日去重）。
+
+**写入闸门**：与冰点/底部区域一致——`trade_calendar.is_trade_day()` + 北京时间 ≥15:00 + 按日去重；非交易日/盘中只读不写。首次运行（历史不足 20 行）自动回补最近 22 个交易日。
+
+**风险口径**：深市无历史份额接口，159919 / 159949 / 159915 的份额从部署日起累积，此前不可回补；沪市分时只回溯 21 个交易日，因此回补窗口取 22 天。
+
 ### 850天线抄底坐标（旁挂指标 · plutus 观点）
 
 > 与冰点参考平行的**第二个旁挂指标**（页面顺序：冰点 → 850 → 底部区域），同样**独立于 XXFI**，不修改 XXFI 任何原始计算/展示。
@@ -278,13 +311,16 @@ python run_xxfi.py --hs300 <指数日K文件路径> \
 python run_xxfi.py --json '{"drawdown":-0.08,"ret20":0.02,"above_ma20":0.01,"up":1800,"down":3200,"limit_up":40,"limit_down":30,"vol_pct":0.78,"retail_net":-0.02}'
 ```
 
-### 3) 旁挂参考指标（冰点 / 850天线 / 底部区域）
+### 3) 旁挂参考指标（冰点 / 护盘 / 850天线 / 底部区域）
 
 三者均**独立于 XXFI**，可单独运行，产物各自落到 `output/`，由 `render_html.py` 旁挂渲染：
 
 ```bash
 # 冰点参考（4 维度全满足才判冰点）
 python run_bingdian.py --akshare --out output
+
+# 国家队护盘追踪（11 只宽基 ETF 尾盘三段分布 + 昨日份额净申购）
+python run_guard.py --akshare --out output
 
 # 850天线抄底坐标（plutus 观点：四大指数 vs 850日线，收盘跌破/盘中跌破）
 python run_ma850.py --akshare --out output
@@ -303,10 +339,11 @@ python render_html.py --json output/xxfi_report.json \
                       --bingdian output/bingdian_report.json \
                       --dibudian output/dibudian_report.json \
                       --ma850 output/ma850_report.json \
+                      --guard output/guard_report.json \
                       --out docs/index.html
 ```
 
-> 📌 **2026-08-27 加固**：`--bingdian` / `--dibudian` / `--ma850` 可省略（自动探测 `output/` 默认产物）；生成后**自检三大板块**（冰点参考卡 / 850天线抄底卡 / 底部区域判断卡），任一缺失打印 `[warn]` 防残缺页被静默提交（曾因漏传参数导致两卡丢失 46 行事故）。
+> 📌 **2026-08-27 加固**：`--bingdian` / `--dibudian` / `--ma850` / `--guard` 可省略（自动探测 `output/` 默认产物）；生成后**自检四大板块**（冰点参考卡 / 护盘追踪卡 / 850天线抄底卡 / 底部区域判断卡），任一缺失打印 `[warn]` 防残缺页被静默提交（曾因漏传参数导致两卡丢失 46 行事故）。
 
 > ⛔ **模拟区块已撤出本页（2026-10-23 用户决定）**：原「📊 秋哥操作 · 实盘模拟」区块（`sim_block.py` 三件套固定内联 + 运行时从 `output/simulation_state.json` / `accuracy_stats.json` / `simulation_history.jsonl` 拉数）**已整体移除**。
 > - **原因**：净值 / 持仓 / 胜率属个人资产数据，公开页面 + raw URL 无鉴权即可直读；
@@ -391,6 +428,9 @@ git clone <this-repo> ~/.workbuddy/skills/xiaoxu-fear-index
 | `run_dibudian.py` | 底部区域编排入口（`--akshare` / `--demo-bottom` / `--demo-normal` / `--json`），产出 `output/dibudian_report.json` + 跨日持久的 `dibudian_state.json` |
 | `ma850_index.py` | 850天线纯计算（仅标准库，零依赖）：四大指数日K → MA850 / 收盘偏离 / 盘中跌破 / 最近触发日 / 综合状态（局部·多数·全面进入） |
 | `fetch_ma850_akshare.py` | 850天线取数器：四指数新浪日K（850+根）→ 腾讯单指数兜底；新浪 spot 一次取齐四指数补当日收盘/最低；单指数失败只标该格 |
+| `guard_index.py` | 护盘纯计算（仅标准库，零依赖）：11 只 ETF 尾盘三段分布 → 三档判定（疑似买入/单只异动/未发现）+ 份额净申购汇总 |
+| `fetch_guard_akshare.py` | 护盘取数器：11 只 ETF 新浪 5 分钟（→ 腾讯 1 分钟兜底）+ 沪市 `fund_etf_scale_sse` 份额 + 深市 `fund_etf_scale_szse` 快照（净值反推数据日） |
+| `run_guard.py` | 护盘编排入口（`--akshare` / `--demo-buy/weak/none/degraded` / `--json`），产出 `output/guard_report.json` + 份额历史 |
 | `run_ma850.py` | 850天线编排入口（`--akshare` / `--demo-touched` / `--demo-entered` / `--demo-none` / `--json`），产出 `output/ma850_report.json` + `.md` |
 | `build_cache.py` | **冷启动一次性工具**：把通达信 `tdx_kline` 导出的上证/深证日 K 原始数据合并为 `output/_turnover_cache.json`（全市场成交额 `{date: 元}`） |
 | `render_html.py` | 把 `xxfi_report.json` + `history.jsonl` + `bingdian_report.json` + `dibudian_report.json` + `ma850_report.json` 渲染为自包含静态页 `docs/index.html`（含冰点参考卡 + 850天线抄底卡 + 底部区域判断卡与30日趋势图，GitHub Pages）；2026-08-27 加固：`--bingdian/--dibudian/--ma850` 缺省自动探测 `output/` 产物，生成后自检三卡齐全（缺失 warn）；2026-10-23：**撤出「实盘模拟」区块**（`SIM_*` 恒为空串，已迁 qg 盘中页） |

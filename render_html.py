@@ -651,7 +651,218 @@ def render_ma850_card(m):
     </div>'''
 
 
-def render(r, hist, bingdian=None, dibudian=None, ma850=None):
+GUARD_CSS = r"""
+/* —— 国家队护盘追踪卡（旁挂 XXFI，置于冰点参考与 850 坐标之间）—— */
+.guard-card{background:linear-gradient(160deg,#fbfaff 0%,#f4f1fc 100%);border:1px solid #e9e3f7;border-radius:16px;
+  padding:18px 20px;box-shadow:var(--shadow);overflow:hidden;}
+.guard-head{font-size:13px;font-weight:800;color:#6a5aa8;display:flex;align-items:center;gap:5px;margin-bottom:14px;flex-wrap:wrap;}
+.guard-tag{font-size:10px;font-weight:600;color:#7a6bb5;background:#f1ecfb;border:1px solid #e9e3f7;
+  border-radius:999px;padding:1px 7px;margin-left:auto;white-space:nowrap;}
+.g-main{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.g-left{min-width:0;}
+.g-verdict{font-size:clamp(22px,6vw,28px);font-weight:800;line-height:1.15;display:flex;align-items:center;gap:9px;}
+.g-verdict .g-dot{width:13px;height:13px;border-radius:50%;flex:none;display:inline-block;}
+.g-verdict.buy{color:#5b4a9e;}
+.g-verdict.buy .g-dot{background:#8b7ad6;box-shadow:0 0 0 4px #ece7fa;}
+.g-verdict.weak{color:#8a7fb8;}
+.g-verdict.weak .g-dot{background:#b8abdf;box-shadow:0 0 0 4px #f2eefb;}
+.g-verdict.none{color:#8d93a3;}
+.g-verdict.none .g-dot{background:#c3c9d4;box-shadow:0 0 0 4px #f1f3f6;}
+.g-verdict.na{color:#a6abba;}
+.g-verdict.na .g-dot{background:#d5d9e2;box-shadow:0 0 0 4px #f4f6f9;}
+.g-sub{font-size:12px;color:#7f7796;margin-top:7px;line-height:1.45;}
+.g-right{text-align:right;min-width:150px;}
+.g-k{font-size:10px;color:#9d97b3;font-weight:600;letter-spacing:.2px;}
+.g-time{font-size:19px;font-weight:800;color:#5b4a9e;font-variant-numeric:tabular-nums;line-height:1.25;margin-top:1px;}
+.g-k2{font-size:10.5px;color:#8b84a3;margin-top:2px;}
+.g-sec{margin-top:16px;border-top:1px solid #efeaf9;padding-top:13px;}
+.g-sec-h{font-size:12px;font-weight:800;color:#5b4a9e;}
+.g-sec-h b{color:#7d68c6;}
+.g-sec-h span{font-weight:500;color:#9d97b3;font-size:10.5px;margin-left:6px;}
+.g-legend{display:flex;align-items:center;gap:5px;font-size:9.5px;color:#a29cb8;margin:7px 0 9px;flex-wrap:wrap;}
+.g-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+.g-legend i.am{background:#ded5f2;}
+.g-legend i.md{background:#b6a3e3;margin-left:8px;}
+.g-legend i.tl{background:#7d68c6;margin-left:8px;}
+.gr{display:grid;grid-template-columns:96px 1fr 58px 40px;align-items:center;gap:9px;padding:5px 0;}
+.gr-h{padding:0 0 2px;align-items:end;}
+.gr-h div{font-size:9px;font-weight:600;color:#a9a2c0;text-align:right;line-height:1.2;}
+.gr-h .nh{text-align:left;font-size:9px;color:#b3adc4;}
+.gr-n{font-size:11.5px;font-weight:700;color:#3f3766;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px;}
+.gr.hit .gr-n{color:#5b4a9e;}
+.gr-b{height:15px;border-radius:5px;overflow:hidden;display:flex;background:#f4f1fb;box-shadow:inset 0 0 0 1px #efeaf9;}
+.gr-b .sg{display:block;height:100%;}
+.gr-b .sg.am{background:#ded5f2;}
+.gr-b .sg.md{background:#b6a3e3;}
+.gr-b .sg.tl{background:#7d68c6;}
+.gr.hit .gr-b .sg.tl{background:#6a55b8;}
+.gr-v{font-size:13px;font-weight:800;color:#3f3766;text-align:right;font-variant-numeric:tabular-nums;}
+.gr-v span{font-size:9px;font-weight:600;color:#a29cb8;margin-left:1px;}
+.gr-p{font-size:11px;font-weight:700;color:#8b84a3;text-align:right;font-variant-numeric:tabular-nums;}
+.gr.hit .gr-p{color:#5b4a9e;}
+.g-rest{font-size:10.5px;color:#9d97b3;margin-top:9px;line-height:1.5;}
+.g-rest b{color:#5b4a9e;}
+.g-sep{height:1px;background:linear-gradient(90deg,transparent,#e6e0f5,transparent);margin:16px 0 13px;}
+.g-share{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.g-share-l{min-width:0;}
+.g-share-v{font-size:23px;font-weight:800;color:#6a5aa8;font-variant-numeric:tabular-nums;margin-top:3px;}
+.g-share-m{font-size:10.5px;color:#8b84a3;margin-top:1px;}
+.g-share-r{flex:0 1 330px;min-width:150px;}
+.g-share-r svg{width:100%;max-width:100%;height:auto;display:block;}
+.g-share-r svg .pos{fill:#a892e0;}
+.g-share-r svg .neg{fill:#cfd5df;}
+.g-x{display:flex;justify-content:space-between;font-size:9px;color:#a29cb8;font-variant-numeric:tabular-nums;margin-top:2px;}
+.guard-note{font-size:10px;color:#a29cb8;margin-top:12px;line-height:1.6;}
+@media(max-width:640px){
+  .gr{grid-template-columns:88px 1fr 46px 34px;gap:6px;}
+  .gr-n{font-size:11px;}
+  .gr-h div{font-size:8.5px;}
+  .g-right{text-align:left;}
+  .g-share-r{flex:1 1 100%;}
+}
+"""
+
+# ============================================================ 国家队护盘追踪卡
+GUARD_RIGHT = {
+    "buy": ("买入时段", True),
+    "weak": ("买入时段", True),
+    "none": ("最活跃 5 分钟", False),
+    "na": ("时段", False),
+}
+
+
+def _g_pct(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _g_trend(series):
+    """近 20 日净申购柱（A股配色在浅紫系下改为：正=紫，负=灰）"""
+    if not series:
+        return "", ""
+    vals = [(_g_pct(x.get("net_yi"))) for x in series]
+    mx = max([abs(v) for v in vals] + [1.0])
+    W, H, pad = 660, 84, 6
+    bw = (W - pad * 2) / len(vals)
+    zero = H / 2 + 2
+    seg = ['<svg viewBox="0 0 %d %d" role="img" aria-label="近20日护盘篮子净申购">' % (W, H)]
+    for i, v in enumerate(vals):
+        h = max(1.2, abs(v) / mx * (H / 2 - 6))
+        x = pad + i * bw + bw * 0.22
+        y = zero - h if v > 0 else zero
+        cls = "pos" if v > 0 else "neg"
+        seg.append('<rect class="%s" x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1"/>'
+                   % (cls, x, y, bw * 0.56, h))
+    seg.append("</svg>")
+    pick = sorted({0, len(vals) // 3, len(vals) * 2 // 3, len(vals) - 1})
+    labs = "".join("<span>%s</span>" % (series[k].get("date", "")[5:]) for k in pick)
+    return "".join(seg), '<div class="g-x">%s</div>' % labs
+
+
+def render_guard_card(g):
+    if not g:
+        return ""
+    kind = g.get("verdict") or "na"
+    if kind not in GUARD_RIGHT:
+        kind = "na"
+    right_label, tail_scope = GUARD_RIGHT[kind]
+
+    rows_html = ""
+    for x in (g.get("rows") or []):
+        am = _g_pct(x.get("am_pct"))
+        md = _g_pct(x.get("md_pct"))
+        tl = max(0.0, 100.0 - am - md)
+        rows_html += (
+            '<div class="gr%s">'
+            '<div class="gr-n">%s</div>'
+            '<div class="gr-b"><span class="sg am" style="width:%.2f%%"></span>'
+            '<span class="sg md" style="width:%.2f%%"></span>'
+            '<span class="sg tl" style="width:%.2f%%"></span></div>'
+            '<div class="gr-v">%.0f<span>亿</span></div>'
+            '<div class="gr-p">%.0f%%</div>'
+            '</div>' % (" hit" if x.get("hit") else "", x.get("label", ""), am, md, tl,
+                        _g_pct(x.get("tail_yi")), _g_pct(x.get("tail_pct")))
+        )
+    if not rows_html:
+        rows_html = '<div class="g-rest">今日分时暂未获取，无法判断时段分布。</div>'
+
+    rest = ""
+    if g.get("rest_n"):
+        rest = ('<div class="g-rest">其余 %d 只尾盘合计 %.0f 亿 · 全部 %d 只合计 <b>%.0f 亿</b></div>'
+                % (g.get("rest_n", 0), _g_pct(g.get("rest_tail_yi")),
+                   g.get("n_etf", 0), _g_pct(g.get("total_tail_yi"))))
+
+    sh = g.get("share") or {}
+    s_date = sh.get("date") or "—"
+    s_net = _g_pct(sh.get("net_yi"))
+    share_html = ""
+    if sh.get("date"):
+        share_html = (
+            '<div class="g-share-v">%+.0f 亿</div>'
+            '<div class="g-share-m">%d/%d 只沪市 ETF 净申购 · 连续 %d 日 · 近5日 %+.0f 亿</div>'
+            % (s_net, sh.get("pos_cnt", 0), sh.get("basket_cnt", 0),
+               sh.get("days_pos", 0), _g_pct(sh.get("d5_yi")))
+        )
+    else:
+        share_html = ('<div class="g-share-v">暂未获取</div>'
+                      '<div class="g-share-m">上交所份额接口未返回数据</div>')
+    svg, xlab = _g_trend(sh.get("series") or [])
+
+    if kind in ("buy", "weak"):
+        peak_line = "最集中 %s · %s 亿" % (g.get("peak_window") or "—", g.get("peak_amt_yi") or 0)
+        time_txt = g.get("window") or "14:45–15:00"
+    elif kind == "none":
+        peak_line = "尾盘未放量"
+        time_txt = g.get("peak_window") or "—"
+    else:
+        peak_line = ""
+        time_txt = "—"
+
+    note_extra = ""
+    if g.get("missing"):
+        note_extra = "　今日分时未取到：%s。" % "、".join(g["missing"][:4])
+
+    return (
+        '<div class="card guard-card">\n'
+        '  <div class="guard-head">🛡️ 国家队护盘追踪 <span class="guard-tag">旁挂·不影响XXFI</span></div>\n'
+        '  <div class="g-main">\n'
+        '    <div class="g-left">\n'
+        '      <div class="g-verdict %s"><span class="g-dot"></span>%s</div>\n'
+        '      <div class="g-sub">%s</div>\n'
+        '    </div>\n'
+        '    <div class="g-right">\n'
+        '      <div class="g-k">%s</div>\n'
+        '      <div class="g-time">%s</div>\n'
+        '      <div class="g-k2">%s</div>\n'
+        '    </div>\n'
+        '  </div>\n'
+        '  <div class="g-sec">\n'
+        '    <div class="g-sec-h"><b>①</b> 今天买了什么 <span>条形 = 全天成交额，越靠右越接近收盘</span></div>\n'
+        '    <div class="g-legend"><i class="am"></i>上午 09:30–11:30<i class="md"></i>午后 13:00–14:45<i class="tl"></i>尾盘 14:45–15:00</div>\n'
+        '    <div class="gr gr-h"><div></div><div class="nh">↑ 全天成交额</div><div>尾盘成交</div><div>占比</div></div>\n'
+        '    %s\n'
+        '    %s\n'
+        '  </div>\n'
+        '  <div class="g-sep"></div>\n'
+        '  <div class="g-share">\n'
+        '    <div class="g-share-l">\n'
+        '      <div class="g-sec-h"><b>②</b> 昨日份额确认 <span>%s · T+1 发布，用来验证"是不是真的净买入"</span></div>\n'
+        '      %s\n'
+        '    </div>\n'
+        '    <div class="g-share-r">%s%s</div>\n'
+        '  </div>\n'
+        '  <div class="guard-note">口径：尾盘 = 14:45–15:00；份额 = 上交所按日归档的全市场 ETF 份额，'
+        '深市（嘉实300 / 创业板两只）无历史份额接口，靠每日快照累积。%s</div>\n'
+        '</div>'
+        % (kind, (g.get("verdict_text") or "暂未获取"), (g.get("verdict_sub") or ""),
+           right_label, time_txt, peak_line,
+           rows_html, rest, s_date, share_html, svg, xlab, note_extra)
+    )
+
+
+def render(r, hist, bingdian=None, dibudian=None, ma850=None, guard=None):
     xxfi = float(r.get("XXFI", 0))
     greed = float(r.get("GreedIndex", 0))
     signal = r.get("contrarian_signal") or signal_of(xxfi)
@@ -718,6 +929,7 @@ def render(r, hist, bingdian=None, dibudian=None, ma850=None):
     greed_html = rows_html(greed_rows, "greed", "var(--greed)")
     ice_html = render_ice_card(bingdian)
     ma_html = render_ma850_card(ma850)
+    guard_html = render_guard_card(guard)
     dip_html = render_dibudian_card(dibudian)
 
     # 对照表行
@@ -741,7 +953,7 @@ def render(r, hist, bingdian=None, dibudian=None, ma850=None):
     html = f"""<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>小旭恐惧指数 XXFI · 实时</title><style>{CSS}{SIM_CSS}</style></head>
+<title>小旭恐惧指数 XXFI · 实时</title><style>{CSS}{SIM_CSS}{GUARD_CSS}</style></head>
 <body><div class="wrap">
 <h1>小旭恐惧指数 · XXFI</h1>
 <div class="sub">反向情绪指标（散户行为版）　|　数据日期：{data_date}　|　更新时间：{gen_at}　|　基准：{idx_name}　|　波动率窗口：{vw} 日</div>
@@ -764,6 +976,7 @@ def render(r, hist, bingdian=None, dibudian=None, ma850=None):
 </div>
 
 {ice_html}
+{guard_html}
 {ma_html}
 {dip_html}
 {SIM_HTML}
@@ -825,6 +1038,7 @@ def main():
     ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--ma850", default=None, help="850天线抄底坐标 ma850_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
+    ap.add_argument("--guard", default=None, help="国家队护盘追踪 guard_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--out", required=True, help="输出 HTML 路径，如 docs/index.html")
     args = ap.parse_args()
 
@@ -860,7 +1074,16 @@ def main():
             ma850 = load_json(args.ma850)
         except Exception as e:
             print(f"[warn] 850天线报告读取失败，跳过该卡: {e}")
-    html = render(r, hist, bingdian, dibudian, ma850)
+    # 国家队护盘追踪卡：独立产物，存在才加载；缺失则页面不显示该卡（XXFI 不受影响）
+    guard = None
+    if not args.guard and os.path.exists("output/guard_report.json"):
+        args.guard = "output/guard_report.json"
+    if args.guard and os.path.exists(args.guard):
+        try:
+            guard = load_json(args.guard)
+        except Exception as e:
+            print(f"[warn] 护盘报告读取失败，跳过该卡: {e}")
+    html = render(r, hist, bingdian, dibudian, ma850, guard)
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
@@ -870,13 +1093,14 @@ def main():
     #   撤出本页（迁至 qg 盘中检测页），再自检它会永远报缺失。
     missing = [k for k, kw in [
         ("冰点参考卡", 'class="card ice-card"'),
+        ("护盘追踪卡", 'class="card guard-card"'),
         ("850天线抄底卡", 'class="card ma850-card"'),
         ("底部区域判断卡", 'class="card dip-card"'),
     ] if kw not in html]
     if missing:
         print(f"[warn] 生成页面缺少板块: {', '.join(missing)}（请检查 --bingdian/--ma850/--dibudian 参数与产物）")
     else:
-        print("[ok] 三大板块齐全：冰点参考卡 / 850天线抄底卡 / 底部区域判断卡")
+        print("[ok] 四大板块齐全：冰点参考卡 / 护盘追踪卡 / 850天线抄底卡 / 底部区域判断卡")
     # 一并输出 xxfi_report.json 到 Pages 源目录（docs/），供外部读取原始数据或调试。
     json_out = os.path.join(out_dir, "xxfi_report.json")
     with open(json_out, "w", encoding="utf-8") as f:
