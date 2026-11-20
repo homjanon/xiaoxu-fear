@@ -56,6 +56,11 @@ SZ_CODES = [c for c, _n, _g, m in PANEL if m == "SZSE"]
 
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
+# 交易所（上交所/深交所）在 GitHub Actions 美国 IP 被 ConnectionReset（2026-11-20 实测），
+# 把跑批时间从 10s 拖到 9min。CI 侧一律跳过取数，只读本地推送的份额历史。
+# 本地跑（能连通）时不要设这个变量，即可正常取数 + 回补。
+SKIP_EXCHANGE = os.environ.get("GUARD_SKIP_EXCHANGE", "").strip() in ("1", "true", "yes")
+
 
 def _bj_now():
     return datetime.datetime.now(CST)
@@ -329,10 +334,20 @@ def build_guard_inputs(out_dir="output"):
     now = _bj_now()
     can_write = trade and now.hour >= 15
 
+    # 交易所连通性：CI（美国 IP）实测被 ConnectionReset，单次探针失败即整条链放弃，
+    # 否则逐日重试会把 10s 的步骤拖成 9min；失败时 ② 段回落到本地已推送的份额历史。
+    exchange_ok = not SKIP_EXCHANGE
+    probe_asof, probe_hit = (None, {})
+    if exchange_ok:
+        probe_asof, probe_hit = read_sse(today)
+        exchange_ok = bool(probe_asof and probe_hit)
+        if not exchange_ok:
+            print("[warn] 交易所份额接口不可达，改用本地已推送的份额历史")
+
     hist = load_hist(out_dir)
-    if can_write:
+    if can_write and exchange_ok:
         hist = backfill_hist(out_dir, hist, today, closes_by_code)
-    asof, cur = read_sse(today)
+    asof, cur = (probe_asof, probe_hit) if exchange_ok else (None, {})
     net, detail, prev_date, prev = 0.0, {}, None, {}
     if asof and cur:
         prev_date, prev = read_sse(
@@ -351,7 +366,7 @@ def build_guard_inputs(out_dir="output"):
         detail = uniq[asof].get("detail", detail)
 
     # 3) 深市快照（只落盘，不参与净申购：无历史无法算 Δ）
-    sz_shares, sz_navs = read_szse()
+    sz_shares, sz_navs = read_szse() if exchange_ok else ({}, {})
     sz_asof, inferred = (None, False)
     if sz_shares and can_write:
         sz_asof, inferred = szse_asof(sz_navs, closes_by_code, fallback=today)
@@ -367,6 +382,13 @@ def build_guard_inputs(out_dir="output"):
         with open(p, "w", encoding="utf-8") as f:
             json.dump(snap, f, ensure_ascii=False, indent=1)
 
+    share_src = "live" if (asof and cur) else "history"
+    if share_src == "history" and hist:
+        last = sorted(hist, key=lambda r: r["date"])[-1]
+        asof = last["date"]
+        net = last.get("net_yi", 0.0)
+        detail = last.get("detail", {}) or {}
+
     return {
         "date": data_date,
         "today": today,
@@ -378,10 +400,11 @@ def build_guard_inputs(out_dir="output"):
             "net_yi": net,
             "detail": detail,
             "history": sorted(hist, key=lambda r: r["date"])[-20:],
+            "src": share_src,
         },
         "szse": {"asof": sz_asof, "asof_inferred": inferred,
                  "n_codes": len(sz_shares), "n_hist_days": len(hist)},
-        "_src": " / ".join(sorted(srcs)) + (" / sse" if asof else "") + (" / szse" if sz_shares else ""),
+        "_src": " / ".join(sorted(srcs)) + (" / sse" if share_src == "live" else " / sse(history)") + (" / szse" if sz_shares else ""),
         "_generated_at": _bj_now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 

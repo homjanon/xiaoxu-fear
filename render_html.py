@@ -821,8 +821,10 @@ def render_guard_card(g):
         time_txt = "—"
 
     note_extra = ""
+    if (g.get("share") or {}).get("src") == "history":
+        note_extra += "　份额为最近一次本地推送（交易所份额接口在 CI 侧不可达，跑批只用形态）。"
     if g.get("missing"):
-        note_extra = "　今日分时未取到：%s。" % "、".join(g["missing"][:4])
+        note_extra += "　今日分时未取到：%s。" % "、".join(g["missing"][:4])
 
     return (
         '<div class="card guard-card">\n'

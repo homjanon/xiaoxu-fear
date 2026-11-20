@@ -100,6 +100,7 @@ def _share_block(share):
         "days_pos": days_pos,
         "d5_yi": round(d5, 1),
         "series": [{"date": r["date"], "net_yi": r.get("net_yi", 0)} for r in hist],
+        "src": share.get("src") or "live",
     }
 
 
