@@ -86,7 +86,11 @@ def fetch_exchange(url, referer=None, tries=5):
       故 403 必须重试；5 次退避后残存失败率约 0.1%
     """
     global _EX_MODE, EXCHANGE_MODE
-    modes = [_EX_MODE] if _EX_MODE else (["direct", "proxy"] if GUARD_PROXY else ["direct"])
+    # 注意：不能因为「上一次直连成功」就锁死 direct —— 两个域名的可达性不一样
+    # （2026-11-20 CI 实测：query.sse.com.cn 直连成功，fund.szse.cn 仍被 ConnectionReset，
+    #  锁死后深市就再也没机会切代理了）。只有 proxy 成功后才固定 proxy。
+    modes = ["proxy"] if _EX_MODE == "proxy" else (
+        ["direct", "proxy"] if GUARD_PROXY else ["direct"])
     last = None
     for mode in modes:
         target = url
