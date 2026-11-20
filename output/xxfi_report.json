@@ -23,15 +23,15 @@
     }
   },
   "inputs": {
-    "drawdown": -0.04428024730089359,
-    "ret20": -0.04428024730089364,
-    "above_ma20": -0.02825493593511426,
+    "drawdown": -0.044280220255738946,
+    "ret20": -0.04428022025573897,
+    "above_ma20": -0.02825490977255566,
     "vol_pct": 0.7833333333333333,
     "vol_window": 60,
     "_index_name": "上证指数(sh000001)",
     "_last_date": "2026-11-20",
-    "_last_close": 3533.7929,
-    "_index_source": "sina+spot",
+    "_last_close": 3533.793,
+    "_index_source": "sina",
     "up": 297,
     "down": 4897,
     "limit_up": 30,
@@ -44,10 +44,10 @@
     "_main_net_source": "eastmoney",
     "_breadth_provided": true,
     "_hs300_date": "2026-11-20",
-    "_hs300_close": 3533.7929
+    "_hs300_close": 3533.793
   },
   "_data_date": "2026-11-20",
-  "_generated_at": "2026-11-20 16:20:55",
+  "_generated_at": "2026-11-20 21:17:52",
   "_index_name": "上证指数(sh000001)",
   "_vol_window": 60,
   "_breadth_source": "legu",
