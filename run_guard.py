@@ -59,7 +59,7 @@ def format_report(r):
     if r.get("missing"):
         lines.append("- 分时暂未获取：%s" % "、".join(r["missing"]))
     lines.append("\n---")
-    lines.append("> 口径：尾盘 = 14:45–15:00；份额 = 上交所按日归档（T+1 发布），"
+    lines.append("> 口径：尾盘 = 14:45–15:00；份额 = 交易所按日公布（T 日盘后发布；深市以 T+1 早间为准），"
                  "深市无历史份额接口，靠每日快照累积。")
     lines.append("> 数据源：%s" % (r.get("_src") or "—"))
     return "\n".join(lines)
