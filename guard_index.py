@@ -135,6 +135,21 @@ def compute(inp):
             "hit": (r.get("tail_pct", 0) >= TAIL_MIN_PCT and r.get("amt_tail_yi", 0) >= TAIL_MIN_YI),
         })
 
+    rows_all = []
+    for r in rows:
+        tot = r.get("amt_all_yi") or 0
+        rows_all.append({
+            "code": r["code"], "label": r["label"], "group": r["group"],
+            "tail_yi": round(r.get("amt_tail_yi", 0), 1),
+            "tail_pct": round(r.get("tail_pct", 0), 1),
+            "am_pct": round((r.get("amt_am_yi", 0) / tot * 100) if tot else 0, 2),
+            "md_pct": round((r.get("amt_md_yi", 0) / tot * 100) if tot else 0, 2),
+            "all_yi": round(tot, 1),
+            "mult": r.get("mult"),
+            "tail_ret": round(r.get("tail_ret", 0), 2),
+            "hit": (r.get("tail_pct", 0) >= TAIL_MIN_PCT and r.get("amt_tail_yi", 0) >= TAIL_MIN_YI),
+        })
+
     share = _share_block(inp.get("share") or {})
     missing = [e["label"] for e in etfs if e.get("error")]
 
@@ -151,6 +166,7 @@ def compute(inp):
         "peak_amt_yi": round(peak_yi, 0),
         "peak_scope": peak_scope,
         "rows": out_rows,
+        "rows_all": rows_all,
         "rest_n": rest_n,
         "rest_tail_yi": rest_tail,
         "total_tail_yi": round(total_tail, 0),

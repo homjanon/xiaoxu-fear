@@ -713,6 +713,25 @@ GUARD_CSS = r"""
 .g-share-r svg .neg{fill:#cfd5df;}
 .g-x{display:flex;justify-content:space-between;font-size:9px;color:#a29cb8;font-variant-numeric:tabular-nums;margin-top:2px;}
 .guard-note{font-size:10px;color:#a29cb8;margin-top:12px;line-height:1.6;}
+.guard-more{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;color:#7d68c6;text-decoration:none;}
+.guard-more:hover{text-decoration:underline;}
+.gp-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.gp-tbl th{font-size:10px;font-weight:600;color:#9d97b3;text-align:right;padding:4px 6px;border-bottom:1px solid #efeaf9;white-space:nowrap;}
+.gp-tbl th:first-child,.gp-tbl th:nth-child(2){text-align:left;}
+.gp-tbl td{padding:6px;border-bottom:1px solid #f6f3fc;color:#3f3766;}
+.gp-tbl tr.hit td{background:#faf8ff;}
+.gp-tbl .nm{font-weight:700;white-space:nowrap;}
+.gp-tbl .gp{font-size:10px;color:#9d97b3;white-space:nowrap;}
+.gp-tbl .num{text-align:right;font-variant-numeric:tabular-nums;}
+.gp-tbl .b{font-weight:800;color:#5b4a9e;}
+.gp-bar{display:flex;height:12px;border-radius:4px;overflow:hidden;background:#f4f1fb;min-width:110px;}
+.gp-bar i{display:block;height:100%;}
+.gp-bar .am{background:#ded5f2;} .gp-bar .md{background:#b6a3e3;} .gp-bar .tl{background:#7d68c6;}
+tr.hit .gp-bar .tl{background:#6a55b8;}
+.gp-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:640px){.gp-two{grid-template-columns:1fr;}.gp-tbl{font-size:11px;}}
+.gp-back{font-size:12px;color:#6a5aa8;text-decoration:none;display:inline-block;margin-bottom:10px;}
+
 @media(max-width:640px){
   .gr{grid-template-columns:88px 1fr 46px 34px;gap:6px;}
   .gr-n{font-size:11px;}
@@ -855,6 +874,7 @@ def render_guard_card(g):
         '    </div>\n'
         '    <div class="g-share-r">%s%s</div>\n'
         '  </div>\n'
+        '  <div style="text-align:right"><a class="guard-more" href="./guard.html">查看 11 只明细与份额曲线 →</a></div>'
         '  <div class="guard-note">口径：尾盘 = 14:45–15:00；份额 = 上交所按日归档的全市场 ETF 份额，'
         '深市（嘉实300 / 创业板两只）无历史份额接口，靠每日快照累积。%s</div>\n'
         '</div>'
@@ -863,6 +883,158 @@ def render_guard_card(g):
            rows_html, rest, s_date, share_html, svg, xlab, note_extra)
     )
 
+
+
+def render_guard_page(g):
+    """详情页 docs/guard.html：11 只全表 + 份额曲线 + 判定流水"""
+    if not g:
+        return ""
+    kind = g.get("verdict") or "na"
+    if kind not in GUARD_RIGHT:
+        kind = "na"
+    rows = g.get("rows_all") or g.get("rows") or []
+    rows_html = ""
+    for x in rows:
+        am = _g_pct(x.get("am_pct"))
+        md = _g_pct(x.get("md_pct"))
+        tl = max(0.0, 100.0 - am - md)
+        mv = x.get("mult")
+        rows_html += (
+            '<tr%s><td class="nm">%s</td><td class="gp">%s</td>'
+            '<td><div class="gp-bar"><i class="am" style="width:%.2f%%"></i>'
+            '<i class="md" style="width:%.2f%%"></i><i class="tl" style="width:%.2f%%"></i></div></td>'
+            '<td class="num">%.1f</td><td class="num b">%.1f%%</td><td class="num">%.1f</td>'
+            '<td class="num">%s</td><td class="num">%+.2f%%</td></tr>'
+            % (' class="hit"' if x.get("hit") else "", x.get("label", ""), x.get("group", ""),
+               am, md, tl, _g_pct(x.get("tail_yi")), _g_pct(x.get("tail_pct")),
+               _g_pct(x.get("all_yi")), ("%.1fx" % mv) if mv else "—",
+               _g_pct(x.get("tail_ret"))))
+
+    sh = g.get("share") or {}
+    series = sh.get("series") or []
+    svg, xlab = _g_trend(series) if False else ("", "")
+    # 大号净申购图（详情页专用，尺寸更大）
+    if series:
+        vals = [_g_pct(s.get("net_yi")) for s in series]
+        mx = max([abs(v) for v in vals] + [1.0])
+        W, H, pad = 660, 120, 8
+        bw = (W - pad * 2) / len(vals)
+        zero = H / 2 + 6
+        seg = ['<svg viewBox="0 0 %d %d" role="img" aria-label="近20日份额净申购">' % (W, H)]
+        seg.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#e9e3f7"/>' % (pad, zero, W - pad, zero))
+        for i, v in enumerate(vals):
+            h = max(1.5, abs(v) / mx * (H / 2 - 10))
+            x = pad + i * bw + bw * 0.2
+            y = zero - h if v > 0 else zero
+            seg.append('<rect class="%s" x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1.5"/>'
+                       % ("pos" if v > 0 else "neg", x, y, bw * 0.6, h))
+        seg.append("</svg>")
+        pick = sorted({0, len(vals) // 3, len(vals) * 2 // 3, len(vals) - 1})
+        xlab = '<div class="g-x">%s</div>' % "".join(
+            "<span>%s</span>" % series[k].get("date", "")[5:] for k in pick)
+        svg = "".join(seg)
+    else:
+        svg, xlab = "", ""
+
+    hist_all = []
+    p = os.path.join("output", "guard_share_history.jsonl")
+    if os.path.exists(p):
+        try:
+            with open(p, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        hist_all.append(json.loads(line))
+        except Exception:
+            hist_all = []
+    det = (hist_all[-1].get("detail") if hist_all else {}) or {}
+    det_rows = ""
+    name_map = {c: l for c, l in PANEL_FOR_PAGE}
+    for c, v in sorted(det.items(), key=lambda kv: -abs(kv[1].get("amt_yi", 0)))[:12]:
+        det_rows += ('<tr><td class="nm">%s</td><td class="num">%+.2f</td><td class="num b">%+.1f</td></tr>'
+                     % (name_map.get(c, c), _g_pct(v.get("dsh_yi")), _g_pct(v.get("amt_yi"))))
+    if not det_rows:
+        det_rows = '<tr><td colspan="3" style="color:#9d97b3">暂未获取</td></tr>'
+
+    last_d = hist_all[-1] if hist_all else {}
+    verdict_rows = ('<tr><td class="nm">%s</td><td>%s</td><td class="num">%s</td>'
+                    '<td class="num b">%+.1f</td></tr>'
+                    % (g.get("_data_date") or "—", g.get("verdict_text") or "—",
+                       g.get("total_tail_yi") or 0, _g_pct(sh.get("net_yi"))))
+
+    return (
+        '<div class="card guard-card">\n'
+        '  <div class="guard-head">🛡️ 今日结论 <span class="guard-tag">旁挂·不影响XXFI</span></div>\n'
+        '  <div class="g-main">\n'
+        '    <div class="g-left">\n'
+        '      <div class="g-verdict %s"><span class="g-dot"></span>%s</div>\n'
+        '      <div class="g-sub">%s</div>\n'
+        '    </div>\n'
+        '    <div class="g-right">\n'
+        '      <div class="g-k">买入时段</div>\n'
+        '      <div class="g-time">%s</div>\n'
+        '      <div class="g-k2">最集中 %s · %s 亿</div>\n'
+        '    </div>\n'
+        '  </div>\n'
+        '</div>\n'
+        '<div class="card">\n'
+        '  <div class="sec-h">11 只宽基 ETF · 尾盘三段分布</div>\n'
+        '  <div style="overflow-x:auto"><table class="gp-tbl"><thead><tr><th>ETF</th><th>指数</th>'
+        '<th>上午 → 午后 → 尾盘</th><th>尾盘成交(亿)</th><th>占比</th><th>全天(亿)</th>'
+        '<th>放量</th><th>尾盘涨跌</th></tr></thead><tbody>%s</tbody></table></div>\n'
+        '  <div class="note">深色 = 尾盘 14:45–15:00；行高亮 = 满足「占比 ≥50%% 且 ≥20 亿」。</div>\n'
+        '</div>\n'
+        '<div class="card">\n'
+        '  <div class="sec-h">份额净申购 · 近 %d 个交易日</div>\n'
+        '  <div class="g-share-r" style="flex:1 1 100%%;max-width:100%%">%s%s</div>\n'
+        '  <div class="note">单位：亿元；正 = 净申购（紫），负 = 净赎回（灰）。</div>\n'
+        '  <div style="font-size:11px;color:#9d97b3;margin:12px 0 4px">最近一日明细 · %s（%+.1f 亿）</div>\n'
+        '  <div class="gp-two"><div style="overflow-x:auto"><table class="gp-tbl"><thead><tr><th>ETF</th>'
+        '<th>Δ份额(亿份)</th><th>净申购(亿)</th></tr></thead><tbody>%s</tbody></table></div><div></div></div>\n'
+        '</div>\n'
+        '<div class="card">\n'
+        '  <div class="sec-h">判定流水</div>\n'
+        '  <div style="overflow-x:auto"><table class="gp-tbl"><thead><tr><th>日期</th><th>判定</th>'
+        '<th>尾盘合计(亿)</th><th>份额净申购(亿)</th></tr></thead><tbody>%s</tbody></table></div>\n'
+        '  <div class="note">自 2026-11-20 起逐日累积（此前无落库）。</div>\n'
+        '</div>\n'
+        '<div class="card">\n'
+        '  <div class="sec-h">口径</div>\n'
+        '  <div class="note">'
+        '① 尾盘 = 14:45–15:00（5 分钟 bar 以结束时间标注，故取 14:50 / 14:55 / 15:00 三根）。<br>'
+        '② 份额 = 上交所按日归档的全市场 ETF 份额，T+1 发布；沪市可回补，深市无历史接口、只能逐日快照。<br>'
+        '③ 判定只回答「有没有疑似买入 / 哪只 / 几点」，不识别资金身份；成交量含双边，不能等同于净买入。'
+        '</div>\n'
+        '</div>'
+        % (kind, (g.get("verdict_text") or "暂未获取"), (g.get("verdict_sub") or ""),
+           (g.get("window") or "—"), (g.get("peak_window") or "—"), (g.get("peak_amt_yi") or 0),
+           rows_html, len(series), svg, xlab,
+           last_d.get("date", "—"), _g_pct(last_d.get("net_yi")), det_rows, verdict_rows)
+    )
+
+
+def render_guard_shell(guard_card_html, data_date, src):
+    """把详情页卡片包成完整 HTML（复用 CSS）"""
+    return (
+        '<!doctype html>\n<html lang="zh-CN"><head><meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+        '<title>国家队护盘追踪 · 明细</title><style>%s%s</style></head>\n'
+        '<body><div class="wrap">\n'
+        '<a class="gp-back" href="./index.html">← 返回首页</a>\n'
+        '<h1>国家队护盘追踪 · 明细</h1>\n'
+        '<div class="sub">数据日期 %s　|　数据源 %s</div>\n'
+        '%s\n'
+        '</div></body></html>\n'
+        % ("__CSS__", "__MORECSS__", data_date, src, guard_card_html)
+    )
+
+
+PANEL_FOR_PAGE = [
+    ("sh510050", "上证50ETF"), ("sh510300", "300ETF·华泰"), ("sz159919", "300ETF·嘉实"),
+    ("sh510310", "300ETF·易方达"), ("sh510330", "300ETF·华夏"), ("sh510500", "中证500ETF"),
+    ("sz159922", "500ETF·嘉实"), ("sz159949", "创业板50ETF"), ("sz159915", "创业板ETF"),
+    ("sh588000", "科创50ETF"), ("sh588080", "科创50·易方达"),
+]
 
 def render(r, hist, bingdian=None, dibudian=None, ma850=None, guard=None):
     xxfi = float(r.get("XXFI", 0))
@@ -1040,7 +1212,8 @@ def main():
     ap.add_argument("--bingdian", default=None, help="冰点参考 bingdian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--dibudian", default=None, help="底部区域判断 dibudian_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
     ap.add_argument("--ma850", default=None, help="850天线抄底坐标 ma850_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
-    ap.add_argument("--guard", default=None, help="国家队护盘追踪 guard_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
+    ap.add_argument("--guard", default=None, help="国家队护盘追踪 guard_report.json 路径（可选·旁挂展示；缺省自动探测 output/）")
+    ap.add_argument("--guard-page", default=None, help="详情页输出路径（可选，如 docs/guard.html；不给则不生成）")
     ap.add_argument("--out", required=True, help="输出 HTML 路径，如 docs/index.html")
     args = ap.parse_args()
 
@@ -1086,6 +1259,15 @@ def main():
         except Exception as e:
             print(f"[warn] 护盘报告读取失败，跳过该卡: {e}")
     html = render(r, hist, bingdian, dibudian, ma850, guard)
+    # 详情页（可选）：11 只全表 + 份额曲线 + 判定流水
+    if args.guard_page and guard:
+        page = render_guard_page(guard)
+        shell = render_guard_shell(page, guard.get("_data_date", ""), guard.get("_src", ""))
+        shell = shell.replace("__CSS__", CSS + SIM_CSS).replace("__MORECSS__", GUARD_CSS)
+        os.makedirs(os.path.dirname(os.path.abspath(args.guard_page)), exist_ok=True)
+        with open(args.guard_page, "w", encoding="utf-8") as f:
+            f.write(shell)
+        print("详情页已生成: %s" % args.guard_page)
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:

@@ -257,7 +257,7 @@ jobs:
       # 渲染静态 HTML（XXFI + 冰点参考卡 + 850天线抄底卡 + 底部区域判断卡 → docs/index.html）
       - name: Render static HTML
         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
-        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --dibudian output/dibudian_report.json --ma850 output/ma850_report.json --guard output/guard_report.json --out docs/index.html
+        run: python render_html.py --json output/xxfi_report.json --history output/history.jsonl --bingdian output/bingdian_report.json --dibudian output/dibudian_report.json --ma850 output/ma850_report.json --guard output/guard_report.json --guard-page docs/guard.html --out docs/index.html
 
       - name: Commit outputs
         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
