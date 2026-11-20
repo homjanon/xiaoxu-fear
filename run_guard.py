@@ -26,6 +26,8 @@ import fetch_guard_akshare as fg
 import guard_index as gi
 
 REPORT_FILE = "guard_report.json"
+VERDICT_HIST = "guard_verdict_history.jsonl"
+VERDICT_KEEP = 20          # 判定流水只保留最近 20 个交易日
 CST = datetime.timezone(datetime.timedelta(hours=8))
 
 
@@ -63,6 +65,36 @@ def format_report(r):
     return "\n".join(lines)
 
 
+def append_verdict(out_dir, res):
+    """判定流水：按日期去重，只保留最近 VERDICT_KEEP 条（封顶，不无限增长）"""
+    p = os.path.join(out_dir, VERDICT_HIST)
+    rows = []
+    if os.path.exists(p):
+        try:
+            with open(p, encoding="utf-8") as f:
+                rows = [json.loads(x) for x in f if x.strip()]
+        except Exception as e:
+            print(f"[warn] 判定流水读取失败，重建: {e}")
+            rows = []
+    row = {
+        "date": res.get("_data_date"),
+        "verdict": res.get("verdict"),
+        "text": res.get("verdict_text"),
+        "tail_yi": res.get("total_tail_yi"),
+        "net_yi": (res.get("share") or {}).get("net_yi", 0),
+        "top": (res["rows"][0]["label"] if res.get("rows") else ""),
+        "share_date": (res.get("share") or {}).get("date"),
+    }
+    rows = [r for r in rows if r.get("date") != row["date"]]
+    rows.append(row)
+    rows.sort(key=lambda r: r.get("date") or "")
+    rows = rows[-VERDICT_KEEP:]
+    with open(p, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+    return p
+
+
 def write(res, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     out = dict(res)
@@ -72,6 +104,8 @@ def write(res, out_dir):
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(format_report(out))
     print(f"\n报告已写入: {p}")
+    hp = append_verdict(out_dir, out)
+    print(f"判定流水: {hp}")
     return out
 
 

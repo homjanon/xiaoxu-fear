@@ -29,6 +29,16 @@ def _fmt_hm(hm):
     return "%02d:%02d–%s" % (tot // 60, tot % 60, hm)
 
 
+
+def _dominant(r):
+    """当天占比最大的时段：返回 (段名, 金额亿, 占比%)"""
+    segs = [("上午", r.get("amt_am_yi", 0) or 0),
+            ("午后", r.get("amt_md_yi", 0) or 0),
+            ("尾盘", r.get("amt_tail_yi", 0) or 0)]
+    name, amt = max(segs, key=lambda x: x[1])
+    tot = sum(v for _n, v in segs) or 1
+    return name, round(amt, 1), round(amt / tot * 100, 1)
+
 def _rows(etfs):
     ok = [e for e in etfs if not e.get("error") and e.get("amt_all_yi")]
     ok.sort(key=lambda e: -e.get("amt_tail_yi", 0))
@@ -147,6 +157,7 @@ def compute(inp):
             "all_yi": round(tot, 1),
             "mult": r.get("mult"),
             "tail_ret": round(r.get("tail_ret", 0), 2),
+            "dom_seg": _dominant(r)[0], "dom_yi": _dominant(r)[1], "dom_pct": _dominant(r)[2],
             "hit": (r.get("tail_pct", 0) >= TAIL_MIN_PCT and r.get("amt_tail_yi", 0) >= TAIL_MIN_YI),
         })
 

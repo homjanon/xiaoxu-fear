@@ -684,7 +684,7 @@ GUARD_CSS = r"""
 .g-legend i.am{background:#ded5f2;}
 .g-legend i.md{background:#b6a3e3;margin-left:8px;}
 .g-legend i.tl{background:#7d68c6;margin-left:8px;}
-.gr{display:grid;grid-template-columns:96px 1fr 58px 40px;align-items:center;gap:9px;padding:5px 0;}
+.gr{display:grid;grid-template-columns:96px 1fr 74px 40px;align-items:center;gap:9px;padding:5px 0;}
 .gr-h{padding:0 0 2px;align-items:end;}
 .gr-h div{font-size:9px;font-weight:600;color:#a9a2c0;text-align:right;line-height:1.2;}
 .gr-h .nh{text-align:left;font-size:9px;color:#b3adc4;}
@@ -733,7 +733,7 @@ tr.hit .gp-bar .tl{background:#6a55b8;}
 .gp-back{font-size:12px;color:#6a5aa8;text-decoration:none;display:inline-block;margin-bottom:10px;}
 
 @media(max-width:640px){
-  .gr{grid-template-columns:88px 1fr 46px 34px;gap:6px;}
+  .gr{grid-template-columns:84px 1fr 66px 34px;gap:6px;}
   .gr-n{font-size:11px;}
   .gr-h div{font-size:8.5px;}
   .g-right{text-align:left;}
@@ -799,10 +799,12 @@ def render_guard_card(g):
             '<div class="gr-b"><span class="sg am" style="width:%.2f%%"></span>'
             '<span class="sg md" style="width:%.2f%%"></span>'
             '<span class="sg tl" style="width:%.2f%%"></span></div>'
-            '<div class="gr-v">%.0f<span>亿</span></div>'
+            '<div class="gr-v">%s %.0f</div>'
             '<div class="gr-p">%.0f%%</div>'
             '</div>' % (" hit" if x.get("hit") else "", x.get("label", ""), am, md, tl,
-                        _g_pct(x.get("tail_yi")), _g_pct(x.get("tail_pct")))
+                        (x.get("dom_seg") or "尾盘"),
+                        _g_pct(x.get("dom_yi", x.get("tail_yi"))),
+                        _g_pct(x.get("dom_pct", x.get("tail_pct"))))
         )
     if not rows_html:
         rows_html = '<div class="g-rest">今日分时暂未获取，无法判断时段分布。</div>'
@@ -862,7 +864,7 @@ def render_guard_card(g):
         '  <div class="g-sec">\n'
         '    <div class="g-sec-h"><b>①</b> 今天买了什么 <span>条形 = 全天成交额，越靠右越接近收盘</span></div>\n'
         '    <div class="g-legend"><i class="am"></i>上午 09:30–11:30<i class="md"></i>午后 13:00–14:45<i class="tl"></i>尾盘 14:45–15:00</div>\n'
-        '    <div class="gr gr-h"><div></div><div class="nh">↑ 全天成交额</div><div>尾盘成交</div><div>占比</div></div>\n'
+        '    <div class="gr gr-h"><div></div><div class="nh">↑ 全天成交额</div><div>最大时段(亿)</div><div>占比</div></div>\n'
         '    %s\n'
         '    %s\n'
         '  </div>\n'
@@ -903,10 +905,11 @@ def render_guard_page(g):
             '<tr%s><td class="nm">%s</td><td class="gp">%s</td>'
             '<td><div class="gp-bar"><i class="am" style="width:%.2f%%"></i>'
             '<i class="md" style="width:%.2f%%"></i><i class="tl" style="width:%.2f%%"></i></div></td>'
-            '<td class="num">%.1f</td><td class="num b">%.1f%%</td><td class="num">%.1f</td>'
+            '<td class="num">%s %.1f</td><td class="num b">%.1f%%</td><td class="num">%.1f</td>'
             '<td class="num">%s</td><td class="num">%+.2f%%</td></tr>'
             % (' class="hit"' if x.get("hit") else "", x.get("label", ""), x.get("group", ""),
-               am, md, tl, _g_pct(x.get("tail_yi")), _g_pct(x.get("tail_pct")),
+               am, md, tl, (x.get("dom_seg") or "尾盘"), _g_pct(x.get("dom_yi", x.get("tail_yi"))),
+               _g_pct(x.get("dom_pct", x.get("tail_pct"))),
                _g_pct(x.get("all_yi")), ("%.1fx" % mv) if mv else "—",
                _g_pct(x.get("tail_ret"))))
 
@@ -957,10 +960,26 @@ def render_guard_page(g):
         det_rows = '<tr><td colspan="3" style="color:#9d97b3">暂未获取</td></tr>'
 
     last_d = hist_all[-1] if hist_all else {}
-    verdict_rows = ('<tr><td class="nm">%s</td><td>%s</td><td class="num">%s</td>'
-                    '<td class="num b">%+.1f</td></tr>'
-                    % (g.get("_data_date") or "—", g.get("verdict_text") or "—",
-                       g.get("total_tail_yi") or 0, _g_pct(sh.get("net_yi"))))
+    # 判定流水：读 guard_verdict_history.jsonl（最多 20 行，倒序）；文件缺失时退化为当日 1 行
+    VERDICT_KEEP = 20
+    vp = os.path.join("output", "guard_verdict_history.jsonl")
+    vrows = []
+    if os.path.exists(vp):
+        try:
+            with open(vp, encoding="utf-8") as f:
+                vrows = [json.loads(x) for x in f if x.strip()]
+        except Exception:
+            vrows = []
+    if not vrows:
+        vrows = [{"date": g.get("_data_date"), "text": g.get("verdict_text"),
+                  "tail_yi": g.get("total_tail_yi"), "net_yi": _g_pct(sh.get("net_yi"))}]
+    vrows = sorted([x for x in vrows if x.get("date")], key=lambda x: x["date"])[-VERDICT_KEEP:][::-1]
+    verdict_rows = ""
+    for x in vrows:
+        verdict_rows += ('<tr><td class="nm">%s</td><td>%s</td><td class="num">%s</td>'
+                         '<td class="num b">%+.1f</td></tr>'
+                         % (x.get("date"), x.get("text") or "—", x.get("tail_yi") or 0,
+                            _g_pct(x.get("net_yi"))))
 
     return (
         '<div class="card guard-card">\n'
@@ -980,7 +999,7 @@ def render_guard_page(g):
         '<div class="card">\n'
         '  <div class="sec-h">11 只宽基 ETF · 尾盘三段分布</div>\n'
         '  <div style="overflow-x:auto"><table class="gp-tbl"><thead><tr><th>ETF</th><th>指数</th>'
-        '<th>上午 → 午后 → 尾盘</th><th>尾盘成交(亿)</th><th>占比</th><th>全天(亿)</th>'
+        '<th>上午 → 午后 → 尾盘</th><th>最大时段</th><th>占比</th><th>全天(亿)</th>'
         '<th>放量</th><th>尾盘涨跌</th></tr></thead><tbody>%s</tbody></table></div>\n'
         '  <div class="note">深色 = 尾盘 14:45–15:00；行高亮 = 满足「占比 ≥50%% 且 ≥20 亿」。</div>\n'
         '</div>\n'
@@ -996,7 +1015,7 @@ def render_guard_page(g):
         '  <div class="sec-h">判定流水</div>\n'
         '  <div style="overflow-x:auto"><table class="gp-tbl"><thead><tr><th>日期</th><th>判定</th>'
         '<th>尾盘合计(亿)</th><th>份额净申购(亿)</th></tr></thead><tbody>%s</tbody></table></div>\n'
-        '  <div class="note">自 2026-11-20 起逐日累积（此前无落库）。</div>\n'
+        '  <div class="note">最多保留最近 20 个交易日（倒序）；份额为 T-1 口径，故当日行的份额列为上一交易日数据。</div>\n'
         '</div>\n'
         '<div class="card">\n'
         '  <div class="sec-h">口径</div>\n'

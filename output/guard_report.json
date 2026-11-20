@@ -1,6 +1,6 @@
 {
   "_data_date": "2026-11-20",
-  "_generated_at": "2026-11-20 21:41:02",
+  "_generated_at": "2026-11-20 21:55:22",
   "_src": "sina5m / sse(history)",
   "_note": "旁挂参考卡，不参与 XXFI 计算；形态推断，非身份认定",
   "verdict": "buy",
@@ -76,6 +76,9 @@
       "all_yi": 234.8,
       "mult": 16.73,
       "tail_ret": 0.22,
+      "dom_seg": "尾盘",
+      "dom_yi": 220.9,
+      "dom_pct": 94.1,
       "hit": true
     },
     {
@@ -89,6 +92,9 @@
       "all_yi": 243.4,
       "mult": 12.32,
       "tail_ret": 0.83,
+      "dom_seg": "尾盘",
+      "dom_yi": 165.9,
+      "dom_pct": 68.2,
       "hit": true
     },
     {
@@ -102,6 +108,9 @@
       "all_yi": 181.8,
       "mult": 3.49,
       "tail_ret": 0.17,
+      "dom_seg": "午后",
+      "dom_yi": 81.8,
+      "dom_pct": 45.0,
       "hit": false
     },
     {
@@ -115,6 +124,9 @@
       "all_yi": 115.8,
       "mult": 3.21,
       "tail_ret": -0.62,
+      "dom_seg": "午后",
+      "dom_yi": 74.1,
+      "dom_pct": 64.0,
       "hit": false
     },
     {
@@ -128,6 +140,9 @@
       "all_yi": 153.6,
       "mult": 1.35,
       "tail_ret": -0.58,
+      "dom_seg": "上午",
+      "dom_yi": 103.0,
+      "dom_pct": 67.0,
       "hit": false
     },
     {
@@ -141,6 +156,9 @@
       "all_yi": 55.7,
       "mult": 1.95,
       "tail_ret": -0.95,
+      "dom_seg": "午后",
+      "dom_yi": 24.2,
+      "dom_pct": 43.4,
       "hit": false
     },
     {
@@ -154,6 +172,9 @@
       "all_yi": 98.4,
       "mult": 0.96,
       "tail_ret": -0.61,
+      "dom_seg": "上午",
+      "dom_yi": 61.2,
+      "dom_pct": 62.2,
       "hit": false
     },
     {
@@ -167,6 +188,9 @@
       "all_yi": 50.1,
       "mult": 3.56,
       "tail_ret": 0.23,
+      "dom_seg": "午后",
+      "dom_yi": 35.7,
+      "dom_pct": 71.4,
       "hit": false
     },
     {
@@ -180,6 +204,9 @@
       "all_yi": 16.4,
       "mult": 1.78,
       "tail_ret": 0.05,
+      "dom_seg": "午后",
+      "dom_yi": 6.2,
+      "dom_pct": 37.6,
       "hit": false
     },
     {
@@ -193,6 +220,9 @@
       "all_yi": 23.9,
       "mult": 0.97,
       "tail_ret": -0.5,
+      "dom_seg": "上午",
+      "dom_yi": 15.1,
+      "dom_pct": 63.3,
       "hit": false
     },
     {
@@ -206,6 +236,9 @@
       "all_yi": 3.8,
       "mult": 0.77,
       "tail_ret": -0.73,
+      "dom_seg": "上午",
+      "dom_yi": 2.0,
+      "dom_pct": 53.3,
       "hit": false
     }
   ],
